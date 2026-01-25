@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今後の活動予定 | 下北沢 20-30代社会人サークル</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- 基本設定 --- */
+        :root {
+            --bg-color: #fcfbf9; /* 生成り色 */
+            --text-color: #333333; /* 濃いグレー */
+            --accent-color: #bf5b3b; /* 落ち着いたテラコッタ */
+            --accent-light: #f4e9e4; /* 薄いアクセントカラー */
+            --accent-hover: #a64d31;
+            --secondary-bg: #ffffff;
+            --border-radius: 4px; /* 角丸を控えめにして洗練させる */
+        }
+
+        body {
+            font-family: "Zen Kaku Gothic New", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3 {
+            font-family: "Shippori Mincho", serif;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        p {
+            margin-bottom: 1.8rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- コンポーネント --- */
+        .btn-cta {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 18px;
+            background-color: #06c755;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 100px;
+            box-shadow: 0 4px 15px rgba(6, 199, 85, 0.25);
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(6, 199, 85, 0.4);
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            position: relative;
+            display: inline;
+            background: linear-gradient(transparent 70%, var(--accent-light) 70%);
+            padding: 0 10px;
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        /* --- schedule.html用スタイル --- */
+        .schedule-item {
+            background: var(--secondary-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            margin-bottom: 24px;
+            border-left: 4px solid var(--accent-color);
+        }
+        .schedule-date {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            margin-bottom: 8px;
+        }
+        .schedule-title-h3 { /* h3のデフォルトスタイルを上書きするため */
+            font-family: "Shippori Mincho", serif;
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* --- フッター --- */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 0.8rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">今後の活動予定</h2>
+            </div>
+            <p style="text-align: center; margin-bottom: 40px;">最新の活動予定はこちらでご確認ください。<br>参加希望のイベントが見つかったら、LINE公式アカウントから「〇月〇日のイベント参加希望」とメッセージをお送りください。</p>
+
+            <div class="schedule-list">
+                <div class="schedule-item">
+                    <div class="schedule-date">2024年 8月 10日 (土) 14:00〜</div>
+                    <h3 class="schedule-title-h3">下北沢・隠れ家カフェ巡り</h3>
+                    <p style="margin-bottom: 0;">新しくオープンしたカフェや、路地裏にある隠れ家的なカフェを巡ります。コーヒーを片手におしゃべりしましょう。初めての方も大歓迎です。</p>
+                </div>
+
+                <div class="schedule-item">
+                    <div class="schedule-date">2024年 8月 24日 (土) 13:00〜</div>
+                    <h3 class="schedule-title-h3">初心者だらけのボードゲーム会</h3>
+                    <p style="margin-bottom: 0;">会話が苦手でも大丈夫！みんなでワイワイ楽しめる簡単なボードゲームを用意しています。ルール説明から丁寧に行うので、初心者の方も安心してご参加ください。</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="margin-bottom: 10px;">参加申し込みやご質問は<br>LINE公式アカウントからお気軽にどうぞ！</p>
+                <a href="#" class="btn-cta">LINE公式アカウントはこちら</a>
+                <a href="index.html" class="back-link">トップページに戻る</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p style="margin-bottom: 0;">&copy; 2024 下北沢社会人サークル. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
