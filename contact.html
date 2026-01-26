@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お問い合わせ | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- ラジオボタンのスタイル --- */
+        .form-group-radio {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .form-group-radio label {
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+        .form-group-radio input {
+            width: auto;
+        }
+        /* --- contact.html用スタイル --- */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+            box-sizing: border-box; /* paddingを含めてwidth 100%にする */
+        }
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            max-width: 250px;
+            margin: 30px auto 0;
+            padding: 15px;
+            background-color: var(--accent-color);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .submit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">下北コミュニティ</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">トップ</a></li>
+                <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="staff.html">運営募集</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+            </ul>
+        </nav>
+        <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <section class="section main-content fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">お問い合わせ・参加希望</h2>
+            </div>
+            <p style="text-align: center; margin-bottom: 40px;">サークルに関するご質問、イベントへの参加希望、運営への参加希望など、<br>こちらからお気軽にご連絡ください。</p>
+
+            <form id="contact-form" class="contact-form">
+                <div class="form-group">
+                    <label>お問い合わせ種別</label>
+                    <div class="form-group-radio">
+                        <label><input type="radio" name="type" value="運営希望" checked> 運営に参加したい</label>
+                        <label><input type="radio" name="type" value="イベント参加希望"> イベントに参加したい</label>
+                        <label><input type="radio" name="type" value="その他"> その他</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name">お名前</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">メールアドレス</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">お問い合わせ内容</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" id="submit-btn" class="submit-btn">送信する</button>
+            </form>
+            <p id="success-message" style="text-align: center; color: var(--accent-color); font-weight: bold; display: none; margin-top: 20px;">メッセージを送信しました。ありがとうございます！</p>
+
+            <div style="text-align: center; margin-top: 50px;">
+                 <a href="index.html" class="back-link">トップページに戻る</a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
+        </div>
+    </footer>
+
+    <!-- ページトップへ戻るボタン -->
+    <a href="#" class="back-to-top">↑</a>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hamburger Menu
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.querySelector('.main-nav');
+            const navLinks = document.querySelectorAll('.main-nav a');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('is-active');
+                nav.classList.toggle('is-active');
+            });
+
+            // Close menu when a link is clicked
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (nav.classList.contains('is-active')) {
+                        hamburger.classList.remove('is-active');
+                        nav.classList.remove('is-active');
+                    }
+                });
+            });
+
+            // スクロール時のフェードインアニメーション
+            const observerOptions = {
+                root: null,
+                rootMargin: "0px",
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const elements = document.querySelectorAll(".fade-in");
+            elements.forEach(el => observer.observe(el));
+
+            // Back to Top Button
+            const backToTopButton = document.querySelector('.back-to-top');
+            if (backToTopButton) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 400) {
+                        backToTopButton.classList.add('visible');
+                    } else {
+                        backToTopButton.classList.remove('visible');
+                    }
+                });
+
+                backToTopButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // --- Firebase & Form Submission ---
+
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+                authDomain: "tokyonakama-e7331.firebaseapp.com",
+                projectId: "tokyonakama-e7331",
+                storageBucket: "tokyonakama-e7331.firebasestorage.app",
+                messagingSenderId: "538079381768",
+                appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+                measurementId: "G-BWM0Q87Q93"
+            };
+
+            // Firebaseを初期化
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            // Analyticsを初期化
+            const analytics = getAnalytics(app);
+
+            const form = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const successMessage = document.getElementById('success-message');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // デフォルトのフォーム送信をキャンセル
+
+                // ボタンを無効化して二重送信を防ぐ
+                submitBtn.disabled = true;
+                submitBtn.textContent = '送信中...';
+
+                // フォームからデータを取得
+                const inquiryType = form.type.value;
+                const name = form.name.value;
+                const email = form.email.value;
+                const message = form.message.value;
+
+                // Firestoreにデータを保存
+                addDoc(collection(db, 'contacts'), {
+                    type: inquiryType,
+                    name: name,
+                    email: email,
+                    message: message,
+                    createdAt: serverTimestamp()
+                })
+                .then((docRef) => {
+                    console.log("Document written with ID: ", docRef.id);
+                    // フォームを非表示にし、成功メッセージを表示
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                    alert('送信に失敗しました。時間をおいて再度お試しください。');
+                    // エラーがあった場合はボタンを元に戻す
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '送信する';
+                });
+            });
+        });
+    </script>
+    <!--
+    自動返信メールと管理者画面について：
+    - フォーム送信者に自動でThank youメールを送るには、Firebase FunctionsとNodemailer等を組み合わせる必要があります。
+      （Firestoreへのデータ書き込みをトリガーにして、サーバー側でメール送信処理を実行します）
+    - 入力されたデータは、FirebaseコンソールのFirestore画面から直接確認できます。
+      また、別途管理者用のWebページを作成し、Firestoreからデータを読み込んで表示することも可能です。
+    -->
+</body>
+</html>

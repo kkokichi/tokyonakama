@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>今後の活動予定 | 下北コミュニティ</title>
+    <title>運営仲間募集 | 下北コミュニティ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .event-date {
+        .cta-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto 0;
+            padding: 15px;
+            background-color: var(--accent-color);
+            color: white;
+            text-align: center;
+            text-decoration: none;
             font-weight: bold;
-            font-size: 0.9rem;
-            color: #888; /* 目立ちすぎないように */
-            margin-top: 0;
-            margin-bottom: 8px;
+            font-size: 1.1rem;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
-        .event-card h3 {
-            margin-top: 0;
+        .cta-btn:hover {
+            background-color: var(--accent-hover);
         }
     </style>
 </head>
@@ -43,50 +53,35 @@
     <section class="section main-content fade-in">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">活動予定（企画中）</h2>
+                <h2 class="section-title">運営仲間を募集します！</h2>
             </div>
-            <p style="text-align: center; margin-bottom: 40px;">「こんなことやりたい！」という企画案です。<br>参加してみたいイベントがあれば、お気軽にお問い合わせください！</p>
+            <p style="text-align: center; margin-bottom: 40px;">「下北コミュニティ」を一緒に作り、盛り上げてくれる<br>「仲間」を募集します！</p>
 
-            <div class="event-grid">
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="カフェ巡り">
-                    <p class="event-date">日付：未定</p>
-                    <h3>☕ 下北沢・隠れ家カフェ巡り</h3>
-                    <p style="margin-bottom: 0;">新しくオープンしたカフェや、路地裏にある隠れ家的なカフェを巡ります。コーヒーを片手におしゃべりしましょう。初めての方も大歓迎です。</p>
-                </div>
+            <div class="card" style="margin-bottom: 40px;">
+                <h3>こんな仲間を待ってます！</h3>
+                <ul>
+                    <li>「こんなことしたら楽しそう！」と企画するのが好きな人</li>
+                    <li>人と話したり、人の輪を広げたりするのが好きな人</li>
+                    <li>もっと楽しい場所にするためのアイデアを出すのが好きな人</li>
+                    <li>どうせやるなら、楽しく真剣に！と思える人</li>
+                </ul>
+                <p style="margin-bottom: 0;">特別なスキルは必要ありません。「サークルを楽しい場所にしたい」という気持ちがあれば大歓迎です。</p>
+            </div>
 
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1632501641765-e568d28b0015?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ボードゲーム会">
-                    <p class="event-date">日付：未定</p>
-                    <h3>🎲 初心者だらけのボードゲーム会</h3>
-                    <p style="margin-bottom: 0;">会話が苦手でも大丈夫！みんなでワイワイ楽しめる簡単なボードゲームを用意しています。ルール説明から丁寧に行うので、初心者の方も安心してご参加ください。</p>
-                </div>
-
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ランニング">
-                    <p class="event-date">日付：未定</p>
-                    <h3>🏃 みんなでランニング</h3>
-                    <p style="margin-bottom: 0;">週末の朝、公園で軽く走りませんか？運動不足解消やリフレッシュに。終わった後は近くのカフェでモーニングもいいですね。</p>
-                </div>
-
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1628852425822-c49a4a5b5433?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="サウナ">
-                    <p class="event-date">日付：未定</p>
-                    <h3>🧖 みんなでサウナ</h3>
-                    <p style="margin-bottom: 0;">話題のサウナ施設で「ととのう」体験を。サウナ好きはもちろん、初心者も大歓迎。汗を流して心も体もスッキリさせましょう。</p>
-                </div>
-
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1533473359331-097b50025d16?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ドライブ">
-                    <p class="event-date">日付：未定</p>
-                    <h3>🚗 みんなでドライブ</h3>
-                    <p style="margin-bottom: 0;">レンタカーを借りて、少し遠出のプチ旅行。海を見に行ったり、美味しいものを食べに行ったり。行き先はみんなで決めましょう！</p>
-                </div>
+            <div class="card">
+                <h3>仲間になったら、こんなことをします</h3>
+                <ul>
+                    <li>月1〜2回のイベント企画・立案</li>
+                    <li>イベント当日の参加者サポートや進行</li>
+                    <li>LINE公式アカウントでの告知や参加者対応</li>
+                    <li>新規メンバーが馴染めるような雰囲気作り</li>
+                </ul>
+                 <p style="margin-bottom: 0;">未経験でもまったく問題ありません！「やってみたい」という気持ちを大切に、一緒にコミュニティを盛り上げていきましょう！</p>
             </div>
 
             <div style="text-align: center; margin-top: 50px;">
-                <p style="margin-bottom: 10px;">参加希望のご連絡や、「こんなことしたい！」というご提案は<br>お問い合わせページからお気軽にどうぞ！</p>
-                <a href="contact.html" class="btn-cta">参加希望・お問い合わせはこちら</a>
+                <p style="margin-bottom: 10px;">少しでも興味を持っていただけたら、<br>まずはお気軽にお問い合わせください！</p>
+                <a href="contact.html" class="cta-btn">お問い合わせフォームへ</a>
                 <a href="index.html" class="back-link">トップページに戻る</a>
             </div>
         </div>
@@ -103,6 +98,7 @@
     <a href="#" class="back-to-top">↑</a>
 
     <script>
+        // スクロール時のフェードインアニメーション
         document.addEventListener("DOMContentLoaded", function() {
             // Hamburger Menu
             const hamburger = document.querySelector('.hamburger');

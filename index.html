@@ -3,118 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>下北沢 20-30代社会人サークル | ゆるく繋がる週末</title>
+    <title>下北コミュニティ | 下北沢 20-30代社会人サークル</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* --- 基本設定 --- */
-        :root {
-            --bg-color: #fcfbf9; /* 生成り色 */
-            --text-color: #333333; /* 濃いグレー */
-            --accent-color: #bf5b3b; /* 落ち着いたテラコッタ */
-            --accent-light: #f4e9e4; /* 薄いアクセントカラー */
-            --accent-hover: #a64d31;
-            --secondary-bg: #ffffff;
-            --border-radius: 4px; /* 角丸を控えめにして洗練させる */
-        }
-
-        body {
-            font-family: "Zen Kaku Gothic New", sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.8;
-            margin: 0;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        h1, h2, h3 {
-            font-family: "Shippori Mincho", serif;
-            font-weight: 700;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-            letter-spacing: 0.05em;
-        }
-
-        p {
-            margin-bottom: 1.8rem;
-        }
-
-        .container {
-            max-width: 800px; /* 少し幅を広げる */
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: var(--border-radius);
-        }
-
         /* --- コンポーネント --- */
-        .btn-cta {
-            display: block;
-            width: 100%;
-            max-width: 400px;
-            margin: 20px auto;
-            padding: 18px;
-            background-color: #06c755;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 100px;
-            box-shadow: 0 4px 15px rgba(6, 199, 85, 0.25);
-            transition: transform 0.2s, box-shadow 0.2s;
-            letter-spacing: 0.05em;
-        }
-
-        .btn-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(6, 199, 85, 0.4);
-        }
-
-        .btn-cta small {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: normal;
-            margin-top: 4px;
-            opacity: 0.9;
-        }
-
-        .section {
-            padding: 60px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 1.8rem;
-            position: relative;
-            display: inline;
-            /* マーカー風の下線 */
-            background: linear-gradient(transparent 70%, var(--accent-light) 70%);
-            padding: 0 10px;
-            -webkit-box-decoration-break: clone;
-            box-decoration-break: clone;
-        }
-        /* 親要素で中央揃えにする必要があるため、h2自体はinline-blockで背景を文字幅に合わせる */
-        .section-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .card {
-            background: var(--secondary-bg);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            margin-bottom: 24px;
-        }
-
         /* --- 1. ファーストビュー --- */
         .hero {
             /* 画像を少し暗くして文字を読みやすく、かつセピア調に */
@@ -150,9 +45,9 @@
 
         .badge {
             background: rgba(255,255,255,0.9);
-            color: #333;
+            color: var(--text-color);
             padding: 6px 14px;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             font-size: 0.85rem;
             font-weight: bold;
             letter-spacing: 0.05em;
@@ -181,7 +76,7 @@
 
         /* --- 3. 解決策 --- */
         .solution {
-            background-color: #fff;
+            background-color: var(--secondary-bg);
             text-align: center;
         }
         
@@ -190,20 +85,27 @@
             line-height: 2;
         }
 
-        /* --- 4. イベント紹介 --- */
-        .event-grid {
+        /* --- 4.5 ギャラリー --- */
+        .gallery-grid {
             display: grid;
-            gap: 24px;
-            /* PC表示時に2列にする */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
         }
-        
-        .event-card img {
+        @media (min-width: 600px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+        }
+        .gallery-grid img {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: cover;
-            margin-bottom: 20px;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
+            transition: transform 0.3s;
+        }
+        .gallery-grid img:hover {
+            transform: scale(1.02);
         }
 
         /* --- 5. 下北沢の理由 --- */
@@ -212,11 +114,54 @@
             border-top: 1px solid #e6e0d8;
             border-bottom: 1px solid #e6e0d8;
         }
+        .shimokita-content {
+            display: grid;
+            gap: 30px;
+            align-items: center;
+        }
+        @media (min-width: 768px) {
+            .shimokita-content {
+                grid-template-columns: 1fr 1.2fr;
+                gap: 50px;
+            }
+        }
+        .shimokita-img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+
+        /* --- 6. 主催者紹介 --- */
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .profile-img {
+            flex-shrink: 0;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        /* スマホでは縦並びにする */
+        @media (max-width: 600px) {
+            .profile {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        .profile-text h3 {
+            margin-top: 0;
+        }
 
         /* --- 6. 参加者の声 --- */
         .voice-card {
             position: relative;
-            background: #fff;
+            background: var(--secondary-bg);
             padding: 30px 25px;
             border-radius: var(--border-radius);
             margin-bottom: 25px;
@@ -244,41 +189,29 @@
             display: block;
         }
 
-        /* --- 8. フッター --- */
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 40px 20px;
-            font-size: 0.8rem;
-            padding-bottom: 100px; /* 追従ボタンの被りを防ぐ */
-        }
-        
-        .sticky-cta {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            z-index: 100;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            margin: 0; /* 上書き */
-        }
-
-        /* PCでは追従ボタンを非表示にする */
-        @media (min-width: 768px) {
-            .sticky-cta {
-                display: none;
-            }
-        }
-
     </style>
 </head>
-<body>
+<body class="has-sticky-cta">
+
+    <header class="header">
+        <a href="index.html" class="logo">下北コミュニティ</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">トップ</a></li>
+                <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="staff.html">運営募集</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+            </ul>
+        </nav>
+        <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
 
     <!-- ① ファーストビュー -->
-    <section class="hero">
+    <section class="hero fade-in">
         <div class="container">
             <div class="badges">
                 <span class="badge">おひとり様9割</span>
@@ -287,15 +220,14 @@
             </div>
             <h1>会社と家の往復だけじゃ、<br>なんだか少し、息が詰まる。</h1>
             <p>下北沢で、コーヒー片手に「会社以外の友達」と話す週末。<br>無理せず、飾らず、ゆるく繋がる。</p>
-            <a href="schedule.html" class="btn-cta">
-                活動予定をLINEで見てみる
-                <small>※無理な勧誘は一切ありません</small>
+            <a href="contact.html" class="btn-cta">
+                お問い合わせはこちら
             </a>
         </div>
     </section>
 
     <!-- ② 共感ゾーン -->
-    <section class="section">
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">ふと、こんなことを<br>思う瞬間はありませんか？</h2>
@@ -314,7 +246,7 @@
     </section>
 
     <!-- ③ 解決策提示 -->
-    <section class="section solution">
+    <section class="section solution fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">「頑張らなくていい」<br>それが一番大切なルール</h2>
@@ -329,7 +261,7 @@
     </section>
 
     <!-- ④ イベント紹介 -->
-    <section class="section">
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">下北沢を拠点に、<br>こんな活動をしています</h2>
@@ -338,43 +270,93 @@
             <div class="event-grid">
                 <!-- Activity 1 -->
                 <div class="card event-card">
-                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="カフェ">
+                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="カフェでの交流">
                     <h3>☕ まったり交流</h3>
                     <p><b>下北沢カフェ・古着屋巡り</b><br>「あのお店、気になってたんだよね」をみんなで消化。月1回、おしゃれなカフェでただお喋りするだけの会も人気です。</p>
                 </div>
 
                 <!-- Activity 2 -->
                 <div class="card event-card">
-                    <img src="https://images.unsplash.com/photo-1632501641765-e568d28b0015?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ボードゲーム">
+                    <img src="https://images.unsplash.com/photo-1632501641765-e568d28b0015?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ボードゲーム会">
                     <h3>🎲 趣味の共有</h3>
                     <p><b>インドア派も安心</b><br>会話が苦手でも大丈夫。ボードゲームや映画鑑賞なら、無理に話そうとしなくても自然と仲良くなれます。</p>
                 </div>
 
                 <!-- Activity 3 -->
                 <div class="card event-card">
-                    <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="スポーツ">
+                    <img src="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ゆるいスポーツ">
                     <h3>🏃 ゆるくリフレッシュ</h3>
                     <p><b>「ガチじゃない」スポーツ</b><br>経験者お断り？と思うくらいゆるいフットサルやバドミントン。ミスしても笑って許せる雰囲気です。</p>
+                </div>
+
+                <!-- Activity 4 -->
+                <div class="card event-card">
+                    <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="週末のドライブ">
+                    <h3>🚗 ちょっとお出かけ</h3>
+                    <p><b>週末プチ旅行</b><br>たまには少し足を延ばして、みんなでドライブや日帰り温泉へ。非日常な体験を共有すれば、もっと仲良くなれるはず。</p>
+                </div>
+            </div>
+            <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 30px; margin-bottom: 0;">※一部、今後の活動イメージを含みます。実際の活動内容はLINEでご確認ください。</p>
+        </div>
+    </section>
+
+    <!-- ギャラリー -->
+    <section class="section fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">活動のアルバム</h2>
+            </div>
+            <p style="text-align: center; margin-bottom: 30px;">過去のイベントや、普段の活動の様子です。<br>初対面でもすぐに打ち解けられる、和やかな雰囲気です。</p>
+            <div class="gallery-grid">
+                <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="みんなで食事">
+                <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="散歩">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ゲーム">
+                <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="カフェ">
+                <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="交流会">
+                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="パーティー">
+            </div>
+            <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 30px; margin-bottom: 0;">※掲載している写真は活動のイメージです。</p>
+        </div>
+    </section>
+
+    <!-- ⑤ 下北沢を拠点にする理由 -->
+    <section class="section shimokita-reason fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">なぜ、渋谷でも新宿でもなく<br>「下北沢」なのか？</h2>
+            </div>
+            <div class="shimokita-content">
+                <img src="images/shimokita.webp" alt="下北沢の街並み" class="shimokita-img">
+                <div>
+                    <p>それは、下北沢が<b>「気取らなくていい街」</b>だからです。</p>
+                    <p>キラキラした港区のような緊張感もなければ、ビジネス街のような堅苦しさもない。</p>
+                    <p>古着にスニーカーで歩けるこの街の空気感は、初対面の緊張を驚くほどほぐしてくれます。</p>
+                    <p style="margin-bottom: 0;">路地裏の隠れ家カフェや、ディープな居酒屋。「こんなお店あったんだ！」という発見が、会話のきっかけを自然に作ってくれるのです。</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ⑤ 下北沢を拠点にする理由 -->
-    <section class="section shimokita-reason">
+    <!-- ⑥ 主催者紹介 -->
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">なぜ、渋谷でも新宿でもなく<br>「下北沢」なのか？</h2>
+                <h2 class="section-title">主催者はこんな人です</h2>
             </div>
-            <p>それは、下北沢が<b>「気取らなくていい街」</b>だからです。</p>
-            <p>キラキラした港区のような緊張感もなければ、ビジネス街のような堅苦しさもない。</p>
-            <p>古着にスニーカーで歩けるこの街の空気感は、初対面の緊張を驚くほどほぐしてくれます。</p>
-            <p>路地裏の隠れ家カフェや、ディープな居酒屋。「こんなお店あったんだ！」という発見が、会話のきっかけを自然に作ってくれるのです。</p>
+            <div class="card">
+                <div class="profile">
+                    <img src="images/profile.webp" alt="主催者の写真" class="profile-img">
+                    <div class="profile-text">
+                        <h3>主催：らいと (20代後半)</h3>
+                        <p style="margin-bottom: 0;">趣味はカフェ巡りと散歩とサウナ、筋トレ。上京したての頃、会社以外に話せる人がいなくて寂しい思いをしました。「休日にふらっと集まれる仲間がほしいな」という軽い気持ちでこの会を始めました。人見知りの方も大歓迎なので、気軽に遊びに来てください！</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- ⑥ 参加者の声 -->
-    <section class="section">
+    <!-- ⑦ 参加者の声 -->
+    <section class="section fade-in">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">「最初はすごく不安でした」<br>参加メンバーの声</h2>
@@ -391,11 +373,12 @@
                 <h3>「上京したての孤独感がなくなりました」</h3>
                 <p>地方から出てきて友達がおらず、休日はずっと家。このサークルは「意識高い系」じゃないのが自分に合ってました。下北のカレー屋巡りが楽しくて、週末が待ち遠しくなりました。</p>
             </div>
+            <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 30px; margin-bottom: 0;">※これらは個人の感想を元に作成した活動イメージです。</p>
         </div>
     </section>
 
-    <!-- ⑦ よくある不安・Q&A -->
-    <section class="section" style="background-color: #fff;">
+    <!-- ⑧ よくある不安・Q&A -->
+    <section class="section fade-in" style="background-color: #fff;">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">参加前の<br>「ちょっとした不安」にお答えします</h2>
@@ -418,33 +401,95 @@
         </div>
     </section>
 
-    <!-- ⑧ 最終CTA -->
-    <section class="section" style="padding-bottom: 100px;">
+    <!-- ⑨ 最終CTA -->
+    <section class="section fade-in">
         <div class="container" style="text-align: center;">
             <div class="section-header">
                 <h2 class="section-title">まずは「雰囲気」を知るだけでOK</h2>
             </div>
-            <p>ここまで読んでいただき、ありがとうございます。<br>それでもやっぱり、いきなり参加するのは勇気がいりますよね。</p>
-            <p>だから、まずは<b>「LINE登録」だけ</b>しておいてください。</p>
-            <p>「今月はこんなカフェに行きます」「来週はボドゲ会やります」<br>そんな通知が届くだけです。</p>
-            <p>気が向いた時、予定が空いた時だけ、「ちょっと行ってみようかな」と返信をくれればOKです。</p>
+            <p>ここまで読んでいただき、ありがとうございます。<br>少しでも興味を持っていただけたら、お気軽にお問い合わせください。</p>
+            <p>イベントへの参加希望はもちろん、「こんなことしたい！」というご提案も大歓迎です。</p>
+            <p>あなたからのご連絡をお待ちしています！</p>
             
-            <a href="schedule.html" class="btn-cta">
-                \ 1分で完了・匿名OK /<br>
-                LINEで活動スケジュールを受け取る
-                <small>※合わないと思ったら即ブロックでOKです</small>
+            <a href="contact.html" class="btn-cta">
+                参加希望・お問い合わせはこちら
             </a>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2024 下北沢社会人サークル. All Rights Reserved.</p>
+        <div class="container">
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
+        </div>
     </footer>
 
     <!-- スクロール追従ボタン（スマホ用） -->
-    <a href="schedule.html" class="btn-cta sticky-cta">
-        LINEで活動予定を見る
+    <a href="contact.html" class="btn-cta sticky-cta">
+        お問い合わせはこちら
     </a>
 
+    <!-- ページトップへ戻るボタン -->
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hamburger Menu
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.querySelector('.main-nav');
+            const navLinks = document.querySelectorAll('.main-nav a');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('is-active');
+                nav.classList.toggle('is-active');
+            });
+
+            // Close menu when a link is clicked
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (nav.classList.contains('is-active')) {
+                        hamburger.classList.remove('is-active');
+                        nav.classList.remove('is-active');
+                    }
+                });
+            });
+
+            // スクロール時のフェードインアニメーション
+            const observerOptions = {
+                root: null,
+                rootMargin: "0px",
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const elements = document.querySelectorAll(".fade-in");
+            elements.forEach(el => observer.observe(el));
+
+            // Back to Top Button
+            const backToTopButton = document.querySelector('.back-to-top');
+            if (backToTopButton) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 400) {
+                        backToTopButton.classList.add('visible');
+                    } else {
+                        backToTopButton.classList.remove('visible');
+                    }
+                });
+
+                backToTopButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
