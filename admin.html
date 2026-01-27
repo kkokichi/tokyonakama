@@ -85,6 +85,80 @@
             font-family: inherit;
             font-size: 0.9rem;
         }
+        .reply-textarea {
+            width: 100%;
+            min-height: 60px;
+            font-size: 0.9rem;
+            padding: 5px;
+            box-sizing: border-box;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn-save {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* スマホ対応：カード型レイアウト */
+        @media screen and (max-width: 768px) {
+            .table-wrapper {
+                overflow-x: visible;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr {
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background: #fff;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            }
+            td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding: 12px 12px 12px 35%; /* ラベル分のスペース確保 */
+                text-align: right;
+            }
+            td::before {
+                position: absolute;
+                top: 12px;
+                left: 12px;
+                width: 30%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                content: attr(data-label);
+                color: #555;
+            }
+            /* 内容と返信は長文になるためレイアウト調整 */
+            td:nth-of-type(5), td:nth-of-type(6) {
+                padding: 12px;
+                text-align: left;
+            }
+            td:nth-of-type(5)::before, td:nth-of-type(6)::before {
+                position: static;
+                display: block;
+                margin-bottom: 5px;
+                width: 100%;
+            }
+            td:last-child {
+                border-bottom: none;
+                text-align: center;
+                padding-left: 12px;
+            }
+            td:last-child::before {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -116,6 +190,7 @@
                                 <th>名前</th>
                                 <th>Email</th>
                                 <th style="min-width: 200px;">内容</th>
+                                <th style="min-width: 200px;">返信内容</th>
                                 <th>ステータス</th>
                                 <th>操作</th>
                             </tr>
@@ -175,7 +250,7 @@
                 contactListTbody.innerHTML = ""; // クリア
 
                 if (querySnapshot.empty) {
-                    contactListTbody.innerHTML = "<tr><td colspan='7' style='text-align:center;'>データがありません</td></tr>";
+                    contactListTbody.innerHTML = "<tr><td colspan='8' style='text-align:center;'>データがありません</td></tr>";
                     return;
                 }
 
@@ -185,22 +260,27 @@
                     // 日時のフォーマット
                     const date = data.createdAt ? data.createdAt.toDate().toLocaleString('ja-JP') : "---";
                     const status = data.status || '未対応';
+                    const reply = data.reply || '';
                     
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${date}</td>
-                        <td>${data.type || '-'}</td>
-                        <td style="font-weight:bold;">${data.name || '-'}</td>
-                        <td>${data.email || '-'}</td>
-                        <td style="white-space: pre-wrap;">${data.message || '-'}</td>
-                        <td>
+                        <td data-label="日時">${date}</td>
+                        <td data-label="種別">${data.type || '-'}</td>
+                        <td data-label="名前" style="font-weight:bold;">${data.name || '-'}</td>
+                        <td data-label="Email">${data.email || '-'}</td>
+                        <td data-label="内容" style="white-space: pre-wrap;">${data.message || '-'}</td>
+                        <td data-label="返信内容">
+                            <textarea class="reply-textarea" id="reply-${docId}" placeholder="サイト上に表示する返信">${reply}</textarea>
+                            <button class="btn-delete btn-save" data-id="${docId}">返信保存</button>
+                        </td>
+                        <td data-label="ステータス">
                             <select class="status-select" data-id="${docId}">
                                 <option value="未対応" ${status === '未対応' ? 'selected' : ''}>未対応</option>
                                 <option value="返信済" ${status === '返信済' ? 'selected' : ''}>返信済</option>
                                 <option value="対応不要" ${status === '対応不要' ? 'selected' : ''}>対応不要</option>
                             </select>
                         </td>
-                        <td><button class="btn-delete" data-id="${docId}">削除</button></td>
+                        <td data-label="操作"><button class="btn-delete" data-id="${docId}">削除</button></td>
                     `;
                     contactListTbody.appendChild(tr);
                 });
@@ -214,6 +294,26 @@
         // イベントデリゲーションでクリックと変更を処理
         contactListTbody.addEventListener('click', (e) => {
             if (e.target.classList.contains('btn-delete')) {
+                // 返信保存ボタンの場合 (btn-saveクラスも持っているため先に判定)
+                if (e.target.classList.contains('btn-save')) {
+                    const docId = e.target.dataset.id;
+                    const replyText = document.getElementById(`reply-${docId}`).value;
+                    const docRef = doc(db, "contacts", docId);
+
+                    updateDoc(docRef, { reply: replyText, status: '返信済' })
+                    .then(() => {
+                        alert('返信を保存し、ステータスを「返信済」にしました。');
+                        // ステータスのセレクトボックスも見た目だけ更新しておく
+                        const select = document.querySelector(`.status-select[data-id="${docId}"]`);
+                        if(select) select.value = '返信済';
+                    })
+                    .catch((error) => {
+                        console.error("Error updating document: ", error);
+                        alert('保存に失敗しました。');
+                    });
+                    return; // 削除処理に行かないように終了
+                }
+
                 const docId = e.target.dataset.id;
                 if (confirm('この問い合わせを削除しますか？')) {
                     deleteDoc(doc(db, "contacts", docId))

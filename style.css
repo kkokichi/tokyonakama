@@ -323,12 +323,17 @@ footer {
     .sticky-cta {
         display: none;
     }
+    /* PC表示でページトップへ戻るボタンとフッターが被るのを防ぐ */
+    footer {
+        /* ボタンの上端が bottom: 80px (30px + 高さ50px) のため、それ以上の余白を確保 */
+        padding-bottom: 90px;
+    }
 }
 
 @media (max-width: 767px) {
     /* 追従CTAボタンを持つページで、フッターとの被りを防ぐ */
     .has-sticky-cta footer {
-        padding-bottom: 100px;
+        padding-bottom: 160px;
     }
     .back-to-top {
         display: none;
