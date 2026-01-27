@@ -217,6 +217,7 @@
                 <span class="badge">おひとり様9割</span>
                 <span class="badge">勧誘NG</span>
                 <span class="badge">20〜30代限定</span>
+                <span class="badge" id="applicant-badge" style="display: none; background-color: #ff9f43; color: white;">累計応募数 <span id="applicant-count">-</span>人</span>
             </div>
             <h1>会社と家の往復だけじゃ、<br>なんだか少し、息が詰まる。</h1>
             <p>下北沢で、コーヒー片手に「会社以外の友達」と話す週末。<br>無理せず、飾らず、ゆるく繋がる。</p>
@@ -431,6 +432,39 @@
 
     <!-- ページトップへ戻るボタン -->
     <a href="#" class="back-to-top">↑</a>
+
+    <!-- Firebase SDK for Count -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 応募総数を取得して表示
+        async function showApplicantCount() {
+            try {
+                const coll = collection(db, "contacts");
+                const snapshot = await getCountFromServer(coll);
+                const count = snapshot.data().count;
+                document.getElementById('applicant-count').textContent = count;
+                document.getElementById('applicant-badge').style.display = 'inline-block';
+            } catch (error) {
+                console.error("Error fetching count:", error);
+            }
+        }
+        showApplicantCount();
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

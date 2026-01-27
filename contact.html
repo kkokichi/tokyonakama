@@ -244,7 +244,8 @@
                     name: name,
                     email: email,
                     message: message,
-                    createdAt: serverTimestamp()
+                    createdAt: serverTimestamp(),
+                    status: '未対応' // 初期ステータス
                 })
                 .then((docRef) => {
                     console.log("Document written with ID: ", docRef.id);
