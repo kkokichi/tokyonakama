@@ -327,15 +327,36 @@ footer {
 }
 
 /* --- スクロール動物 --- */
-#scroll-animal {
+#scroll-animal-container {
     position: fixed;
     bottom: 10px; /* フッターやボタンと被らない位置 */
     left: 0;
-    height: 50px; /* GIFの高さに合わせて調整 */
-    width: auto;
     z-index: 9999;
     will-change: transform; /* アニメーションのパフォーマンスを最適化 */
-    pointer-events: none; /* 動物がクリックイベントを妨げないように */
+    pointer-events: none; /* コンテナはクリックを妨げない */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#scroll-animal-link {
+    pointer-events: auto; /* リンクはクリック可能にする */
+    display: block;
+    line-height: 0; /* 画像下の余分なスペースを削除 */
+}
+
+#scroll-animal-img {
+    height: 50px; /* GIFの高さに合わせて調整 */
+    width: auto;
+}
+
+#scroll-animal-text {
+    font-size: 12px;
+    color: #333;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 3px 8px;
+    border-radius: 4px;
 }
 
 /* --- レスポンシブ --- */
