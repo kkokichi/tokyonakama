@@ -1,17 +1,18 @@
 /* --- 基本設定 --- */
 :root {
-    --bg-color: #fcfbf9; /* 生成り色 */
+    --bg-color: #f2f2f7; /* 明るいグレー（グラデーションのフォールバック） */
     --text-color: #333333; /* 濃いグレー */
     --accent-color: #bf5b3b; /* 落ち着いたテラコッタ */
     --accent-light: #f4e9e4; /* 薄いアクセントカラー */
     --accent-hover: #a64d31;
     --secondary-bg: #ffffff;
-    --border-radius: 4px; /* 角丸を控えめにして洗練させる */
+    --border-radius: 16px; /* グラスモーフィズム用に角丸を大きく */
 }
 
 body {
     font-family: "Zen Maru Gothic", sans-serif;
-    background-color: var(--bg-color);
+    background-color: var(--bg-color); /* グラデーション非対応ブラウザ用 */
+    background-image: linear-gradient(135deg, var(--grad-start, #f9e7d8) 0%, var(--grad-end, #e6e9f9) 100%);
     color: var(--text-color);
     line-height: 1.8;
     margin: 0;
@@ -73,12 +74,22 @@ img {
 }
 
 .card {
-    background: var(--secondary-bg);
+    /* --- Glassmorphism Style --- */
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 30px;
     border-radius: var(--border-radius);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     margin-bottom: 24px;
+}
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
 .back-link {
@@ -142,7 +153,7 @@ img {
     align-items: center;
     padding: 0 20px;
     height: 70px;
-    background-color: rgba(252, 251, 249, 0.9);
+    background-color: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -283,12 +294,48 @@ footer {
 /* --- アニメーション --- */
 .fade-in {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transform: translateY(20px);
+    /* https://cubic-bezier.com/#.215,.61,.355,1 - easeOutCubic */
+    transition: opacity 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000), transform 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    transition-delay: calc(0.08s * var(--i, 0)); /* --i はHTML側で設定 */
 }
 .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* ヒーローセクションの個別アニメーション */
+.hero .badge, .hero h1, .hero p, .hero .btn-cta {
+    opacity: 0;
+    animation: hero-fade-in-up 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+/* アニメーションの遅延 */
+.hero .badge { animation-delay: 0.2s; }
+.hero h1 { animation-delay: 0.4s; }
+.hero p { animation-delay: 0.6s; }
+.hero .btn-cta { animation-delay: 0.8s; }
+
+@keyframes hero-fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- スクロール動物 --- */
+#scroll-animal {
+    position: fixed;
+    bottom: 10px; /* フッターやボタンと被らない位置 */
+    left: 0;
+    height: 50px; /* GIFの高さに合わせて調整 */
+    width: auto;
+    z-index: 9999;
+    will-change: transform; /* アニメーションのパフォーマンスを最適化 */
+    pointer-events: none; /* 動物がクリックイベントを妨げないように */
 }
 
 /* --- レスポンシブ --- */
