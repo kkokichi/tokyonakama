@@ -186,6 +186,40 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // --- 位置情報取得と距離表示 ---
+            const locationInfo = document.getElementById('location-info');
+            // 下北沢駅周辺の座標
+            const TARGET_LAT = 35.6612;
+            const TARGET_LNG = 139.6666;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        // 直線距離の計算 (Haversine formula)
+                        const R = 6371; // 地球の半径(km)
+                        const dLat = (TARGET_LAT - lat) * Math.PI / 180;
+                        const dLng = (TARGET_LNG - lng) * Math.PI / 180;
+                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                  Math.cos(lat * Math.PI / 180) * Math.cos(TARGET_LAT * Math.PI / 180) * 
+                                  Math.sin(dLng/2) * Math.sin(dLng/2);
+                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        const distance = (R * c).toFixed(1); // 小数点第1位まで
+
+                        // Googleマップルート検索URL (公共交通機関)
+                        const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${TARGET_LAT},${TARGET_LNG}&travelmode=transit`;
+
+                        locationInfo.innerHTML = `📍下北沢まで約${distance}km <a href="${mapUrl}" target="_blank">🚆ルート・時間を検索</a>`;
+                        locationInfo.style.display = 'flex';
+                    },
+                    (error) => {
+                        console.log("位置情報の取得に失敗しました", error);
+                    }
+                );
+            }
+
             // Hamburger Menu
             const hamburger = document.querySelector('.hamburger');
             const nav = document.querySelector('.main-nav');
