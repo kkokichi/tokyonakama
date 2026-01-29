@@ -590,7 +590,9 @@
                 <p style="text-align: center; color: #888;">読み込み中...</p>
             </div>
             <div style="text-align: center; margin-top: 40px;" class="fade-in">
-                <a href="recommend.html" class="btn-cta" style="background-color: #27ae60;">下北沢のおすすめスポットも見る</a>
+                <a href="recommend.html" class="btn-cta" style="background-color: #27ae60; margin-bottom: 15px;">下北沢のおすすめスポットも見る</a>
+                <br>
+                <a href="column.html" class="btn-cta" style="background-color: #3498db;">下北沢のコラムも見る</a>
             </div>
         </div>
     </section>
@@ -658,7 +660,6 @@
         <span id="scroll-animal-text">僕をタッチして</span>
     </div>
 
-    <!-- Firebase SDK for Count -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, getCountFromServer, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -673,6 +674,7 @@
             measurementId: "G-BWM0Q87Q93"
         };
 
+        // Firebaseの初期化
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 

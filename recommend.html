@@ -97,6 +97,13 @@
             line-height: 1.4;
         }
         
+        .spot-description {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
         .spot-link {
             margin-top: auto;
             color: var(--accent-color);
@@ -279,40 +286,40 @@
             // --- スポットデータ ---
             const spots = [
                 // Cafe
-                { name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13265558/" },
-                { name: "W/O STAND SHIMOKITA", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13224222/" },
-                { name: "BOOKENDS COFFEE SERVICE", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13199583/" },
-                { name: "喫茶ネグラ", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13189972/" },
-                { name: "トロワ・シャンブル", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13001826/" },
-                { name: "CITY COUNTRY CITY", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13009353/" },
-                { name: "kate coffee", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13165345/" },
-                { name: "ON THE WAY, coffee & cupcake", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13196811/" },
-                { name: "Brooklyn Roasting Company", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13265559/" },
-                { name: "COFFEA EXLIBRIS", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13145333/" },
-                { name: "バロンデッセ", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13158302/" },
-                { name: "モルディブ", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13007111/" },
-                { name: "フリッパーズ 下北沢店", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13199527/" },
+                { name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", description: "reload内にあるスタイリッシュな空間。Wi-Fi・電源完備で作業にも最適。" },
+                { name: "W/O STAND SHIMOKITA", category: "cafe", description: "自販機が入り口の遊び心あるコーヒースタンド。写真映えも抜群。" },
+                { name: "BOOKENDS COFFEE SERVICE", category: "cafe", description: "本に囲まれた空間で、こだわりのスペシャルティコーヒーが楽しめる。" },
+                { name: "喫茶ネグラ", category: "cafe", description: "鮮やかな青い壁が印象的。レトロなクリームソーダが人気。" },
+                { name: "トロワ・シャンブル", category: "cafe", description: "レンガ造りの落ち着いた空間。ネルドリップで淹れる深煎りコーヒーが絶品。" },
+                { name: "CITY COUNTRY CITY", category: "cafe", description: "レコードショップ併設。音楽好きにはたまらない空間。" },
+                { name: "kate coffee", category: "cafe", description: "自家焙煎のスペシャルティコーヒーと、美味しい焼き菓子が楽しめる。" },
+                { name: "ON THE WAY, coffee & cupcake", category: "cafe", description: "見た目も可愛いカップケーキが人気。手土産にも喜ばれる。" },
+                { name: "Brooklyn Roasting Company", category: "cafe", description: "ミカン下北にある広々としたカフェ。開放的なテラス席も。" },
+                { name: "COFFEA EXLIBRIS", category: "cafe", description: "コーヒー豆の種類が豊富。バリスタと相談しながら好みの味を見つけられる。" },
+                { name: "バロンデッセ", category: "cafe", description: "ラテアートが有名。ギャラリーも併設されているアートな空間。" },
+                { name: "モルディブ", category: "cafe", description: "昔ながらの喫茶店。カレーやピラフなど、フードメニューも充実。" },
+                { name: "フリッパーズ 下北沢店", category: "cafe", description: "「奇跡のパンケーキ」で有名。ふわふわ食感がたまらない。" },
                 
                 // Curry
-                { name: "マジックスパイス 東京下北沢店", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13001852/" },
-                { name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13195632/" },
-                { name: "旧ヤム邸 シモキタ荘", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13211592/" },
-                { name: "茄子おやじ", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13001867/" },
-                { name: "般゜若 PANNYA CAFE CURRY", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13125053/" },
-                { name: "カレーの惑星", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13196427/" },
-                { name: "SAMA 下北沢店", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13099529/" },
-                { name: "NAN STATION", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13131510/" },
-                { name: "スパイスラーメン 点と線.", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13228867/" },
-                { name: "ポニピリカ", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13149339/" },
-                { name: "犬拳堂", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13165792/" },
-                { name: "カレー食堂 心 下北沢店", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13020224/" },
-                { name: "202カリー堂", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13259253/" },
-                { name: "無敵のカレー", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13270984/" },
-                { name: "スパイスキッチン ムーナ", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13130622/" },
+                { name: "マジックスパイス 東京下北沢店", category: "curry", description: "スープカレーの元祖。辛さの段階が「虚空」まであることで有名。" },
+                { name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", description: "ゴロゴロ野菜がたっぷり入った、北海道発の人気スープカレー店。" },
+                { name: "旧ヤム邸 シモキタ荘", category: "curry", description: "大阪発のスパイスカレー。月替わりの独創的なあいがけカレーが楽しめる。" },
+                { name: "茄子おやじ", category: "curry", description: "40年以上続く老舗。どこか懐かしい、優しい味わいの欧風カレー。" },
+                { name: "般゜若 PANNYA CAFE CURRY", category: "curry", description: "薬膳スパイスカレーの有名店。サラサラのルーが特徴的。" },
+                { name: "カレーの惑星", category: "curry", description: "ドライカレーと数種類のカレーをあいがけで楽しめる。見た目も美しい一皿。" },
+                { name: "SAMA 下北沢店", category: "curry", description: "札幌発のスープカレー店。トマトベースやココナッツベースなど、スープの種類が豊富。" },
+                { name: "NAN STATION", category: "curry", description: "チーズナンが絶品。本格的なインド・ネパール料理が楽しめる。" },
+                { name: "スパイスラーメン 点と線.", category: "curry", description: "スープカレーとラーメンが融合した、新感覚のスパイスラーメン。" },
+                { name: "ポニピリカ", category: "curry", description: "野菜たっぷりのスープカレーが人気。店内もおしゃれで女性に人気。" },
+                { name: "犬拳堂", category: "curry", description: "キーマカレーが名物。濃厚な味わいでファンが多い。" },
+                { name: "カレー食堂 心 下北沢店", category: "curry", description: "スープカレーの草分け的存在。安定の美味しさ。" },
+                { name: "202カリー堂", category: "curry", description: "創作スパイスカレーが楽しめる。SNSでも話題の人気店。" },
+                { name: "無敵のカレー", category: "curry", description: "カツカレーが人気。ボリューム満点でガッツリ食べたい時に。" },
+                { name: "スパイスキッチン ムーナ", category: "curry", description: "本格的な南インド料理が味わえる。ミールスがおすすめ。" },
 
                 // Spot
-                { name: "reload", category: "spot", url: "https://tabelog.com/tokyo/A1318/A131802/13261283/" },
-                { name: "BONUS TRACK", category: "spot", url: "https://tabelog.com/tokyo/A1318/A131802/13245400/" }
+                { name: "reload", category: "spot", description: "個性的なお店が集まる商業施設。散歩するだけでも楽しい。" },
+                { name: "BONUS TRACK", category: "spot", description: "商店街のような雰囲気の商業施設。飲食店や本屋、コワーキングスペースも。" }
             ];
 
             // カテゴリごとの画像（ダミー）
@@ -350,6 +357,7 @@
                         <div class="spot-content">
                             <span class="spot-category cat-${spot.category}">${catName}</span>
                             <h3 class="spot-title">${spot.name}</h3>
+                            <p class="spot-description">${spot.description}</p>
                             <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" rel="noopener noreferrer" class="spot-link">Googleマップで見る</a>
                         </div>
                     `;
