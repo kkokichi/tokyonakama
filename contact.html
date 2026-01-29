@@ -114,6 +114,9 @@
         .btn-yay {
             background-color: #FF7A00;
         }
+        .btn-instagram {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
         /* --- 広告用スタイル --- */
         .ad-container {
             margin: 40px auto;
@@ -142,6 +145,14 @@
             font-size: 1rem;
             font-weight: bold;
         }
+        /* --- 占い結果アニメーション --- */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .anim-fade-in {
+            animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
     </style>
 </head>
 <body>
@@ -153,6 +164,7 @@
                 <li><a href="index.html">トップ</a></li>
                 <li><a href="schedule.html">活動予定</a></li>
                 <li><a href="recommend.html">おすすめ</a></li>
+                <li><a href="column.html">コラム</a></li>
                 <li><a href="staff.html">運営募集</a></li>
                 <li><a href="contact.html">お問い合わせ</a></li>
             </ul>
@@ -203,8 +215,20 @@
                         </div>
                         <p style="font-size: 0.85rem; color: #666; margin-top: 5px; margin-bottom: 0;">※「掲載する」を選択された場合、トップページの「最近届いたお問い合わせ」に紹介させていただくことがあります。</p>
                     </div>
-                    <button type="submit" id="submit-btn" class="submit-btn">送信して占う</button>
+                    <button type="submit" id="check-btn" class="submit-btn">確認画面へ</button>
                 </form>
+
+                <!-- 確認画面エリア -->
+                <div id="confirmation-area" class="contact-form" style="display: none;">
+                    <h3 style="text-align: center; margin-bottom: 20px;">以下の内容で送信しますか？</h3>
+                    <div id="confirm-content" style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                        <!-- JSで内容挿入 -->
+                    </div>
+                    <div style="display: flex; gap: 15px; justify-content: center;">
+                        <button type="button" id="back-btn" class="submit-btn" style="background-color: #999; margin-top: 0;">戻る</button>
+                        <button type="button" id="real-submit-btn" class="submit-btn" style="margin-top: 0;">送信して占う</button>
+                    </div>
+                </div>
             </div>
 
             <!-- 占い結果表示エリア -->
@@ -223,10 +247,15 @@
                         <p class="uranai-item-row">ラッキースポット：<span id="uranai-spot"></span></p>
                     </div>
 
+                    <button id="retry-btn" class="submit-btn" style="margin: 20px auto; background-color: #aaa; font-size: 0.9rem; padding: 10px;">もう一度占う</button>
+
+                    <a href="recommend.html" class="submit-btn" style="margin: 15px auto 25px; background-color: #27ae60; font-size: 1rem; padding: 15px; text-decoration: none;">下北沢のおすすめスポットを見る</a>
+
                     <div class="share-buttons">
                         <a href="#" id="share-twitter" class="btn-share btn-twitter" target="_blank">Xでシェア</a>
                         <a href="#" id="share-line" class="btn-share btn-line" target="_blank">LINEでシェア</a>
                         <a href="#" id="share-yay" class="btn-share btn-yay" target="_blank">Yay!でシェア</a>
+                        <a href="#" id="share-instagram" class="btn-share btn-instagram" target="_blank">Instagram</a>
                     </div>
                 </div>
             </div>
@@ -249,7 +278,7 @@
 
     <footer>
         <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
             <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
         </div>
     </footer>
@@ -374,8 +403,13 @@
             const analytics = getAnalytics(app);
 
             const form = document.getElementById('contact-form');
-            const submitBtn = document.getElementById('submit-btn');
             const formWrapper = document.getElementById('form-wrapper');
+            
+            const confirmationArea = document.getElementById('confirmation-area');
+            const confirmContent = document.getElementById('confirm-content');
+            const backBtn = document.getElementById('back-btn');
+            const realSubmitBtn = document.getElementById('real-submit-btn');
+
             const uranaiArea = document.getElementById('uranai-area');
             const uranaiUnsei = document.getElementById('uranai-unsei');
             const uranaiTitle = document.getElementById('uranai-title');
@@ -385,6 +419,9 @@
             const shareTwitter = document.getElementById('share-twitter');
             const shareLine = document.getElementById('share-line');
             const shareYay = document.getElementById('share-yay');
+            const shareInstagram = document.getElementById('share-instagram');
+            const retryBtn = document.getElementById('retry-btn');
+            let retryCount = 0;
 
             function getUnseiColor(unsei) {
                 switch (unsei) {
@@ -397,12 +434,108 @@
                 }
             }
 
+            // 確認画面への遷移
             form.addEventListener('submit', (e) => {
                 e.preventDefault(); // デフォルトのフォーム送信をキャンセル
+                
+                // フォームからデータを取得
+                const inquiryType = form.type.value;
+                const name = form.name.value;
+                const email = form.email.value;
+                const message = form.message.value;
+                const publicPreference = form.publicPreference.value;
+                
+                let publicText = "掲載しない";
+                if (publicPreference === 'anonymous') publicText = "掲載する（匿名）";
+                if (publicPreference === 'named') publicText = "掲載する（名前を表示）";
+
+                // 確認画面に表示
+                confirmContent.innerHTML = `
+                    <p><strong>お問い合わせ種別:</strong><br>${inquiryType}</p>
+                    <p><strong>お名前:</strong><br>${name}</p>
+                    <p><strong>メールアドレス:</strong><br>${email}</p>
+                    <p><strong>お問い合わせ内容:</strong><br>${message.replace(/\n/g, '<br>')}</p>
+                    <p><strong>サイトへの掲載:</strong><br>${publicText}</p>
+                `;
+
+                // 表示切り替え
+                form.style.display = 'none';
+                confirmationArea.style.display = 'block';
+                window.scrollTo({ top: formWrapper.offsetTop - 50, behavior: 'smooth' });
+            });
+
+            // 戻るボタン
+            backBtn.addEventListener('click', () => {
+                confirmationArea.style.display = 'none';
+                form.style.display = 'block';
+                window.scrollTo({ top: formWrapper.offsetTop - 50, behavior: 'smooth' });
+            });
+
+            // 占い実行関数
+            const drawFortune = () => {
+                // アニメーションリセット（リフロー強制）
+                uranaiArea.classList.remove('anim-fade-in');
+                void uranaiArea.offsetWidth;
+                uranaiArea.classList.add('anim-fade-in');
+
+                const randomIndex = Math.floor(Math.random() * uranaiData.length);
+                const result = uranaiData[randomIndex];
+
+                uranaiUnsei.textContent = result.unsei;
+                uranaiUnsei.style.color = getUnseiColor(result.unsei);
+                uranaiTitle.textContent = result.title;
+                uranaiDescription.textContent = result.description;
+                uranaiItem.textContent = result.luckyItem;
+
+                // ラッキースポットをリンク付きで表示
+                uranaiSpot.innerHTML = ''; // 中身をクリア
+                const spotLink = document.createElement('a');
+                spotLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(result.luckySpot.name)}`;
+                spotLink.textContent = result.luckySpot.name;
+                spotLink.target = '_blank'; // 新しいタブで開く
+                spotLink.rel = 'noopener noreferrer';
+                spotLink.style.color = 'var(--text-color)';
+                spotLink.style.textDecoration = 'underline';
+                uranaiSpot.appendChild(spotLink);
+
+                // シェア用リンクの生成
+                const shareUrl = window.location.href.split('?')[0]; // クエリパラメータを除外
+                const shareText = `🔮本日の下北占い🔮\n\n運勢：${result.unsei}✨\n「${result.title}」\n\n今日のラッキーアイテムは...${result.luckyItem}！\nラッキースポットは...${result.luckySpot.name}！\n\n週末は下北沢でゆるく繋がろう！\n#下北コミュニティ #下北沢 #社会人サークル`;
+                
+                // X (Twitter)
+                shareTwitter.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                // LINE
+                shareLine.href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText + "\n" + shareUrl)}`;
+                // Yay! (Web共有URLがないため、クリップボードコピー + サイトへ遷移)
+                shareYay.onclick = (e) => {
+                    e.preventDefault();
+                    const textToCopy = shareText + "\n" + shareUrl;
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        alert('投稿内容をコピーしました。\nYay!を開いて貼り付けてください。');
+                        window.open('https://yay.space/', '_blank');
+                    }).catch(() => {
+                        window.open('https://yay.space/', '_blank');
+                    });
+                };
+                // Instagram (Web共有URLがないため、クリップボードコピー + サイトへ遷移)
+                shareInstagram.onclick = (e) => {
+                    e.preventDefault();
+                    const textToCopy = shareText + "\n" + shareUrl;
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        alert('投稿内容をコピーしました。\nInstagramを開いてストーリーズやフィードに貼り付けてください。');
+                        window.open('https://www.instagram.com/', '_blank');
+                    }).catch(() => {
+                        window.open('https://www.instagram.com/', '_blank');
+                    });
+                };
+            };
+
+            // 送信ボタン
+            realSubmitBtn.addEventListener('click', async () => {
 
                 // ボタンを無効化して二重送信を防ぐ
-                submitBtn.disabled = true;
-                submitBtn.textContent = '送信中...';
+                realSubmitBtn.disabled = true;
+                realSubmitBtn.textContent = '送信中...';
 
                 // フォームからデータを取得
                 const inquiryType = form.type.value;
@@ -411,74 +544,53 @@
                 const message = form.message.value;
                 const publicPreference = form.publicPreference.value;
 
-                // Firestoreにデータを保存
-                addDoc(collection(db, 'contacts'), {
-                    type: inquiryType,
-                    name: name,
-                    email: email,
-                    message: message,
-                    publicPreference: publicPreference, // 掲載希望
-                    createdAt: serverTimestamp(),
-                    displayOnSite: 'hidden', // 管理画面での表示設定（初期値は非表示）
-                    status: '未対応' // 初期ステータス
-                })
-                .then((docRef) => {
+                try {
+                    // Firestoreにデータを保存
+                    const docRef = await addDoc(collection(db, 'contacts'), {
+                        type: inquiryType,
+                        name: name,
+                        email: email,
+                        message: message,
+                        publicPreference: publicPreference, // 掲載希望
+                        createdAt: serverTimestamp(),
+                        displayOnSite: 'hidden', // 管理画面での表示設定（初期値は非表示）
+                        status: '未対応' // 初期ステータス
+                    });
+
                     console.log("Document written with ID: ", docRef.id);
                     // フォームを非表示にし、占いエリアを表示
                     formWrapper.style.display = 'none';
                     uranaiArea.style.display = 'block';
 
-                    // 占い結果をランダムに選んで表示
-                    const randomIndex = Math.floor(Math.random() * uranaiData.length);
-                    const result = uranaiData[randomIndex];
+                    // リトライ状態をリセット
+                    retryCount = 0;
+                    retryBtn.disabled = false;
+                    retryBtn.textContent = 'もう一度占う';
+                    retryBtn.style.cursor = 'pointer';
 
-                    uranaiUnsei.textContent = result.unsei;
-                    uranaiUnsei.style.color = getUnseiColor(result.unsei);
-                    uranaiTitle.textContent = result.title;
-                    uranaiDescription.textContent = result.description;
-                    uranaiItem.textContent = result.luckyItem;
-
-                    // ラッキースポットをリンク付きで表示
-                    uranaiSpot.innerHTML = ''; // 中身をクリア
-                    const spotLink = document.createElement('a');
-                    spotLink.href = result.luckySpot.url;
-                    spotLink.textContent = result.luckySpot.name;
-                    spotLink.target = '_blank'; // 新しいタブで開く
-                    spotLink.rel = 'noopener noreferrer';
-                    spotLink.style.color = 'var(--text-color)';
-                    spotLink.style.textDecoration = 'underline';
-                    uranaiSpot.appendChild(spotLink);
-
-                    // シェア用リンクの生成
-                    const shareUrl = window.location.href.split('?')[0]; // クエリパラメータを除外
-                    const shareText = `【本日の下北占い】\n結果：${result.unsei}「${result.title}」\nラッキーアイテム：${result.luckyItem}\nラッキースポット：${result.luckySpot.name}\n\n#下北コミュニティ #下北沢`;
-                    
-                    // X (Twitter)
-                    shareTwitter.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                    // LINE
-                    shareLine.href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText + "\n" + shareUrl)}`;
-                    // Yay! (Web共有URLがないため、クリップボードコピー + サイトへ遷移)
-                    shareYay.onclick = (e) => {
-                        e.preventDefault();
-                        const textToCopy = shareText + "\n" + shareUrl;
-                        navigator.clipboard.writeText(textToCopy).then(() => {
-                            alert('投稿内容をコピーしました。\nYay!を開いて貼り付けてください。');
-                            window.open('https://yay.space/', '_blank');
-                        }).catch(() => {
-                            window.open('https://yay.space/', '_blank');
-                        });
-                    };
+                    drawFortune();
 
                     // 画面を占い結果までスクロール
                     uranaiArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                })
-                .catch((error) => {
+
+                } catch (error) {
                     console.error("Error adding document: ", error);
                     alert('送信に失敗しました。時間をおいて再度お試しください。');
                     // エラーがあった場合はボタンを元に戻す
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '送信して占う';
-                });
+                    realSubmitBtn.disabled = false;
+                    realSubmitBtn.textContent = '送信して占う';
+                }
+            });
+
+            // もう一度占うボタン
+            retryBtn.addEventListener('click', () => {
+                if (retryCount < 1) {
+                    drawFortune();
+                    retryCount++;
+                    retryBtn.disabled = true;
+                    retryBtn.textContent = '本日の占いは終了です';
+                    retryBtn.style.cursor = 'default';
+                }
             });
 
             // 占いデータ
@@ -516,56 +628,56 @@
             ];
 
             const uranaiData = [
-                { unsei: "中吉", title: "ヴィンテージデニムのように味が出る日", description: "今日の経験は、未来のあなたを形作る大切な一部になります。困難も後から見れば良い思い出。じっくり味わいましょう。", luckyItem: "革のベルト", luckySpot: spotList[0] },
-                { unsei: "大吉", title: "一点モノのシャツに出会う日", description: "予期せぬ場所で、特別な人やモノとの出会いがありそう。いつもと違う道を通ってみるのがオススメです。", luckyItem: "柄シャツ", luckySpot: spotList[1] },
-                { unsei: "下吉", title: "試着室で新しい自分発見の日", description: "普段は選ばない選択をしてみると、意外な自分の一面に気づけるかも。食わず嫌いはもったいない！", luckyItem: "帽子", luckySpot: spotList[2] },
-                { unsei: "中吉", title: "古着屋の店員さんと話が弾む日", description: "誰かとの何気ない会話から、有益な情報が手に入りそう。積極的にコミュニケーションをとってみて。", luckyItem: "トートバッグ", luckySpot: spotList[3] },
-                { unsei: "凶", title: "リメイクジーンズのように創造性が光る日", description: "あなたのアイデアが輝く日。既存のルールにとらわれず、自由な発想で物事に取り組んでみましょう。", luckyItem: "ハサミ", luckySpot: spotList[4] },
-                { unsei: "中吉", title: "ライブハウスの熱気に包まれる日", description: "情熱が幸運を呼び込みます。好きなことに没頭する時間を作ると、エネルギーが満ちてくるでしょう。", luckyItem: "タオル", luckySpot: spotList[5] },
-                { unsei: "下吉", title: "レコードのB面に名曲ありの日", description: "見過ごしていた物事の中に、大切なヒントが隠されています。もう一度、丁寧に見直してみて。", luckyItem: "アナログレコード", luckySpot: spotList[6] },
-                { unsei: "中吉", title: "知らないバンドにハマる日", description: "新しい趣味や推しが見つかる予感。友達の「好き」なものを教えてもらうと世界が広がります。", luckyItem: "イヤホン", luckySpot: spotList[7] },
-                { unsei: "中吉", title: "鼻歌まじりで歩くと良い日", description: "ご機嫌なあなたの周りには、自然と人が集まってきます。笑顔を忘れずに過ごしましょう。", luckyItem: "スニーカー", luckySpot: spotList[8] },
-                { unsei: "凶", title: "ヘッドホンで世界から少し離れる日", description: "今日は一人の時間も大切に。好きな音楽を聴きながら、自分の内面と向き合うと良いアイデアが浮かびそう。", luckyItem: "ノイズキャンセリングイヤホン", luckySpot: spotList[9] },
-                { unsei: "大吉", title: "スポットライトを浴びる日", description: "あなたの言動が注目を集めそう。自信を持って堂々と振る舞うことで、チャンスを掴めます。", luckyItem: "サングラス", luckySpot: spotList[10] },
-                { unsei: "中吉", title: "意外な人がキーパーソンになる日", description: "今まであまり話したことがない人が、あなたの助けになってくれるかも。視野を広く持ちましょう。", luckyItem: "名刺入れ", luckySpot: spotList[11] },
-                { unsei: "下吉", title: "感情のままに泣いたり笑ったりしてOKな日", description: "感情を素直に表現することが、心のデトックスに繋がります。無理に我慢しないで。", luckyItem: "ハンカチ", luckySpot: spotList[12] },
-                { unsei: "中吉", title: "アドリブが最高の結果を生む日", description: "計画通りに進まなくても焦らないで。その場のひらめきと対応力が、予想以上の結果を導きます。", luckyItem: "腕時計", luckySpot: spotList[13] },
-                { unsei: "凶", title: "舞台袖からそっと見守る日", description: "今日は主役じゃなくてOK。誰かのサポートに徹することで、巡り巡ってあなたに幸運が舞い込むでしょう。", luckyItem: "黒い服", luckySpot: spotList[14] },
-                { unsei: "中吉", title: "スパイスカレーでデトックスの日", description: "心と体のメンテナンスに最適な日。溜まった疲れやストレスは、今日のうちに発散させましょう。", luckyItem: "ラッシー", luckySpot: spotList[15] },
-                { unsei: "下吉", title: "喫茶店のナポリタンが沁みる日", description: "懐かしい思い出が幸運の鍵。昔のアルバムを見返したり、旧友に連絡したりしてみては？", luckyItem: "粉チーズ", luckySpot: spotList[16] },
-                { unsei: "中吉", title: "はしご酒で新しい出会いがある日", description: "フットワークの軽さが吉。一つの場所に留まらず、色々な場所に顔を出すと良い縁に恵まれそう。", luckyItem: "ウコンの力", luckySpot: spotList[17] },
-                { unsei: "下吉", title: "テイクアウトのコーヒーで一息つく日", description: "忙しい中でも、意識的に休憩を取りましょう。短いリフレッシュが、午後のパフォーマンスを上げます。", luckyItem: "タンブラー", luckySpot: spotList[18] },
-                { unsei: "凶", title: "羽根つきたい焼き、あんこはみ出す日", description: "あなたの魅力や才能が隠しきれないくらい溢れ出しそう。少し大胆なくらいが丁度いいかも。", luckyItem: "甘いお菓子", luckySpot: spotList[19] },
-                { unsei: "大吉", title: "深夜のラーメンが許される日", description: "たまには自分を甘やかしてあげましょう。罪悪感は不要！自分へのご褒美が明日への活力になります。", luckyItem: "レンゲ", luckySpot: spotList[20] },
-                { unsei: "中吉", title: "クリームソーダのように弾ける日", description: "あなたの明るさが周りを照らします。ちょっとした遊び心が、場の雰囲気を和ませるでしょう。", luckyItem: "さくらんぼ", luckySpot: spotList[21] },
-                { unsei: "下吉", title: "レコードが聴けるバーで物思いにふける日", description: "静かな場所でじっくり考え事をすると、悩んでいた問題の解決策が見えてきそう。", luckyItem: "コースター", luckySpot: spotList[22] },
-                { unsei: "中吉", title: "せんべろで心が豊かになる日", description: "お金をかけなくても、幸せは見つけられます。身の回りにある小さな幸せに目を向けてみて。", luckyItem: "小銭入れ", luckySpot: spotList[23] },
-                { unsei: "凶", title: "隠れ家カフェの特等席に座れる日", description: "ラッキーな出来事が起こる予感。普段の行いが報われる、ちょっと特別な一日になりそうです。", luckyItem: "文庫本", luckySpot: spotList[24] },
-                { unsei: "大凶", title: "路地裏探検で近道発見の日", description: "物事の効率的な進め方が見つかりそう。いつもと違うアプローチを試す価値ありです。", luckyItem: "地図アプリ", luckySpot: spotList[25] },
-                { unsei: "中吉", title: "本多劇場のオーラを感じる日", description: "一流のものに触れると運気アップ。本や映画、音楽など、質の高い芸術に触れてみましょう。", luckyItem: "チケット", luckySpot: spotList[26] },
-                { unsei: "下吉", title: "街角の猫に癒やされる日", description: "気まぐれな行動がラッキーを呼びます。計画に縛られず、心の赴くままに行動してみては？", luckyItem: "カメラ", luckySpot: spotList[27] },
-                { unsei: "中吉", title: "ミカン下北で新しい風を感じる日", description: "新しい情報やトレンドに敏感になると吉。アンテナを高く張って、チャンスを逃さないで。", luckyItem: "スマホ", luckySpot: spotList[28] },
-                { unsei: "凶", title: "井の頭線と小田急線、乗り換えスムーズな日", description: "物事がトントン拍子に進む一日。面倒なタスクは今日のうちに片付けてしまうのがオススメ。", luckyItem: "ICカード", luckySpot: spotList[29] },
-                { unsei: "大吉", title: "古本屋で運命の一冊に出会う日", description: "過去の知識や経験が、現在のあなたを助けてくれます。温故知新の精神を大切に。", luckyItem: "しおり", luckySpot: spotList[0] },
-                { unsei: "下吉", title: "ザ・スズナリの階段を駆け上がる日", description: "目標に向かって一歩踏み出すのに最適な日。小さな一歩が、大きな成果に繋がります。", luckyItem: "歩きやすい靴", luckySpot: spotList[1] },
-                { unsei: "中吉", title: "下北線路街をのんびり散歩する日", description: "急がば回れ。焦らず、自分のペースで進むことが成功への一番の近道です。", luckyItem: "水筒", luckySpot: spotList[2] },
-                { unsei: "下吉", title: "ヴィレヴァンで無駄遣いしちゃう日", description: "「面白い！」という直感に従ってみて。一見無駄に見えることが、後で意外な形で役立つかも。", luckyItem: "変な雑貨", luckySpot: spotList[3] },
-                { unsei: "凶", title: "小さなギャラリーで感性が磨かれる日", description: "あなたの美的センスが冴えわたる日。ファッションやインテリアにこだわると運気が上がります。", luckyItem: "ポストカード", luckySpot: spotList[4] },
-                { unsei: "中吉", title: "トリウッドで短編映画に感動する日", description: "短い時間でも、人の心は動かせます。的を射た一言が、誰かの心を救うかもしれません。", luckyItem: "ポップコーン", luckySpot: spotList[5] },
-                { unsei: "下吉", title: "開かずの踏切の思い出に浸る日", description: "待つ時間も悪くない。焦らず待つことで、より良い結果がもたらされるでしょう。", luckyItem: "待ち受け画面", luckySpot: spotList[6] },
-                { unsei: "中吉", title: "BONUS TRACKで新しいコミュニティを見つける日", description: "新しい人間関係が始まる予感。少し勇気を出して、新しい輪の中に飛び込んでみて。", luckyItem: "名刺", luckySpot: spotList[7] },
-                { unsei: "中吉", title: "reloadでオシャレな気分になる日", description: "身だしなみを整えると、心もシャキッとします。いつもより少しだけオシャレを意識してみて。", luckyItem: "香水", luckySpot: spotList[8] },
-                { unsei: "凶", title: "駅前の喧騒が心地よい日", description: "多くの人との関わりの中に幸運がありそう。チームワークを大切にすると物事が上手く進みます。", luckyItem: "イヤホン", luckySpot: spotList[9] },
-                { unsei: "大吉", title: "サブカル魂が燃える日", description: "あなたの「好き」という気持ちが、周りを巻き込む力になります。熱く語るあなたに人は惹きつけられるでしょう。", luckyItem: "缶バッジ", luckySpot: spotList[10] },
-                { unsei: "下吉", title: "あえて王道を外してみる日", description: "みんなと同じじゃつまらない。あなたらしいユニークな視点が、新しい価値を生み出します。", luckyItem: "個性的な靴下", luckySpot: spotList[11] },
-                { unsei: "中吉", title: "「なんかエモい」が口癖になる日", description: "言葉にできない感情も大切に。論理だけでなく、直感やフィーリングを信じて行動すると良い結果に。", luckyItem: "フィルムカメラ", luckySpot: spotList[12] },
-                { unsei: "中吉", title: "周りに流されず自分の「好き」を貫く日", description: "あなたの個性は最高の武器。自信を持って、自分らしさを全面に出していきましょう。", luckyItem: "お気に入りの服", luckySpot: spotList[13] },
-                { unsei: "下吉", title: "計画通りに進まなくてもOKな日", description: "予期せぬハプニングも楽しむ余裕を持って。回り道をしたからこそ見える景色があります。", luckyItem: "スケジュール帳", luckySpot: spotList[14] },
-                { unsei: "中吉", title: "ノスタルジックな気分が幸運を呼ぶ日", description: "昔の経験が今のあなたを支えています。過去の成功体験を思い出せば、自信が湧いてくるはず。", luckyItem: "昔の写真", luckySpot: spotList[15] },
-                { unsei: "下吉", title: "マイペースが一番の日", description: "他人と比べる必要はありません。あなたのペースで、一歩一歩着実に進んでいきましょう。", luckyItem: "お茶", luckySpot: spotList[16] },
-                { unsei: "中吉", title: "ごちゃごちゃ感を楽しむ日", description: "カオスの中から新しいものが生まれます。整理整頓も大事ですが、今日は少し散らかっているくらいが丁度いいかも。", luckyItem: "おもちゃ箱", luckySpot: spotList[17] },
-                { unsei: "下吉", title: "新しいと古いが出会う日", description: "伝統的なものと最新のものを組み合わせることで、革新的なアイデアが生まれそう。温故知新です。", luckyItem: "万年筆", luckySpot: spotList[18] },
-                { unsei: "大凶", title: "夢を語ると応援される日", description: "あなたの夢を周りの人に話してみましょう。思わぬ協力者が現れるかもしれません。", luckyItem: "ノート", luckySpot: spotList[19] }
+                { unsei: "中吉", title: "ヴィンテージデニムのように味が出る日", description: "今日の経験は、未来のあなたを形作る大切な一部になります。困難も後から見れば良い思い出。じっくり味わいましょう。", luckyItem: "古着の柄シャツ", luckySpot: spotList[0] },
+                { unsei: "大吉", title: "一点モノのシャツに出会う日", description: "予期せぬ場所で、特別な人やモノとの出会いがありそう。いつもと違う道を通ってみるのがオススメです。", luckyItem: "レコード盤", luckySpot: spotList[1] },
+                { unsei: "下吉", title: "試着室で新しい自分発見の日", description: "普段は選ばない選択をしてみると、意外な自分の一面に気づけるかも。食わず嫌いはもったいない！", luckyItem: "演劇のチラシ", luckySpot: spotList[2] },
+                { unsei: "中吉", title: "古着屋の店員さんと話が弾む日", description: "誰かとの何気ない会話から、有益な情報が手に入りそう。積極的にコミュニケーションをとってみて。", luckyItem: "カレースパイス", luckySpot: spotList[3] },
+                { unsei: "凶", title: "リメイクジーンズのように創造性が光る日", description: "あなたのアイデアが輝く日。既存のルールにとらわれず、自由な発想で物事に取り組んでみましょう。", luckyItem: "フィルムカメラ", luckySpot: spotList[4] },
+                { unsei: "中吉", title: "ライブハウスの熱気に包まれる日", description: "情熱が幸運を呼び込みます。好きなことに没頭する時間を作ると、エネルギーが満ちてくるでしょう。", luckyItem: "丸メガネ", luckySpot: spotList[5] },
+                { unsei: "下吉", title: "レコードのB面に名曲ありの日", description: "見過ごしていた物事の中に、大切なヒントが隠されています。もう一度、丁寧に見直してみて。", luckyItem: "ベレー帽", luckySpot: spotList[6] },
+                { unsei: "中吉", title: "知らないバンドにハマる日", description: "新しい趣味や推しが見つかる予感。友達の「好き」なものを教えてもらうと世界が広がります。", luckyItem: "ギターピック", luckySpot: spotList[7] },
+                { unsei: "中吉", title: "鼻歌まじりで歩くと良い日", description: "ご機嫌なあなたの周りには、自然と人が集まってきます。笑顔を忘れずに過ごしましょう。", luckyItem: "純喫茶のマッチ箱", luckySpot: spotList[8] },
+                { unsei: "凶", title: "ヘッドホンで世界から少し離れる日", description: "今日は一人の時間も大切に。好きな音楽を聴きながら、自分の内面と向き合うと良いアイデアが浮かびそう。", luckyItem: "キャンバストート", luckySpot: spotList[9] },
+                { unsei: "大吉", title: "スポットライトを浴びる日", description: "あなたの言動が注目を集めそう。自信を持って堂々と振る舞うことで、チャンスを掴めます。", luckyItem: "シルバーリング", luckySpot: spotList[10] },
+                { unsei: "中吉", title: "意外な人がキーパーソンになる日", description: "今まであまり話したことがない人が、あなたの助けになってくれるかも。視野を広く持ちましょう。", luckyItem: "ドクターマーチン", luckySpot: spotList[11] },
+                { unsei: "下吉", title: "感情のままに泣いたり笑ったりしてOKな日", description: "感情を素直に表現することが、心のデトックスに繋がります。無理に我慢しないで。", luckyItem: "バンドTシャツ", luckySpot: spotList[12] },
+                { unsei: "中吉", title: "アドリブが最高の結果を生む日", description: "計画通りに進まなくても焦らないで。その場のひらめきと対応力が、予想以上の結果を導きます。", luckyItem: "文庫本", luckySpot: spotList[13] },
+                { unsei: "凶", title: "舞台袖からそっと見守る日", description: "今日は主役じゃなくてOK。誰かのサポートに徹することで、巡り巡ってあなたに幸運が舞い込むでしょう。", luckyItem: "クリームソーダ", luckySpot: spotList[14] },
+                { unsei: "中吉", title: "スパイスカレーでデトックスの日", description: "心と体のメンテナンスに最適な日。溜まった疲れやストレスは、今日のうちに発散させましょう。", luckyItem: "缶バッジ", luckySpot: spotList[15] },
+                { unsei: "下吉", title: "喫茶店のナポリタンが沁みる日", description: "懐かしい思い出が幸運の鍵。昔のアルバムを見返したり、旧友に連絡したりしてみては？", luckyItem: "スケッチブック", luckySpot: spotList[16] },
+                { unsei: "中吉", title: "はしご酒で新しい出会いがある日", description: "フットワークの軽さが吉。一つの場所に留まらず、色々な場所に顔を出すと良い縁に恵まれそう。", luckyItem: "お香（インセンス）", luckySpot: spotList[17] },
+                { unsei: "下吉", title: "テイクアウトのコーヒーで一息つく日", description: "忙しい中でも、意識的に休憩を取りましょう。短いリフレッシュが、午後のパフォーマンスを上げます。", luckyItem: "サコッシュ", luckySpot: spotList[18] },
+                { unsei: "凶", title: "羽根つきたい焼き、あんこはみ出す日", description: "あなたの魅力や才能が隠しきれないくらい溢れ出しそう。少し大胆なくらいが丁度いいかも。", luckyItem: "ダテ眼鏡", luckySpot: spotList[19] },
+                { unsei: "大吉", title: "深夜のラーメンが許される日", description: "たまには自分を甘やかしてあげましょう。罪悪感は不要！自分へのご褒美が明日への活力になります。", luckyItem: "オーバーオール", luckySpot: spotList[20] },
+                { unsei: "中吉", title: "クリームソーダのように弾ける日", description: "あなたの明るさが周りを照らします。ちょっとした遊び心が、場の雰囲気を和ませるでしょう。", luckyItem: "映画の半券", luckySpot: spotList[21] },
+                { unsei: "下吉", title: "レコードが聴けるバーで物思いにふける日", description: "静かな場所でじっくり考え事をすると、悩んでいた問題の解決策が見えてきそう。", luckyItem: "アナログ時計", luckySpot: spotList[22] },
+                { unsei: "中吉", title: "せんべろで心が豊かになる日", description: "お金をかけなくても、幸せは見つけられます。身の回りにある小さな幸せに目を向けてみて。", luckyItem: "レザーの財布", luckySpot: spotList[23] },
+                { unsei: "凶", title: "隠れ家カフェの特等席に座れる日", description: "ラッキーな出来事が起こる予感。普段の行いが報われる、ちょっと特別な一日になりそうです。", luckyItem: "ネルシャツ", luckySpot: spotList[24] },
+                { unsei: "大凶", title: "路地裏探検で近道発見の日", description: "物事の効率的な進め方が見つかりそう。いつもと違うアプローチを試す価値ありです。", luckyItem: "ベースボールキャップ", luckySpot: spotList[25] },
+                { unsei: "中吉", title: "本多劇場のオーラを感じる日", description: "一流のものに触れると運気アップ。本や映画、音楽など、質の高い芸術に触れてみましょう。", luckyItem: "ハイテクスニーカー", luckySpot: spotList[26] },
+                { unsei: "下吉", title: "街角の猫に癒やされる日", description: "気まぐれな行動がラッキーを呼びます。計画に縛られず、心の赴くままに行動してみては？", luckyItem: "デニムジャケット", luckySpot: spotList[27] },
+                { unsei: "中吉", title: "ミカン下北で新しい風を感じる日", description: "新しい情報やトレンドに敏感になると吉。アンテナを高く張って、チャンスを逃さないで。", luckyItem: "ヴィンテージスカーフ", luckySpot: spotList[28] },
+                { unsei: "凶", title: "井の頭線と小田急線、乗り換えスムーズな日", description: "物事がトントン拍子に進む一日。面倒なタスクは今日のうちに片付けてしまうのがオススメ。", luckyItem: "アンティークブローチ", luckySpot: spotList[29] },
+                { unsei: "大吉", title: "古本屋で運命の一冊に出会う日", description: "過去の知識や経験が、現在のあなたを助けてくれます。温故知新の精神を大切に。", luckyItem: "ホテルキーホルダー", luckySpot: spotList[0] },
+                { unsei: "下吉", title: "ザ・スズナリの階段を駆け上がる日", description: "目標に向かって一歩踏み出すのに最適な日。小さな一歩が、大きな成果に繋がります。", luckyItem: "アートなポストカード", luckySpot: spotList[1] },
+                { unsei: "中吉", title: "下北線路街をのんびり散歩する日", description: "急がば回れ。焦らず、自分のペースで進むことが成功への一番の近道です。", luckyItem: "ZINE（個人製作の本）", luckySpot: spotList[2] },
+                { unsei: "下吉", title: "ヴィレヴァンで無駄遣いしちゃう日", description: "「面白い！」という直感に従ってみて。一見無駄に見えることが、後で意外な形で役立つかも。", luckyItem: "カセットテープ", luckySpot: spotList[3] },
+                { unsei: "凶", title: "小さなギャラリーで感性が磨かれる日", description: "あなたの美的センスが冴えわたる日。ファッションやインテリアにこだわると運気が上がります。", luckyItem: "有線ヘッドホン", luckySpot: spotList[4] },
+                { unsei: "中吉", title: "トリウッドで短編映画に感動する日", description: "短い時間でも、人の心は動かせます。的を射た一言が、誰かの心を救うかもしれません。", luckyItem: "派手な靴下", luckySpot: spotList[5] },
+                { unsei: "下吉", title: "開かずの踏切の思い出に浸る日", description: "待つ時間も悪くない。焦らず待つことで、より良い結果がもたらされるでしょう。", luckyItem: "トレンチコート", luckySpot: spotList[6] },
+                { unsei: "中吉", title: "BONUS TRACKで新しいコミュニティを見つける日", description: "新しい人間関係が始まる予感。少し勇気を出して、新しい輪の中に飛び込んでみて。", luckyItem: "ミリタリージャケット", luckySpot: spotList[7] },
+                { unsei: "中吉", title: "reloadでオシャレな気分になる日", description: "身だしなみを整えると、心もシャキッとします。いつもより少しだけオシャレを意識してみて。", luckyItem: "ワイドパンツ", luckySpot: spotList[8] },
+                { unsei: "凶", title: "駅前の喧騒が心地よい日", description: "多くの人との関わりの中に幸運がありそう。チームワークを大切にすると物事が上手く進みます。", luckyItem: "大きめのリュック", luckySpot: spotList[9] },
+                { unsei: "大吉", title: "サブカル魂が燃える日", description: "あなたの「好き」という気持ちが、周りを巻き込む力になります。熱く語るあなたに人は惹きつけられるでしょう。", luckyItem: "詩集", luckySpot: spotList[10] },
+                { unsei: "下吉", title: "あえて王道を外してみる日", description: "みんなと同じじゃつまらない。あなたらしいユニークな視点が、新しい価値を生み出します。", luckyItem: "演劇の台本", luckySpot: spotList[11] },
+                { unsei: "中吉", title: "「なんかエモい」が口癖になる日", description: "言葉にできない感情も大切に。論理だけでなく、直感やフィーリングを信じて行動すると良い結果に。", luckyItem: "スタジオの会員証", luckySpot: spotList[12] },
+                { unsei: "中吉", title: "周りに流されず自分の「好き」を貫く日", description: "あなたの個性は最高の武器。自信を持って、自分らしさを全面に出していきましょう。", luckyItem: "ライブタオル", luckySpot: spotList[13] },
+                { unsei: "下吉", title: "計画通りに進まなくてもOKな日", description: "予期せぬハプニングも楽しむ余裕を持って。回り道をしたからこそ見える景色があります。", luckyItem: "ラバーバンド", luckySpot: spotList[14] },
+                { unsei: "中吉", title: "ノスタルジックな気分が幸運を呼ぶ日", description: "昔の経験が今のあなたを支えています。過去の成功体験を思い出せば、自信が湧いてくるはず。", luckyItem: "バンドステッカー", luckySpot: spotList[15] },
+                { unsei: "下吉", title: "マイペースが一番の日", description: "他人と比べる必要はありません。あなたのペースで、一歩一歩着実に進んでいきましょう。", luckyItem: "ガチャガチャのカプセル", luckySpot: spotList[16] },
+                { unsei: "中吉", title: "ごちゃごちゃ感を楽しむ日", description: "カオスの中から新しいものが生まれます。整理整頓も大事ですが、今日は少し散らかっているくらいが丁度いいかも。", luckyItem: "ベビーカステラ", luckySpot: spotList[17] },
+                { unsei: "下吉", title: "新しいと古いが出会う日", description: "伝統的なものと最新のものを組み合わせることで、革新的なアイデアが生まれそう。温故知新です。", luckyItem: "銭湯の木札", luckySpot: spotList[18] },
+                { unsei: "大凶", title: "夢を語ると応援される日", description: "あなたの夢を周りの人に話してみましょう。思わぬ協力者が現れるかもしれません。", luckyItem: "神社のお守り", luckySpot: spotList[19] }
             ];
         });
     </script>

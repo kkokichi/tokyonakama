@@ -125,7 +125,8 @@
             <ul>
                 <li><a href="index.html">トップ</a></li>
                 <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html" class="active">おすすめ</a></li>
+                <li><a href="recommend.html">おすすめ</a></li>
+                <li><a href="column.html">コラム</a></li>
                 <li><a href="staff.html">運営募集</a></li>
                 <li><a href="contact.html">お問い合わせ</a></li>
             </ul>
@@ -176,7 +177,7 @@
 
     <footer>
         <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
             <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
         </div>
     </footer>
@@ -255,6 +256,26 @@
                 });
             }
 
+            // スクロール時のフェードインアニメーション
+            const observerOptions = {
+                root: null,
+                rootMargin: "0px",
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // このページで最初に読み込まれるfade-in要素を監視
+            const staticFadeInElements = document.querySelectorAll(".main-content.fade-in, .ad-container.fade-in");
+            staticFadeInElements.forEach(el => observer.observe(el));
+
             // --- スポットデータ ---
             const spots = [
                 // Cafe
@@ -329,16 +350,13 @@
                         <div class="spot-content">
                             <span class="spot-category cat-${spot.category}">${catName}</span>
                             <h3 class="spot-title">${spot.name}</h3>
-                            <a href="${spot.url}" target="_blank" rel="noopener noreferrer" class="spot-link">食べログで見る</a>
+                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" rel="noopener noreferrer" class="spot-link">Googleマップで見る</a>
                         </div>
                     `;
                     grid.appendChild(card);
                 });
-                
-                // フェードインアニメーションのトリガー
-                setTimeout(() => {
-                    document.querySelectorAll('.spot-card').forEach(el => el.classList.add('visible'));
-                }, 100);
+                // 動的に生成されたカードも監視対象に追加
+                document.querySelectorAll('.spot-card.fade-in').forEach(el => observer.observe(el));
             }
 
             // 初期表示

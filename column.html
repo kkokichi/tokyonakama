@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下北沢コラム | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- フィルタリング --- */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 10px 25px;
+            border: 2px solid var(--accent-color);
+            background: transparent;
+            color: var(--accent-color);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        /* --- コラムカード --- */
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .article-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .article-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+        .article-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .article-card:hover .article-img {
+            transform: scale(1.05);
+        }
+        
+        .article-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .article-category {
+            font-size: 0.75rem;
+            color: #fff;
+            margin-bottom: 10px;
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 100px;
+            align-self: flex-start;
+            font-weight: bold;
+        }
+        .cat-gourmet { background-color: #e67e22; }
+        .cat-culture { background-color: #3498db; }
+        .cat-deai { background-color: #e74c3c; }
+        
+        .article-title {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .article-excerpt {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .article-link {
+            margin-top: auto;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            padding-top: 15px;
+        }
+        .article-link::after {
+            content: "→";
+            margin-left: 5px;
+            transition: transform 0.2s;
+        }
+        .article-link:hover::after {
+            transform: translateX(3px);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">下北コミュニティ</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">トップ</a></li>
+                <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="recommend.html">おすすめ</a></li>
+                <li><a href="column.html" class="active">コラム</a></li>
+                <li><a href="staff.html">運営募集</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+            </ul>
+        </nav>
+        <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <section class="section main-content fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">下北沢コラム</h2>
+            </div>
+            <p style="text-align: center; margin-bottom: 40px;">下北沢の魅力や、サークル活動の裏側などを<br>ブログ形式でお届けします。</p>
+
+            <!-- フィルタリングボタン -->
+            <div class="filter-container">
+                <button class="filter-btn active" data-filter="all">すべて</button>
+                <button class="filter-btn" data-filter="deai">出会い・サークル</button>
+                <button class="filter-btn" data-filter="gourmet">グルメ</button>
+                <button class="filter-btn" data-filter="culture">カルチャー</button>
+            </div>
+
+            <!-- コラム一覧 -->
+            <div id="article-grid" class="article-grid">
+                <!-- JSで生成 -->
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="index.html" class="back-link">トップページに戻る</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
+        </div>
+    </footer>
+
+    <!-- ページトップへ戻るボタン -->
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hamburger Menu, Back to Top, etc.
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.querySelector('.main-nav');
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('is-active');
+                nav.classList.toggle('is-active');
+            });
+            const backToTopButton = document.querySelector('.back-to-top');
+            if (backToTopButton) {
+                window.addEventListener('scroll', () => {
+                    backToTopButton.classList.toggle('visible', window.scrollY > 400);
+                });
+                backToTopButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // --- コラムデータ ---
+            const articles = [
+                { 
+                    title: "【体験談】人見知りでも大丈夫？下北沢の社会人サークルに潜入してみた", 
+                    category: "deai", 
+                    excerpt: "「友達がほしいけど、人見知りだし…」そんな不安を抱えながら、勇気を出して下北沢の社会人サークルに参加。実際の雰囲気や参加者の様子を正直にレポートします。",
+                    imageUrl: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    detailUrl: "column-detail-1.html"
+                },
+                { 
+                    title: "下北沢カレーフェスティバル完全攻略！初心者が行くべき名店5選", 
+                    category: "gourmet", 
+                    excerpt: "毎年大盛況のカレーフェス。無数にあるお店の中から、絶対に外さない王道の名店から、知る人ぞ知る隠れた名店まで、カレー好き運営が厳選してご紹介！",
+                    imageUrl: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    detailUrl: "#" // ToDo: 記事ページ作成
+                },
+                { 
+                    title: "なぜ下北沢の古着屋は面白いのか？現役アパレル店員と巡ってみた", 
+                    category: "culture", 
+                    excerpt: "ただ安いだけじゃない、下北沢の古着の魅力とは？アパレル業界で働くメンバーと一緒に、初心者でも楽しめる古着屋の巡り方や、掘り出し物を見つけるコツを伝授します。",
+                    imageUrl: "https://images.unsplash.com/photo-1560243563-062bfc001d68?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    detailUrl: "#" // ToDo: 記事ページ作成
+                },
+                 { 
+                    title: "「本多劇場」だけじゃない！下北沢の小劇場で演劇デビューのすすめ", 
+                    category: "culture", 
+                    excerpt: "「演劇って難しそう…」そんなイメージを覆す、笑いあり涙ありの小劇場演劇の魅力をご紹介。チケットの取り方から観劇後の楽しみ方まで、完全ガイドします。",
+                    imageUrl: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    detailUrl: "#" // ToDo: 記事ページ作成
+                },
+                { 
+                    title: "サウナ好き必見！下北沢の銭湯・サウナで「ととのう」休日", 
+                    category: "gourmet", 
+                    excerpt: "実はサウナ施設も充実している下北沢。昔ながらの銭湯から最新の個室サウナまで、サウナ好きメンバーが徹底比較。サウナ後の「サ飯」情報も満載です。",
+                    imageUrl: "https://images.unsplash.com/photo-1628852425822-c49a4a5b5433?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    detailUrl: "#" // ToDo: 記事ページ作成
+                },
+            ];
+
+            const categoryNames = {
+                deai: "出会い・サークル",
+                gourmet: "グルメ",
+                culture: "カルチャー"
+            };
+
+            const grid = document.getElementById('article-grid');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            function renderArticles(filter) {
+                grid.innerHTML = '';
+                const filteredArticles = filter === 'all' ? articles : articles.filter(a => a.category === filter);
+
+                filteredArticles.forEach((article, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'article-card fade-in';
+                    card.style.animationDelay = `${index * 0.05}s`;
+
+                    const catName = categoryNames[article.category];
+
+                    card.innerHTML = `
+                        <div class="article-img-wrapper">
+                            <img src="${article.imageUrl}" alt="${article.title}" class="article-img">
+                        </div>
+                        <div class="article-content">
+                            <span class="article-category cat-${article.category}">${catName}</span>
+                            <h3 class="article-title">${article.title}</h3>
+                            <p class="article-excerpt">${article.excerpt}</p>
+                            <a href="${article.detailUrl}" class="article-link">続きを読む</a>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                    observer.observe(card);
+                });
+            }
+
+            // 初期表示
+            renderArticles('all');
+
+            // フィルタリング処理
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderArticles(btn.dataset.filter);
+                });
+            });
+
+            // ページ全体のフェードイン
+            document.querySelector('.main-content.fade-in')?.classList.add('visible');
+        });
+    </script>
+</body>
+</html>
