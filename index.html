@@ -307,6 +307,34 @@
             margin-bottom: 5px;
             display: block;
         }
+        /* --- 広告用スタイル --- */
+        .ad-container {
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            max-width: 728px; /* 一般的な広告サイズ */
+        }
+        .ad-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .ad-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e9e9e9;
+            color: #aaa;
+            min-height: 90px; /* 一般的な広告の高さ */
+            width: 100%;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="has-sticky-cta">
@@ -317,6 +345,7 @@
             <ul>
                 <li><a href="index.html">トップ</a></li>
                 <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="recommend.html">おすすめ</a></li>
                 <li><a href="staff.html">運営募集</a></li>
                 <li><a href="contact.html">お問い合わせ</a></li>
             </ul>
@@ -503,6 +532,19 @@
         </div>
     </section>
 
+    <!-- ▼▼▼ 広告スペース ▼▼▼ -->
+    <section class="section">
+        <div class="container">
+            <div class="ad-container fade-in">
+                <span class="ad-label">スポンサーリンク</span>
+                <a href="https://px.a8.net/svt/ejp?a8mat=4AV9KD+1C84S2+5Q4K+5Z6WX" rel="nofollow">
+                <img border="0" width="300" height="250" alt="" src="https://www25.a8.net/svt/bgt?aid=260119597081&wid=001&eno=01&mid=s00000026714001004000&mc=1"></a>
+                <img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4AV9KD+1C84S2+5Q4K+5Z6WX" alt="">
+            </div>
+        </div>
+    </section>
+    <!-- ▲▲▲ 広告スペース ▲▲▲ -->
+
     <!-- ⑦.5 最新のお問い合わせ -->
     <section class="section" style="background-color: #f9f9f9;">
         <div class="container">
@@ -558,7 +600,7 @@
 
     <footer>
         <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
             <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
         </div>
     </footer>

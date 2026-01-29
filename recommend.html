@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おすすめスポット | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- 固有スタイル --- */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 10px 25px;
+            border: 2px solid var(--accent-color);
+            background: transparent;
+            color: var(--accent-color);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+        
+        .spot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .spot-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .spot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .spot-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+        .spot-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .spot-card:hover .spot-img {
+            transform: scale(1.05);
+        }
+        
+        .spot-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .spot-category {
+            font-size: 0.75rem;
+            color: #fff;
+            margin-bottom: 10px;
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 100px;
+            align-self: flex-start;
+            font-weight: bold;
+        }
+        .cat-cafe { background-color: #e67e22; }
+        .cat-curry { background-color: #f1c40f; color: #333; }
+        .cat-spot { background-color: #3498db; }
+        
+        .spot-title {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        
+        .spot-link {
+            margin-top: auto;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            padding-top: 15px;
+        }
+        .spot-link::after {
+            content: "→";
+            margin-left: 5px;
+            transition: transform 0.2s;
+        }
+        .spot-link:hover::after {
+            transform: translateX(3px);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">下北コミュニティ</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">トップ</a></li>
+                <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="recommend.html" class="active">おすすめ</a></li>
+                <li><a href="staff.html">運営募集</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+            </ul>
+        </nav>
+        <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <section class="section main-content fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">下北沢のおすすめスポット</h2>
+            </div>
+            <p style="text-align: center; margin-bottom: 40px;">活動の前後によく立ち寄るお店や、<br>メンバーおすすめのスポットをご紹介します。</p>
+
+            <!-- フィルタリングボタン -->
+            <div class="filter-container">
+                <button class="filter-btn active" data-filter="all">すべて</button>
+                <button class="filter-btn" data-filter="curry">カレー</button>
+                <button class="filter-btn" data-filter="cafe">カフェ・喫茶</button>
+                <button class="filter-btn" data-filter="spot">その他</button>
+            </div>
+
+            <!-- スポット一覧 -->
+            <div id="spot-grid" class="spot-grid">
+                <!-- JSで生成 -->
+            </div>
+
+            <!-- ▼▼▼ 広告スペース ▼▼▼ -->
+            <div class="ad-container fade-in" style="margin-top: 60px;">
+                <span class="ad-label">スポンサーリンク</span>
+                <a href="https://px.a8.net/svt/ejp?a8mat=4AV9KD+1C84S2+5Q4K+5Z6WX" rel="nofollow">
+                <img border="0" width="300" height="250" alt="" src="https://www25.a8.net/svt/bgt?aid=260119597081&wid=001&eno=01&mid=s00000026714001004000&mc=1"></a>
+                <img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4AV9KD+1C84S2+5Q4K+5Z6WX" alt="">
+            </div>
+            <!-- ▲▲▲ 広告スペース ▲▲▲ -->
+
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="margin-bottom: 10px;">「ここもおすすめ！」という情報があれば、<br>ぜひ教えてください！</p>
+                <a href="contact.html" class="btn-cta">お問い合わせはこちら</a>
+                <a href="index.html" class="back-link">トップページに戻る</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
+        </div>
+    </footer>
+
+    <!-- ページトップへ戻るボタン -->
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hamburger Menu
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.querySelector('.main-nav');
+            const navLinks = document.querySelectorAll('.main-nav a');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('is-active');
+                nav.classList.toggle('is-active');
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (nav.classList.contains('is-active')) {
+                        hamburger.classList.remove('is-active');
+                        nav.classList.remove('is-active');
+                    }
+                });
+            });
+
+            // Back to Top Button
+            const backToTopButton = document.querySelector('.back-to-top');
+            if (backToTopButton) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 400) {
+                        backToTopButton.classList.add('visible');
+                    } else {
+                        backToTopButton.classList.remove('visible');
+                    }
+                });
+                backToTopButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // --- スポットデータ ---
+            const spots = [
+                // Cafe
+                { name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13265558/" },
+                { name: "W/O STAND SHIMOKITA", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13224222/" },
+                { name: "BOOKENDS COFFEE SERVICE", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13199583/" },
+                { name: "喫茶ネグラ", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13189972/" },
+                { name: "トロワ・シャンブル", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13001826/" },
+                { name: "CITY COUNTRY CITY", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13009353/" },
+                { name: "kate coffee", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13165345/" },
+                { name: "ON THE WAY, coffee & cupcake", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13196811/" },
+                { name: "Brooklyn Roasting Company", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13265559/" },
+                { name: "COFFEA EXLIBRIS", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13145333/" },
+                { name: "バロンデッセ", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13158302/" },
+                { name: "モルディブ", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13007111/" },
+                { name: "フリッパーズ 下北沢店", category: "cafe", url: "https://tabelog.com/tokyo/A1318/A131802/13199527/" },
+                
+                // Curry
+                { name: "マジックスパイス 東京下北沢店", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13001852/" },
+                { name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13195632/" },
+                { name: "旧ヤム邸 シモキタ荘", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13211592/" },
+                { name: "茄子おやじ", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13001867/" },
+                { name: "般゜若 PANNYA CAFE CURRY", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13125053/" },
+                { name: "カレーの惑星", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13196427/" },
+                { name: "SAMA 下北沢店", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13099529/" },
+                { name: "NAN STATION", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13131510/" },
+                { name: "スパイスラーメン 点と線.", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13228867/" },
+                { name: "ポニピリカ", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13149339/" },
+                { name: "犬拳堂", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13165792/" },
+                { name: "カレー食堂 心 下北沢店", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13020224/" },
+                { name: "202カリー堂", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13259253/" },
+                { name: "無敵のカレー", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13270984/" },
+                { name: "スパイスキッチン ムーナ", category: "curry", url: "https://tabelog.com/tokyo/A1318/A131802/13130622/" },
+
+                // Spot
+                { name: "reload", category: "spot", url: "https://tabelog.com/tokyo/A1318/A131802/13261283/" },
+                { name: "BONUS TRACK", category: "spot", url: "https://tabelog.com/tokyo/A1318/A131802/13245400/" }
+            ];
+
+            // カテゴリごとの画像（ダミー）
+            const categoryImages = {
+                cafe: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                curry: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                spot: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            };
+
+            const categoryNames = {
+                cafe: "カフェ・喫茶",
+                curry: "カレー",
+                spot: "その他"
+            };
+
+            const grid = document.getElementById('spot-grid');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+
+            function renderSpots(filter) {
+                grid.innerHTML = '';
+                const filteredSpots = filter === 'all' ? spots : spots.filter(s => s.category === filter);
+
+                filteredSpots.forEach((spot, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'spot-card fade-in';
+                    card.style.animationDelay = `${index * 0.05}s`; // ずらして表示
+
+                    const imgUrl = categoryImages[spot.category];
+                    const catName = categoryNames[spot.category];
+
+                    card.innerHTML = `
+                        <div class="spot-img-wrapper">
+                            <img src="${imgUrl}" alt="${spot.name}" class="spot-img">
+                        </div>
+                        <div class="spot-content">
+                            <span class="spot-category cat-${spot.category}">${catName}</span>
+                            <h3 class="spot-title">${spot.name}</h3>
+                            <a href="${spot.url}" target="_blank" rel="noopener noreferrer" class="spot-link">食べログで見る</a>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+                // フェードインアニメーションのトリガー
+                setTimeout(() => {
+                    document.querySelectorAll('.spot-card').forEach(el => el.classList.add('visible'));
+                }, 100);
+            }
+
+            // 初期表示
+            renderSpots('all');
+
+            // フィルタリング処理
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // アクティブクラスの切り替え
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // 描画
+                    const filter = btn.dataset.filter;
+                    renderSpots(filter);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
