@@ -145,15 +145,15 @@
         </button>
     </header>
 
-    <section class="section main-content fade-in">
+    <section class="section main-content">
         <div class="container">
-            <div class="section-header">
+            <div class="section-header fade-in">
                 <h2 class="section-title">下北沢のおすすめスポット</h2>
             </div>
-            <p style="text-align: center; margin-bottom: 40px;">活動の前後によく立ち寄るお店や、<br>メンバーおすすめのスポットをご紹介します。</p>
+            <p class="fade-in" style="text-align: center; margin-bottom: 40px;">活動の前後によく立ち寄るお店や、<br>メンバーおすすめのスポットをご紹介します。</p>
 
             <!-- フィルタリングボタン -->
-            <div class="filter-container">
+            <div class="filter-container fade-in">
                 <button class="filter-btn active" data-filter="all">すべて</button>
                 <button class="filter-btn" data-filter="curry">カレー</button>
                 <button class="filter-btn" data-filter="cafe">カフェ・喫茶</button>
@@ -174,7 +174,7 @@
             </div>
             <!-- ▲▲▲ 広告スペース ▲▲▲ -->
 
-            <div style="text-align: center; margin-top: 50px;">
+            <div class="fade-in" style="text-align: center; margin-top: 50px;">
                 <p style="margin-bottom: 10px;">「ここもおすすめ！」という情報があれば、<br>ぜひ教えてください！</p>
                 <a href="contact.html" class="btn-cta">お問い合わせはこちら</a>
                 <a href="index.html" class="back-link">トップページに戻る</a>
@@ -280,7 +280,7 @@
             }, observerOptions);
 
             // このページで最初に読み込まれるfade-in要素を監視
-            const staticFadeInElements = document.querySelectorAll(".main-content.fade-in, .ad-container.fade-in");
+            const staticFadeInElements = document.querySelectorAll(".fade-in");
             staticFadeInElements.forEach(el => observer.observe(el));
 
             // --- スポットデータ ---
@@ -345,7 +345,7 @@
                 filteredSpots.forEach((spot, index) => {
                     const card = document.createElement('div');
                     card.className = 'spot-card fade-in';
-                    card.style.animationDelay = `${index * 0.05}s`; // ずらして表示
+                    card.style.transitionDelay = `${index * 0.05}s`; // ずらして表示
 
                     const imgUrl = categoryImages[spot.category];
                     const catName = categoryNames[spot.category];
@@ -362,9 +362,8 @@
                         </div>
                     `;
                     grid.appendChild(card);
+                    observer.observe(card);
                 });
-                // 動的に生成されたカードも監視対象に追加
-                document.querySelectorAll('.spot-card.fade-in').forEach(el => observer.observe(el));
             }
 
             // 初期表示
