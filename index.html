@@ -320,23 +320,6 @@
             margin-bottom: 25px;
         }
 
-        /* --- 追加: CTAボタン --- */
-        .btn-cta {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 100px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(191, 91, 59, 0.25);
-            transition: all 0.3s ease;
-        }
-        .btn-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(191, 91, 59, 0.4);
-        }
-
 
         /* --- 返信表示用スタイル --- */
         .admin-reply {
@@ -463,6 +446,7 @@
         </div>
     </section>
 
+
     <!-- 診断コンテンツへの誘導バナー -->
     <section class="section diagnosis-banner fade-in" style="--i: 5;">
         <div class="container">
@@ -476,6 +460,20 @@
             </a>
         </div>
     </section>
+
+    <!-- お知らせセクション -->
+    <section class="section" style="padding-top: 30px; padding-bottom: 0;">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 30px;">
+                <h2 class="section-title">📢 お知らせ</h2>
+            </div>
+            <div id="announcement-list">
+                <p style="text-align: center; color: #888;">読み込み中...</p>
+            </div>
+        </div>
+    </section>
+
+
 
     <!-- ② 共感ゾーン -->
     <section class="section">
@@ -633,9 +631,10 @@
         <div class="container">
             <div class="ad-container fade-in">
                 <span class="ad-label">スポンサーリンク</span>
-                <a href="https://px.a8.net/svt/ejp?a8mat=4AV9KD+1C84S2+5Q4K+5Z6WX" rel="nofollow">
-                <img border="0" width="300" height="250" alt="" src="https://www25.a8.net/svt/bgt?aid=260119597081&wid=001&eno=01&mid=s00000026714001004000&mc=1"></a>
-                <img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4AV9KD+1C84S2+5Q4K+5Z6WX" alt="">
+                <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
+                    <img src="images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius: 8px;">
+                </a>
+                <p style="font-size:0.9rem; margin-top:15px; margin-bottom:0;">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
             </div>
         </div>
     </section>
@@ -840,6 +839,43 @@
             }
         }
         showRecentInquiries();
+
+        // お知らせ一覧を表示
+        async function showAnnouncements() {
+            const listContainer = document.getElementById('announcement-list');
+            try {
+                const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(5)); // 最新5件まで
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    listContainer.innerHTML = '<p style="text-align: center;">現在、新しいお知らせはありません。</p>';
+                    return;
+                }
+
+                listContainer.innerHTML = ''; // ローディング表示をクリア
+                let i = 0;
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.createdAt.toDate().toLocaleDateString('ja-JP');
+
+                    const item = document.createElement('div');
+                    item.className = 'card fade-in';
+                    item.style.setProperty('--i', i++);
+                    item.style.marginBottom = '15px';
+                    item.innerHTML = `
+                        <p style="font-size: 0.85rem; color: #888; margin-bottom: 5px;">${date}</p>
+                        <p style="font-weight: bold; margin-bottom: 0;">${data.text}</p>
+                    `;
+                    listContainer.appendChild(item);
+                    observer.observe(item);
+                });
+
+            } catch (error) {
+                console.error("Error fetching announcements:", error);
+                listContainer.innerHTML = '<p style="text-align: center; color: #888;">お知らせの読み込みに失敗しました。</p>';
+            }
+        }
+        showAnnouncements();
     </script>
 
     <script>

@@ -134,6 +134,7 @@ img {
     border-radius: 100px;
     box-shadow: 0 4px 15px rgba(191, 91, 59, 0.25);
     transition: transform 0.2s, box-shadow 0.2s;
+    box-sizing: border-box; /* はみ出し防止 */
     letter-spacing: 0.05em;
 }
 

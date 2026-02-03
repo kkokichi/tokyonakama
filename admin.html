@@ -187,6 +187,22 @@
 
             <!-- データ表示エリア -->
             <div id="admin-content" style="display: none;">
+                <!-- お知らせ管理 -->
+                <div class="card" style="margin-bottom: 40px; background: white;">
+                    <h3 style="margin-top:0;">📢 お知らせ管理</h3>
+                    <p style="margin-bottom: 20px; font-size: 0.9rem; color: #666;">トップページに表示するお知らせを管理します。最新の1件が表示されます。</p>
+                    <div class="form-group">
+                        <label for="announcement-input" style="font-weight: bold;">新しいお知らせ内容</label>
+                        <textarea id="announcement-input" class="reply-textarea" placeholder="例：7/20のカフェ会は満席となりました。"></textarea>
+                    </div>
+                    <button id="add-announcement-btn" class="btn-submit" style="margin-top: 10px;">お知らせを追加</button>
+                    
+                    <h4 style="margin-top: 30px; margin-bottom: 15px; border-top: 1px solid #eee; padding-top: 20px;">現在のお知らせ一覧</h4>
+                    <ul id="announcement-list" style="list-style: none; padding: 0;">
+                        <!-- JSで読み込み -->
+                    </ul>
+                </div>
+
                 <h2 style="margin-bottom: 30px;">問い合わせ一覧</h2>
                 <div class="table-wrapper">
                     <table>
@@ -217,7 +233,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Firebase設定
         const firebaseConfig = {
@@ -246,6 +262,7 @@
                 document.getElementById('login-area').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
                 loadData();
+                loadAnnouncements(); // お知らせも読み込む
             } else {
                 document.getElementById('login-error').style.display = 'block';
             }
@@ -315,6 +332,66 @@
             });
         }
 
+        // --- お知らせ管理 ---
+        const announcementListUl = document.getElementById('announcement-list');
+        const addAnnouncementBtn = document.getElementById('add-announcement-btn');
+        const announcementInput = document.getElementById('announcement-input');
+
+        // お知らせ読み込み
+        async function loadAnnouncements() {
+            const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"));
+            try {
+                const querySnapshot = await getDocs(q);
+                announcementListUl.innerHTML = ""; // クリア
+                if (querySnapshot.empty) {
+                    announcementListUl.innerHTML = "<li>お知らせはありません。</li>";
+                    return;
+                }
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const li = document.createElement('li');
+                    li.style.display = 'flex';
+                    li.style.justifyContent = 'space-between';
+                    li.style.alignItems = 'center';
+                    li.style.padding = '10px';
+                    li.style.borderBottom = '1px solid #eee';
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.textContent = data.text;
+                    textSpan.style.flexGrow = '1';
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = '削除';
+                    deleteBtn.className = 'btn-delete';
+                    deleteBtn.dataset.id = doc.id;
+
+                    li.appendChild(textSpan);
+                    li.appendChild(deleteBtn);
+                    announcementListUl.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error loading announcements: ", error);
+                announcementListUl.innerHTML = "<li>読み込みに失敗しました。</li>";
+            }
+        }
+
+        // お知らせ追加
+        addAnnouncementBtn.addEventListener('click', async () => {
+            const text = announcementInput.value.trim();
+            if (!text) {
+                alert('お知らせ内容を入力してください。');
+                return;
+            }
+            try {
+                await addDoc(collection(db, "announcements"), { text: text, createdAt: serverTimestamp() });
+                announcementInput.value = ''; // 入力欄をクリア
+                loadAnnouncements(); // リストを再読み込み
+            } catch (error) {
+                console.error("Error adding announcement: ", error);
+                alert('お知らせの追加に失敗しました。');
+            }
+        });
+
         // イベントデリゲーションでクリックと変更を処理
         contactListTbody.addEventListener('click', (e) => {
             if (e.target.classList.contains('btn-delete')) {
@@ -347,6 +424,20 @@
                     .catch((error) => {
                         console.error("Error removing document: ", error);
                         alert('削除に失敗しました。');
+                    });
+                }
+            }
+        });
+
+        announcementListUl.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-delete')) {
+                const docId = e.target.dataset.id;
+                if (confirm('このお知らせを削除しますか？')) {
+                    deleteDoc(doc(db, "announcements", docId))
+                    .then(() => loadAnnouncements()) // 成功したらリストを再読み込み
+                    .catch(error => {
+                        alert('削除に失敗しました。');
+                        console.error("Error deleting announcement: ", error);
                     });
                 }
             }

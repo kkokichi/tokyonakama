@@ -184,6 +184,7 @@
                 <li><a href="schedule.html">活動予定</a></li>
                 <li><a href="recommend.html">おすすめ</a></li>
                 <li><a href="column.html">コラム</a></li>
+                <li><a href="diagnosis.html">下北16診断</a></li>
                 <li><a href="staff.html">運営募集</a></li>
                 <li><a href="contact.html">お問い合わせ</a></li>
             </ul>
@@ -243,6 +244,12 @@
                         <p id="result-compat" style="font-weight: bold;"></p>
                     </div>
 
+                    <div class="result-section">
+                        <h3>📖 あなたへのおすすめコラム</h3>
+                        <ul id="result-articles" class="recommended-articles">
+                        </ul>
+                    </div>
+
                     <div class="result-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; text-align: center;">
                         <p id="result-mbti-type" style="font-size: 0.85rem; color: #999; margin: 0;"></p>
                     </div>
@@ -267,12 +274,14 @@
 
     <footer>
         <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="diagnosis.html">下北16診断</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
             <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
         </div>
     </footer>
 
+    <script src="articles.js"></script> <!-- コラムデータを読み込む -->
     <script>
+
         document.addEventListener("DOMContentLoaded", function() {
             // 共通UI処理
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
@@ -367,112 +376,128 @@
                     catch: "伝統とルールを愛する静かな守護者",
                     desc: "真面目で責任感が強く、一度決めたことは最後までやり遂げるタイプ。流行り廃りよりも「本物」を好み、下北沢でも騒がしい場所より、歴史ある喫茶店や定食屋で落ち着くことを好みます。",
                     spots: ["トロワ・シャンブル", "茄子おやじ", "静かな読書会"],
-                    compat: "「下北沢の盛り上げ隊長」タイプ"
+                    compat: "「下北沢の盛り上げ隊長」タイプ",
+                    articles: [10, 12, 17] // 記事ID
                 },
                 "ISFJ": {
                     name: "隠れ家カフェの常連さん",
                     catch: "気配り上手な平和主義者",
                     desc: "穏やかで協調性が高く、周りの空気を読むのが得意なタイプ。自分からガツガツ行くよりは、聞き役に回ることが多いです。アットホームな個人経営のお店で、店主と顔なじみになるのが好きかも。",
                     spots: ["kate coffee", "小劇場での観劇", "まったり交流会"],
-                    compat: "「弾丸トークの古着屋店員」タイプ"
+                    compat: "「弾丸トークの古着屋店員」タイプ",
+                    articles: [1, 7, 10]
                 },
                 "INFJ": {
                     name: "静かに燃える演劇民",
                     catch: "理想を追い求める深淵な表現者",
                     desc: "一見静かですが、内には熱い情熱と独自の世界観を秘めています。表面的な会話よりも、人生や芸術についての深い話を好みます。小劇場の最前列で、役者の熱量に涙しているのはあなたかも。",
                     spots: ["ザ・スズナリ", "古本屋巡り", "少人数の語り場"],
-                    compat: "「議論好きの劇団主宰」タイプ"
+                    compat: "「議論好きの劇団主宰」タイプ",
+                    articles: [4, 17, 7]
                 },
                 "INTJ": {
                     name: "孤高のレコードディガー",
                     catch: "我が道を突き進む戦略家",
                     desc: "知識欲が旺盛で、興味のあることはとことん掘り下げるオタク気質。群れることを好まず、一人で黙々とレコードを掘ったり、マニアックな映画を観たりする時間に至福を感じます。",
                     spots: ["ディスクユニオン", "トリウッド", "ソロ活"],
-                    compat: "「ハッピーオーラの自由人」タイプ"
+                    compat: "「ハッピーオーラの自由人」タイプ",
+                    articles: [17, 9, 5]
                 },
                 "ISTP": {
                     name: "職人気質のバンドマン",
                     catch: "クールで器用な一匹狼",
                     desc: "口数は少ないけれど、観察眼が鋭く、いざという時に頼りになるタイプ。理屈よりも実践を重視し、楽器やカメラなど、道具を扱う趣味に没頭しがち。適度な距離感を大切にします。",
                     spots: ["ライブハウス", "ダーツバー", "カメラ散歩"],
-                    compat: "「みんなのオカン的世話焼き」タイプ"
+                    compat: "「みんなのオカン的世話焼き」タイプ",
+                    articles: [15, 18, 20]
                 },
                 "ISFP": {
                     name: "路地裏の野良猫タイプ",
                     catch: "感性のままに生きるアーティスト",
                     desc: "自由気ままで、その日の気分で行動するのが好きなタイプ。美しいものや心地よい空間に敏感で、ふらっと入った路地裏で素敵な雑貨屋を見つける天才です。束縛されるのは大の苦手。",
                     spots: ["東洋百貨店", "BONUS TRACK", "フォトウォーク"],
-                    compat: "「イベントの鬼幹事」タイプ"
+                    compat: "「イベントの鬼幹事」タイプ",
+                    articles: [3, 16, 20]
                 },
                 "INFP": {
                     name: "夢見る文学青年・少女",
                     catch: "物語の中に生きるロマンチスト",
                     desc: "感受性が豊かで、想像力あふれるタイプ。現実世界よりも、本や映画の世界に浸っている方が落ち着きます。下北沢の独特な空気感や、エモい風景に強く惹かれるでしょう。",
                     spots: ["ヴィレッジヴァンガード", "夜の散歩", "映画鑑賞会"],
-                    compat: "「野心家なプロジェクトリーダー」タイプ"
+                    compat: "「野心家なプロジェクトリーダー」タイプ",
+                    articles: [1, 4, 10]
                 },
                 "INTP": {
                     name: "サブカルクイズ王",
                     catch: "知的好奇心の塊な分析家",
                     desc: "「なぜ？」を考えるのが好きで、独自の理論を持っているタイプ。サブカルチャーへの造詣が深く、マニアックな話題になると早口になります。流行りには流されず、自分の「好き」を貫きます。",
                     spots: ["R-lab", "マニアックなバー", "ボードゲーム会"],
-                    compat: "「カリスマ劇団員」タイプ"
+                    compat: "「カリスマ劇団員」タイプ",
+                    articles: [16, 17, 8]
                 },
                 "ESTP": {
                     name: "弾丸トークの古着屋店員",
                     catch: "刺激を求める冒険家",
                     desc: "じっとしているのが苦手で、常に何か面白いことを探しているタイプ。初対面の人ともすぐに打ち解けられるコミュ力の持ち主。ノリと勢いで行動し、周りを巻き込んで楽しみます。",
                     spots: ["古着屋巡り", "飲み歩き", "フットサル"],
-                    compat: "「隠れ家カフェの常連さん」タイプ"
+                    compat: "「隠れ家カフェの常連さん」タイプ",
+                    articles: [3, 6, 18]
                 },
                 "ESFP": {
                     name: "下北沢の盛り上げ隊長",
                     catch: "今を楽しむエンターテイナー",
                     desc: "明るく社交的で、みんなの注目を集めるのが好きなタイプ。細かいことは気にせず、「楽しければOK！」というスタンス。イベントや飲み会では、自然と中心にいることが多いでしょう。",
                     spots: ["ミカン下北", "カラオケ", "大人数での飲み会"],
-                    compat: "「孤高のレコードディガー」タイプ"
+                    compat: "「孤高のレコードディガー」タイプ",
+                    articles: [11, 19, 2]
                 },
                 "ENFP": {
                     name: "ハッピーオーラの自由人",
                     catch: "ワクワクを伝染させる情熱家",
                     desc: "好奇心旺盛で、新しいことや人が大好きなタイプ。独創的なファッションやアイデアで周りを驚かせます。計画性はあまりありませんが、その場のインスピレーションで奇跡を起こすことも。",
                     spots: ["reload", "新しいカフェ開拓", "クリエイティブな活動"],
-                    compat: "「老舗喫茶のマスター気質」タイプ"
+                    compat: "「老舗喫-茶のマスター気質」タイプ",
+                    articles: [1, 11, 16]
                 },
                 "ENTP": {
                     name: "議論好きの劇団主宰",
                     catch: "常識を覆すイノベーター",
                     desc: "頭の回転が速く、弁が立つタイプ。既存のルールに縛られず、新しい可能性を模索します。ちょっと皮肉屋な一面もありますが、そのユニークな視点は多くの人を惹きつけます。",
                     spots: ["朝まで語れる居酒屋", "脱出ゲーム", "企画会議"],
-                    compat: "「静かに燃える演劇民」タイプ"
+                    compat: "「静かに燃える演劇民」タイプ",
+                    articles: [8, 4, 6]
                 },
                 "ESTJ": {
                     name: "イベントの鬼幹事",
                     catch: "段取り完璧なリーダー",
                     desc: "現実的で実行力があり、物事を効率的に進めるのが得意なタイプ。飲み会の手配や旅行の計画はお手のもの。ルールやマナーを守らない人には少し厳しい一面も。",
                     spots: ["駅前のチェーン店", "スケジュール通りの観光", "運営スタッフ"],
-                    compat: "「路地裏の野良猫タイプ」タイプ"
+                    compat: "「路地裏の野良猫タイプ」タイプ",
+                    articles: [2, 7, 8]
                 },
                 "ESFJ": {
                     name: "みんなのオカン的世話焼き",
                     catch: "調和を大切にするサポーター",
                     desc: "人との繋がりを大切にし、困っている人を放っておけないタイプ。流行にも敏感で、SNSで話題のお店にはいち早く行きたがります。集団の和を乱すような行動は好みません。",
                     spots: ["話題のスイーツ店", "カレーフェス", "BBQ"],
-                    compat: "「職人気質のバンドマン」タイプ"
+                    compat: "「職人気質のバンドマン」タイプ",
+                    articles: [7, 11, 14]
                 },
                 "ENFJ": {
                     name: "カリスマ劇団員",
                     catch: "人を導く熱血主人公",
                     desc: "カリスマ性があり、言葉で人を動かす力があるタイプ。他人の成長や幸せを本気で願う熱いハートを持っています。理想を語り、周りを巻き込んで大きなプロジェクトを成し遂げるでしょう。",
                     spots: ["本多劇場", "ワークショップ", "交流会の主催"],
-                    compat: "「サブカルクイズ王」タイプ"
+                    compat: "「サブカルクイズ王」タイプ",
+                    articles: [1, 7, 4]
                 },
                 "ENTJ": {
                     name: "野心家なプロジェクトリーダー",
                     catch: "不可能を可能にする指揮官",
                     desc: "自信に満ち溢れ、高い目標に向かって突き進むタイプ。論理的で決断力があり、リーダーシップを発揮します。下北沢でも、ただ遊ぶだけでなく、何かビジネスチャンスを探しているかも。",
                     spots: ["コワーキングスペース", "異業種交流会", "サウナ"],
-                    compat: "「夢見る文学青年・少女」タイプ"
+                    compat: "「夢見る文学青年・少女」タイプ",
+                    articles: [9, 5, 8]
                 }
             };
 
@@ -563,6 +588,21 @@
                     li.textContent = spot;
                     spotsList.appendChild(li);
                 });
+
+                // おすすめ記事表示
+                const articlesList = document.getElementById('result-articles');
+                articlesList.innerHTML = '';
+                if (data.articles && typeof articles !== 'undefined') {
+                    data.articles.forEach(articleId => {
+                        const article = articles.find(a => a.id === articleId);
+                        if (article) {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a href="${article.detailUrl}">${article.title}</a>`;
+                            articlesList.appendChild(li);
+                        }
+                    });
+                }
+
 
                 // シェアリンク生成
                 const shareText = `🎭下北16診断🎭\n\n私のタイプは...【${data.name}】でした！\n\n"${data.catch}"\n\n#下北コミュニティ #下北沢 #性格診断`;
