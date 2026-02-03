@@ -81,6 +81,64 @@
             letter-spacing: 0.05em;
         }
 
+        /* --- 診断バナー --- */
+        .diagnosis-banner {
+            padding-top: 0;
+            padding-bottom: 30px;
+        }
+        .diagnosis-card-link {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .diagnosis-card-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+        .diagnosis-icon {
+            font-size: 3rem;
+            line-height: 1;
+        }
+        .diagnosis-text h3 {
+            margin: 0 0 5px;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+        .diagnosis-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .diagnosis-arrow {
+            margin-left: auto;
+            font-weight: bold;
+            white-space: nowrap;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        .sub-cta-links {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .sub-cta-links .btn-cta:last-child {
+            margin-bottom: 0;
+        }
+        @media (max-width: 600px) {
+            .diagnosis-card-link {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+
         /* --- 2. 共感ゾーン --- */
         .empathy-list {
             list-style: none;
@@ -279,16 +337,6 @@
             box-shadow: 0 6px 15px rgba(191, 91, 59, 0.4);
         }
 
-        /* --- アニメーション --- */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
 
         /* --- 返信表示用スタイル --- */
         .admin-reply {
@@ -411,6 +459,20 @@
             <p>下北沢で、コーヒー片手に「会社以外の友達」と話す週末。<br>無理せず、飾らず、ゆるく繋がる。</p>
             <a href="contact.html" class="btn-cta">
                 お問い合わせはこちら
+            </a>
+        </div>
+    </section>
+
+    <!-- 診断コンテンツへの誘導バナー -->
+    <section class="section diagnosis-banner fade-in" style="--i: 5;">
+        <div class="container">
+            <a href="diagnosis.html" class="diagnosis-card-link">
+                <div class="diagnosis-icon">🎭</div>
+                <div class="diagnosis-text">
+                    <h3>あなたは何タイプ？「下北16診断」</h3>
+                    <p>10の質問で、あなたの性格を「下北沢にいる人」に例えます。自分のタイプを知って、もっと下北沢を楽しもう！</p>
+                </div>
+                <div class="diagnosis-arrow">診断する →</div>
             </a>
         </div>
     </section>
@@ -589,10 +651,10 @@
             <div id="inquiry-list">
                 <p style="text-align: center; color: #888;">読み込み中...</p>
             </div>
-            <div style="text-align: center; margin-top: 40px;" class="fade-in">
-                <a href="recommend.html" class="btn-cta" style="background-color: #27ae60; margin-bottom: 15px;">下北沢のおすすめスポットも見る</a>
-                <br>
-                <a href="column.html" class="btn-cta" style="background-color: #3498db;">下北沢のコラムも見る</a>
+            <div class="sub-cta-links fade-in">
+                <a href="diagnosis.html" class="btn-cta" style="background-color: #8e44ad;">🎭 あなたのタイプは？下北16診断をやってみる</a>
+                <a href="recommend.html" class="btn-cta" style="background-color: #27ae60;">📍 下北沢のおすすめスポットを見る</a>
+                <a href="column.html" class="btn-cta" style="background-color: #3498db;">📝 下北沢のコラムを読む</a>
             </div>
         </div>
     </section>
@@ -639,7 +701,7 @@
 
     <footer>
         <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="diagnosis.html">下北16診断</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
             <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
         </div>
     </footer>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下北16診断 | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* --- 診断ページ用スタイル --- */
+        .diagnosis-container {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .diagnosis-card {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* スタート画面 */
+        .start-screen h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        .start-screen p {
+            margin-bottom: 30px;
+            color: #666;
+        }
+
+        /* 質問画面 */
+        .question-screen {
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background: #fff;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .option-btn:hover {
+            border-color: var(--accent-color);
+            background: #fff9f5;
+            transform: translateY(-2px);
+        }
+
+        /* 結果画面 */
+        .result-screen {
+            display: none;
+            text-align: left;
+        }
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed #eee;
+        }
+        .result-type-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 10px 0;
+        }
+        .result-catchphrase {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #555;
+            background: #eee;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 50px;
+        }
+        .result-section {
+            margin-bottom: 25px;
+        }
+        .result-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-list {
+            list-style: none;
+            padding: 0;
+        }
+        .result-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .result-list li::before {
+            content: "✔";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        .share-area {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .btn-share {
+            padding: 8px 16px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-twitter { background-color: #000; }
+        .btn-line { background-color: #06C755; }
+        
+        /* アニメーション */
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">下北コミュニティ</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">トップ</a></li>
+                <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="recommend.html">おすすめ</a></li>
+                <li><a href="column.html">コラム</a></li>
+                <li><a href="staff.html">運営募集</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+            </ul>
+        </nav>
+        <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <section class="section main-content fade-in">
+        <div class="container">
+            <div class="diagnosis-container">
+                
+                <!-- スタート画面 -->
+                <div id="start-screen" class="diagnosis-card start-screen">
+                    <span style="font-size: 3rem; display: block; margin-bottom: 10px;">🎭</span>
+                    <h1>下北16診断</h1>
+                    <p>あなたの性格を「下北沢にいそうな人」に例えると？<br>古着、音楽、演劇、カレー...<br>この街でのあなたの「正体」を暴きます。</p>
+                    <button id="start-btn" class="submit-btn" style="margin: 0 auto;">診断を始める</button>
+                </div>
+
+                <!-- 質問画面 -->
+                <div id="question-screen" class="diagnosis-card question-screen">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div id="question-container">
+                        <h2 id="question-text" class="question-text"></h2>
+                        <div id="options-container">
+                            <!-- 選択肢ボタンがここに生成されます -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 結果画面 -->
+                <div id="result-screen" class="diagnosis-card result-screen">
+                    <div class="result-header">
+                        <p style="margin-bottom: 5px; color: #888; font-size: 0.9rem;">あなたのタイプは...</p>
+                        <h2 id="result-name" class="result-type-name"></h2>
+                        <span id="result-catch" class="result-catchphrase"></span>
+                    </div>
+
+                    <div class="result-section">
+                        <h3>📝 性格</h3>
+                        <p id="result-desc" style="line-height: 1.8;"></p>
+                    </div>
+
+                    <div class="result-section">
+                        <h3>📍 下北でのおすすめ</h3>
+                        <ul id="result-spots" class="result-list"></ul>
+                    </div>
+
+                    <div class="result-section">
+                        <h3>🤝 相性のいいタイプ</h3>
+                        <p id="result-compat" style="font-weight: bold;"></p>
+                    </div>
+
+                    <div class="result-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; text-align: center;">
+                        <p id="result-mbti-type" style="font-size: 0.85rem; color: #999; margin: 0;"></p>
+                    </div>
+
+
+                    <div class="share-area">
+                        <p>結果をシェアして仲間を見つけよう！</p>
+                        <div class="share-buttons">
+                            <a href="#" id="share-twitter" class="btn-share btn-twitter" target="_blank">Xでポスト</a>
+                            <a href="#" id="share-line" class="btn-share btn-line" target="_blank">LINEで送る</a>
+                        </div>
+                        <div style="margin-top: 30px;">
+                            <a href="contact.html" class="submit-btn" style="font-size: 1rem; padding: 12px;">コミュニティに参加する</a>
+                            <a href="diagnosis.html" style="display: block; margin-top: 15px; color: #888; text-decoration: none; font-size: 0.9rem;">もう一度診断する</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 共通UI処理
+            document.querySelector('.main-content.fade-in')?.classList.add('visible');
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.querySelector('.main-nav');
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('is-active');
+                nav.classList.toggle('is-active');
+            });
+
+            // --- 診断ロジック ---
+            
+            // 質問データ (10問)
+            // 軸: E(外向)/I(内向), S(現実)/N(直感), T(論理)/F(感情), J(計画)/P(柔軟)
+            const questions = [
+                {
+                    text: "Q1. 休日の朝、目が覚めたら11時。今の気分は？",
+                    options: [
+                        { text: "やばい、1日無駄にした...と焦る", scores: { J: 2 } },
+                        { text: "よく寝た〜！これから何しようかな", scores: { P: 2 } }
+                    ]
+                },
+                {
+                    text: "Q2. 古着屋に入ったとき、店員さんに話しかけられたら？",
+                    options: [
+                        { text: "おすすめを聞いたり、楽しく会話する", scores: { E: 2 } },
+                        { text: "「見てるだけです」と会釈して距離をとる", scores: { I: 2 } }
+                    ]
+                },
+                {
+                    text: "Q3. ライブハウスに行くならどっちのバンド？",
+                    options: [
+                        { text: "SNSで話題の、今キテるバンド", scores: { S: 2 } },
+                        { text: "誰も知らないけど、世界観が凄いバンド", scores: { N: 2 } }
+                    ]
+                },
+                {
+                    text: "Q4. 友達が待ち合わせに15分遅刻。どうする？",
+                    options: [
+                        { text: "「何かあったのかな？」と心配しつつ連絡を待つ", scores: { F: 2 } },
+                        { text: "近くの店で時間を潰してるからOKと伝える", scores: { T: 2 } }
+                    ]
+                },
+                {
+                    text: "Q5. カフェで休憩中。隣の席の会話が聞こえてきたら？",
+                    options: [
+                        { text: "面白そうなら、心の中でツッコミを入れる", scores: { E: 1, N: 1 } },
+                        { text: "自分の世界に入り込んで、全く気にしない", scores: { I: 1, S: 1 } }
+                    ]
+                },
+                {
+                    text: "Q6. 演劇を観る作品選び、決め手は？",
+                    options: [
+                        { text: "あらすじやレビューをしっかり読む", scores: { S: 1, J: 1 } },
+                        { text: "チラシの雰囲気や直感で決める", scores: { N: 1, P: 1 } }
+                    ]
+                },
+                {
+                    text: "Q7. 飲み会で盛り上がっているとき、あなたのポジションは？",
+                    options: [
+                        { text: "中心になって話を回す・盛り上げる", scores: { E: 2 } },
+                        { text: "端っこでニコニコ話を聞いている", scores: { I: 2 } }
+                    ]
+                },
+                {
+                    text: "Q8. 悩み相談をされたとき、どう答える？",
+                    options: [
+                        { text: "解決策を一緒に考えて提案する", scores: { T: 2 } },
+                        { text: "「大変だったね」とまずは共感する", scores: { F: 2 } }
+                    ]
+                },
+                {
+                    text: "Q9. 下北沢からの帰り道。いつもと違う路地を見つけたら？",
+                    options: [
+                        { text: "迷うと面倒だから、いつもの道を行く", scores: { J: 1, S: 1 } },
+                        { text: "面白そう！とりあえず入ってみる", scores: { P: 1, N: 1 } }
+                    ]
+                },
+                {
+                    text: "Q10. 新しいコミュニティに参加するとき、一番大事なのは？",
+                    options: [
+                        { text: "どんな人がいるか、雰囲気やノリ", scores: { F: 1, P: 1 } },
+                        { text: "活動内容や、自分にメリットがあるか", scores: { T: 1, J: 1 } }
+                    ]
+                }
+            ];
+
+            // 診断結果データ (16タイプ)
+            const results = {
+                "ISTJ": {
+                    name: "老舗喫茶のマスター気質",
+                    catch: "伝統とルールを愛する静かな守護者",
+                    desc: "真面目で責任感が強く、一度決めたことは最後までやり遂げるタイプ。流行り廃りよりも「本物」を好み、下北沢でも騒がしい場所より、歴史ある喫茶店や定食屋で落ち着くことを好みます。",
+                    spots: ["トロワ・シャンブル", "茄子おやじ", "静かな読書会"],
+                    compat: "「下北沢の盛り上げ隊長」タイプ"
+                },
+                "ISFJ": {
+                    name: "隠れ家カフェの常連さん",
+                    catch: "気配り上手な平和主義者",
+                    desc: "穏やかで協調性が高く、周りの空気を読むのが得意なタイプ。自分からガツガツ行くよりは、聞き役に回ることが多いです。アットホームな個人経営のお店で、店主と顔なじみになるのが好きかも。",
+                    spots: ["kate coffee", "小劇場での観劇", "まったり交流会"],
+                    compat: "「弾丸トークの古着屋店員」タイプ"
+                },
+                "INFJ": {
+                    name: "静かに燃える演劇民",
+                    catch: "理想を追い求める深淵な表現者",
+                    desc: "一見静かですが、内には熱い情熱と独自の世界観を秘めています。表面的な会話よりも、人生や芸術についての深い話を好みます。小劇場の最前列で、役者の熱量に涙しているのはあなたかも。",
+                    spots: ["ザ・スズナリ", "古本屋巡り", "少人数の語り場"],
+                    compat: "「議論好きの劇団主宰」タイプ"
+                },
+                "INTJ": {
+                    name: "孤高のレコードディガー",
+                    catch: "我が道を突き進む戦略家",
+                    desc: "知識欲が旺盛で、興味のあることはとことん掘り下げるオタク気質。群れることを好まず、一人で黙々とレコードを掘ったり、マニアックな映画を観たりする時間に至福を感じます。",
+                    spots: ["ディスクユニオン", "トリウッド", "ソロ活"],
+                    compat: "「ハッピーオーラの自由人」タイプ"
+                },
+                "ISTP": {
+                    name: "職人気質のバンドマン",
+                    catch: "クールで器用な一匹狼",
+                    desc: "口数は少ないけれど、観察眼が鋭く、いざという時に頼りになるタイプ。理屈よりも実践を重視し、楽器やカメラなど、道具を扱う趣味に没頭しがち。適度な距離感を大切にします。",
+                    spots: ["ライブハウス", "ダーツバー", "カメラ散歩"],
+                    compat: "「みんなのオカン的世話焼き」タイプ"
+                },
+                "ISFP": {
+                    name: "路地裏の野良猫タイプ",
+                    catch: "感性のままに生きるアーティスト",
+                    desc: "自由気ままで、その日の気分で行動するのが好きなタイプ。美しいものや心地よい空間に敏感で、ふらっと入った路地裏で素敵な雑貨屋を見つける天才です。束縛されるのは大の苦手。",
+                    spots: ["東洋百貨店", "BONUS TRACK", "フォトウォーク"],
+                    compat: "「イベントの鬼幹事」タイプ"
+                },
+                "INFP": {
+                    name: "夢見る文学青年・少女",
+                    catch: "物語の中に生きるロマンチスト",
+                    desc: "感受性が豊かで、想像力あふれるタイプ。現実世界よりも、本や映画の世界に浸っている方が落ち着きます。下北沢の独特な空気感や、エモい風景に強く惹かれるでしょう。",
+                    spots: ["ヴィレッジヴァンガード", "夜の散歩", "映画鑑賞会"],
+                    compat: "「野心家なプロジェクトリーダー」タイプ"
+                },
+                "INTP": {
+                    name: "サブカルクイズ王",
+                    catch: "知的好奇心の塊な分析家",
+                    desc: "「なぜ？」を考えるのが好きで、独自の理論を持っているタイプ。サブカルチャーへの造詣が深く、マニアックな話題になると早口になります。流行りには流されず、自分の「好き」を貫きます。",
+                    spots: ["R-lab", "マニアックなバー", "ボードゲーム会"],
+                    compat: "「カリスマ劇団員」タイプ"
+                },
+                "ESTP": {
+                    name: "弾丸トークの古着屋店員",
+                    catch: "刺激を求める冒険家",
+                    desc: "じっとしているのが苦手で、常に何か面白いことを探しているタイプ。初対面の人ともすぐに打ち解けられるコミュ力の持ち主。ノリと勢いで行動し、周りを巻き込んで楽しみます。",
+                    spots: ["古着屋巡り", "飲み歩き", "フットサル"],
+                    compat: "「隠れ家カフェの常連さん」タイプ"
+                },
+                "ESFP": {
+                    name: "下北沢の盛り上げ隊長",
+                    catch: "今を楽しむエンターテイナー",
+                    desc: "明るく社交的で、みんなの注目を集めるのが好きなタイプ。細かいことは気にせず、「楽しければOK！」というスタンス。イベントや飲み会では、自然と中心にいることが多いでしょう。",
+                    spots: ["ミカン下北", "カラオケ", "大人数での飲み会"],
+                    compat: "「孤高のレコードディガー」タイプ"
+                },
+                "ENFP": {
+                    name: "ハッピーオーラの自由人",
+                    catch: "ワクワクを伝染させる情熱家",
+                    desc: "好奇心旺盛で、新しいことや人が大好きなタイプ。独創的なファッションやアイデアで周りを驚かせます。計画性はあまりありませんが、その場のインスピレーションで奇跡を起こすことも。",
+                    spots: ["reload", "新しいカフェ開拓", "クリエイティブな活動"],
+                    compat: "「老舗喫茶のマスター気質」タイプ"
+                },
+                "ENTP": {
+                    name: "議論好きの劇団主宰",
+                    catch: "常識を覆すイノベーター",
+                    desc: "頭の回転が速く、弁が立つタイプ。既存のルールに縛られず、新しい可能性を模索します。ちょっと皮肉屋な一面もありますが、そのユニークな視点は多くの人を惹きつけます。",
+                    spots: ["朝まで語れる居酒屋", "脱出ゲーム", "企画会議"],
+                    compat: "「静かに燃える演劇民」タイプ"
+                },
+                "ESTJ": {
+                    name: "イベントの鬼幹事",
+                    catch: "段取り完璧なリーダー",
+                    desc: "現実的で実行力があり、物事を効率的に進めるのが得意なタイプ。飲み会の手配や旅行の計画はお手のもの。ルールやマナーを守らない人には少し厳しい一面も。",
+                    spots: ["駅前のチェーン店", "スケジュール通りの観光", "運営スタッフ"],
+                    compat: "「路地裏の野良猫タイプ」タイプ"
+                },
+                "ESFJ": {
+                    name: "みんなのオカン的世話焼き",
+                    catch: "調和を大切にするサポーター",
+                    desc: "人との繋がりを大切にし、困っている人を放っておけないタイプ。流行にも敏感で、SNSで話題のお店にはいち早く行きたがります。集団の和を乱すような行動は好みません。",
+                    spots: ["話題のスイーツ店", "カレーフェス", "BBQ"],
+                    compat: "「職人気質のバンドマン」タイプ"
+                },
+                "ENFJ": {
+                    name: "カリスマ劇団員",
+                    catch: "人を導く熱血主人公",
+                    desc: "カリスマ性があり、言葉で人を動かす力があるタイプ。他人の成長や幸せを本気で願う熱いハートを持っています。理想を語り、周りを巻き込んで大きなプロジェクトを成し遂げるでしょう。",
+                    spots: ["本多劇場", "ワークショップ", "交流会の主催"],
+                    compat: "「サブカルクイズ王」タイプ"
+                },
+                "ENTJ": {
+                    name: "野心家なプロジェクトリーダー",
+                    catch: "不可能を可能にする指揮官",
+                    desc: "自信に満ち溢れ、高い目標に向かって突き進むタイプ。論理的で決断力があり、リーダーシップを発揮します。下北沢でも、ただ遊ぶだけでなく、何かビジネスチャンスを探しているかも。",
+                    spots: ["コワーキングスペース", "異業種交流会", "サウナ"],
+                    compat: "「夢見る文学青年・少女」タイプ"
+                }
+            };
+
+            // 状態管理
+            let currentQuestionIndex = 0;
+            let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+            // DOM要素
+            const startScreen = document.getElementById('start-screen');
+            const questionScreen = document.getElementById('question-screen');
+            const resultScreen = document.getElementById('result-screen');
+            const startBtn = document.getElementById('start-btn');
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const progressFill = document.getElementById('progress-fill');
+
+            // 開始ボタン
+            startBtn.addEventListener('click', () => {
+                startScreen.style.display = 'none';
+                questionScreen.style.display = 'block';
+                showQuestion();
+            });
+
+            // 質問表示
+            function showQuestion() {
+                const q = questions[currentQuestionIndex];
+                questionText.textContent = q.text;
+                optionsContainer.innerHTML = '';
+
+                // プログレスバー更新
+                const progress = ((currentQuestionIndex) / questions.length) * 100;
+                progressFill.style.width = `${progress}%`;
+
+                // 選択肢生成
+                q.options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn fade-in-up';
+                    btn.textContent = option.text;
+                    btn.addEventListener('click', () => handleAnswer(option.scores));
+                    optionsContainer.appendChild(btn);
+                });
+            }
+
+            // 回答処理
+            function handleAnswer(points) {
+                // スコア加算
+                for (const key in points) {
+                    scores[key] += points[key];
+                }
+
+                currentQuestionIndex++;
+
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }
+
+            // 結果表示
+            function showResult() {
+                questionScreen.style.display = 'none';
+                resultScreen.style.display = 'block';
+
+                // タイプ判定
+                const type = (scores.E >= scores.I ? 'E' : 'I') +
+                             (scores.S >= scores.N ? 'S' : 'N') +
+                             (scores.F >= scores.T ? 'F' : 'T') + // MBTI順序修正: T/F
+                             (scores.J >= scores.P ? 'J' : 'P');
+                
+                // ※注: 上記ロジックでT/Fの順序を修正しました (MBTIは EI, SN, TF, JP)
+                // データ取得
+                const data = results[type] || results['INFP']; // フォールバック
+
+                // DOM反映
+                document.getElementById('result-name').textContent = data.name;
+                document.getElementById('result-catch').textContent = data.catch;
+                document.getElementById('result-desc').textContent = data.desc;
+                document.getElementById('result-compat').textContent = data.compat;
+
+                // MBTIタイプ表示
+                document.getElementById('result-mbti-type').textContent = `(16Personalitiesでいうと「${type}」タイプです)`;
+
+                const spotsList = document.getElementById('result-spots');
+                spotsList.innerHTML = '';
+                data.spots.forEach(spot => {
+                    const li = document.createElement('li');
+                    li.textContent = spot;
+                    spotsList.appendChild(li);
+                });
+
+                // シェアリンク生成
+                const shareText = `🎭下北16診断🎭\n\n私のタイプは...【${data.name}】でした！\n\n"${data.catch}"\n\n#下北コミュニティ #下北沢 #性格診断`;
+                const shareUrl = window.location.href;
+
+                document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                document.getElementById('share-line').href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText + "\n" + shareUrl)}`;
+
+                // 画面トップへスクロール
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
