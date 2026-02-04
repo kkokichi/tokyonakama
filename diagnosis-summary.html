@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NHMRTD73');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下北16診断 タイプ一覧 | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .type-card {
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .type-card:hover {
+            transform: translateY(-5px);
+        }
+        .type-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: 10px;
+        }
+        .type-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            line-height: 1.4;
+        }
+        .type-mbti {
+            background: #eee;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #555;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .type-catch {
+            font-weight: bold;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .type-desc {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #333;
+        }
+        .type-compat {
+            margin-top: auto;
+            font-size: 0.85rem;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            color: #555;
+        }
+        .compat-label {
+            font-weight: bold;
+            color: var(--accent-color);
+            display: block;
+            margin-bottom: 3px;
+        }
+        /* ランキング用スタイル */
+        .ranking-container {
+            background: #fff;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 30px auto 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 2px solid var(--accent-light);
+            max-width: 600px;
+        }
+        .ranking-container h3 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-top: 0;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+        .rank-number {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: #888;
+        }
+        .rank-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .rank-name {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 1.05rem;
+        }
+        .rank-count {
+            font-size: 0.9rem;
+            color: #666;
+            background: #eee;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NHMRTD73"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <header class="header">
+        <a href="index.html" class="logo">下北コミュニティ</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">トップ</a></li>
+                <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="recommend.html">おすすめ</a></li>
+                <li><a href="column.html">コラム</a></li>
+                <li><a href="diagnosis.html">下北16診断</a></li>
+                <li><a href="staff.html">運営募集</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+            </ul>
+        </nav>
+        <button class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <section class="section main-content fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">下北16診断 タイプ一覧</h2>
+            </div>
+            <p style="text-align: center;">「下北16診断」の全タイプをまとめました。<br>あなたや友達はどのタイプ？</p>
+
+            <!-- ランキングエリア -->
+            <div class="ranking-container fade-in">
+                <h3>🏆 人気のタイプランキング TOP5</h3>
+                <div id="ranking-list">
+                    <p style="text-align:center; font-size:0.9rem; color:#888;">集計中...</p>
+                </div>
+            </div>
+
+            <div id="summary-grid" class="summary-grid">
+                <!-- JSで生成 -->
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="diagnosis.html" class="btn-cta">診断をやってみる</a>
+                <br><br>
+                <a href="index.html" class="back-link">トップページに戻る</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="diagnosis.html">下北16診断</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
+            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top">↑</a>
+
+    <script src="diagnosis-data.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // 共通UI処理
+            document.querySelector('.main-content.fade-in')?.classList.add('visible');
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.querySelector('.main-nav');
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('is-active');
+                nav.classList.toggle('is-active');
+            });
+
+            // 一覧生成
+            const grid = document.getElementById('summary-grid');
+            
+            // diagnosisResultsは diagnosis-data.js から読み込まれる
+            for (const [mbti, data] of Object.entries(diagnosisResults)) {
+                const card = document.createElement('div');
+                card.className = 'type-card fade-in';
+                
+                card.innerHTML = `
+                    <div class="type-header">
+                        <span class="type-name">${data.name}</span>
+                        <span class="type-mbti">${mbti}</span>
+                    </div>
+                    <div class="type-catch">${data.catch}</div>
+                    <div class="type-desc">${data.desc}</div>
+                    <div class="type-compat">
+                        <span class="compat-label">❤️ 相性が良いのは...</span>
+                        ${data.compat}
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+
+            // フェードインアニメーション
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+
+            // ランキング取得・表示
+            async function loadRanking() {
+                const rankingList = document.getElementById('ranking-list');
+                try {
+                    const docRef = doc(db, "stats", "diagnosis");
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        // データを配列にしてカウント順にソート
+                        const sorted = Object.entries(data)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 5); // TOP5
+
+                        let html = '';
+                        sorted.forEach((item, index) => {
+                            const type = item[0];
+                            const count = item[1];
+                            const info = diagnosisResults[type]; // diagnosis-data.jsのデータを使用
+                            const name = info ? info.name : type;
+                            
+                            let rankIcon = index + 1;
+                            if(index === 0) rankIcon = '🥇';
+                            if(index === 1) rankIcon = '🥈';
+                            if(index === 2) rankIcon = '🥉';
+
+                            html += `
+                                <div class="ranking-item">
+                                    <span class="rank-number">${rankIcon}</span>
+                                    <div class="rank-content">
+                                        <span class="rank-name">${name}</span>
+                                        <span class="rank-count">${count}人</span>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        rankingList.innerHTML = html;
+                    } else {
+                        rankingList.innerHTML = '<p style="text-align:center; font-size:0.9rem;">まだデータがありません。</p>';
+                    }
+                } catch (e) {
+                    console.error("ランキング取得エラー:", e);
+                    rankingList.innerHTML = '<p style="text-align:center; font-size:0.9rem;">読み込みに失敗しました。</p>';
+                }
+            }
+            loadRanking();
+        });
+    </script>
+</body>
+</html>
