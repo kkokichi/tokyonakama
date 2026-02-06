@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規会員登録 | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        .login-links {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .login-links a {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .login-links a:hover {
+            text-decoration: underline;
+        }
+        .divider {
+            margin: 20px 0;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">下北コミュニティ</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">トップ</a></li>
+                <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="recommend.html">おすすめ</a></li>
+                <li><a href="column.html">コラム</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+                <li><a href="login.html" style="color: var(--accent-color); font-weight: bold;">ログイン</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="section main-content fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">新規会員登録</h2>
+            </div>
+
+            <div class="login-container">
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="email">メールアドレス</label>
+                        <input type="email" id="email" name="username" placeholder="example@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">パスワード</label>
+                        <input type="password" id="password" name="password" placeholder="パスワードを入力" required>
+                    </div>
+                    <button type="submit" class="submit-btn">登録する</button>
+                </form>
+
+                <div class="login-links">
+                    <div class="divider"></div>
+                    <p>すでにアカウントをお持ちの方は</p>
+                    <a href="login.html" style="font-weight: bold; font-size: 1rem;">ログインはこちら</a>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="index.html" class="back-link">トップページに戻る</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ページ読み込み時のフェードイン
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector('.main-content.fade-in')?.classList.add('visible');
+        });
+
+        // 登録処理
+        document.getElementById('register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            const submitBtn = this.querySelector('.submit-btn');
+            
+            // ボタンを無効化
+            submitBtn.disabled = true;
+            submitBtn.textContent = '登録中...';
+
+            try {
+                // app.py の /register エンドポイントへリクエスト
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // 登録成功時
+                    alert('会員登録が完了しました！ログイン画面へ移動します。');
+                    window.location.href = 'login.html';
+                } else {
+                    // 登録失敗時
+                    alert(result.error || '登録に失敗しました。');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('サーバーとの通信に失敗しました。');
+            } finally {
+                // ボタンを元に戻す
+                submitBtn.disabled = false;
+                submitBtn.textContent = '登録する';
+            }
+        });
+    </script>
+</body>
+</html>
