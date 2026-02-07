@@ -736,6 +736,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, getCountFromServer, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
@@ -750,6 +751,30 @@
         // Firebaseの初期化
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // ログイン状態の監視とヘッダー切り替え
+        onAuthStateChanged(auth, (user) => {
+            const loginLink = document.querySelector('a[href="login.html"]');
+            if (loginLink) {
+                if (user) {
+                    // ログイン中
+                    // イベントリスナーを削除するために要素をクローンして置き換え
+                    const newLink = loginLink.cloneNode(true);
+                    loginLink.parentNode.replaceChild(newLink, loginLink);
+                    
+                    newLink.textContent = 'マイページ';
+                    newLink.href = 'mypage.html';
+                    // スタイル調整（必要に応じて）
+                    newLink.style.color = 'var(--accent-color)';
+                    newLink.style.fontWeight = 'bold';
+                } else {
+                    // 未ログイン（デフォルトのまま）
+                    loginLink.textContent = 'ログイン';
+                    loginLink.href = 'login.html';
+                }
+            }
+        });
 
         // --- Observer for fade-in animation ---
         const observer = new IntersectionObserver((entries, observer) => {

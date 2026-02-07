@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイページ | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        .divider {
+            margin: 30px 0;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">下北コミュニティ</a>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">トップ</a></li>
+                <li><a href="schedule.html">活動予定</a></li>
+                <li><a href="recommend.html">おすすめ</a></li>
+                <li><a href="column.html">コラム</a></li>
+                <li><a href="contact.html">お問い合わせ</a></li>
+                <li><a href="mypage.html" style="color: var(--accent-color); font-weight: bold;">マイページ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="section main-content fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">マイページ</h2>
+            </div>
+
+            <div class="login-container">
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="name">お名前（ニックネーム）</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">メールアドレス</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <button type="submit" class="submit-btn">情報を更新する</button>
+                </form>
+
+                <div class="divider"></div>
+
+                <button id="logout-btn" class="submit-btn" style="background-color: #999;">ログアウト</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="index.html" class="back-link">トップページに戻る</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile, updateEmail, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ログイン状態監視 & リダイレクト処理
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // ログイン済み：Firestoreからデータを取得してフォームにセット
+                const userRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('name').value = data.name || user.displayName || '';
+                    document.getElementById('email').value = user.email || '';
+                }
+                document.querySelector('.main-content').classList.add('visible');
+            } else {
+                // 未ログイン：ログイン画面へリダイレクト
+                window.location.href = 'login.html';
+            }
+        });
+
+        // プロフィール更新処理
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const newName = document.getElementById('name').value;
+            const newEmail = document.getElementById('email').value;
+            const submitBtn = e.target.querySelector('button');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '更新中...';
+
+            try {
+                const updates = [];
+                
+                // 名前が変わっていたら更新
+                if (newName !== user.displayName) {
+                    updates.push(updateProfile(user, { displayName: newName }));
+                    updates.push(updateDoc(doc(db, "users", user.uid), { name: newName }));
+                }
+
+                // メールアドレスが変わっていたら更新
+                if (newEmail !== user.email) {
+                    updates.push(updateEmail(user, newEmail));
+                    updates.push(updateDoc(doc(db, "users", user.uid), { email: newEmail }));
+                }
+
+                await Promise.all(updates);
+                alert('プロフィールを更新しました！');
+            } catch (error) {
+                console.error("Update error:", error);
+                if (error.code === 'auth/requires-recent-login') {
+                    alert('メールアドレスの変更には再ログインが必要です。一度ログアウトして、再度ログインしてください。');
+                } else {
+                    alert('更新に失敗しました。');
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '情報を更新する';
+            }
+        });
+
+        // ログアウト処理
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            if (confirm('ログアウトしますか？')) {
+                signOut(auth).then(() => {
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    console.error('Logout error:', error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

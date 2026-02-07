@@ -95,8 +95,12 @@
             <div class="login-container">
                 <form id="register-form">
                     <div class="form-group">
+                        <label for="name">お名前（ニックネーム）</label>
+                        <input type="text" id="name" name="name" placeholder="下北 太郎" required>
+                    </div>
+                    <div class="form-group">
                         <label for="email">メールアドレス</label>
-                        <input type="email" id="email" name="username" placeholder="example@email.com" required>
+                        <input type="email" id="email" name="email" placeholder="example@email.com" required>
                     </div>
                     <div class="form-group">
                         <label for="password">パスワード</label>
@@ -124,7 +128,25 @@
         </div>
     </footer>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
         // ページ読み込み時のフェードイン
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
@@ -134,37 +156,51 @@
         document.getElementById('register-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            const submitBtn = this.querySelector('.submit-btn');
+            const form = e.target;
+            const name = form.querySelector('#name').value;
+            const email = form.querySelector('#email').value;
+            const password = form.querySelector('#password').value;
+            const submitBtn = form.querySelector('.submit-btn');
             
             // ボタンを無効化
             submitBtn.disabled = true;
             submitBtn.textContent = '登録中...';
 
             try {
-                // app.py の /register エンドポイントへリクエスト
-                const response = await fetch('/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
+                // Firebase Authでユーザー作成
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // プロフィール更新（表示名）
+                await updateProfile(user, {
+                    displayName: name
                 });
 
-                const result = await response.json();
+                // Firestoreにユーザー情報を保存
+                await setDoc(doc(db, "users", user.uid), {
+                    name: name,
+                    email: email,
+                    loginCount: 0, // 初期値
+                    lastLogin: null,
+                    createdAt: serverTimestamp()
+                });
 
-                if (response.ok) {
-                    // 登録成功時
-                    alert('会員登録が完了しました！ログイン画面へ移動します。');
-                    window.location.href = 'login.html';
-                } else {
-                    // 登録失敗時
-                    alert(result.error || '登録に失敗しました。');
-                }
+                alert('会員登録が完了しました！ログイン画面へ移動します。');
+                window.location.href = 'login.html';
+
             } catch (error) {
                 console.error('Error:', error);
-                alert('サーバーとの通信に失敗しました。');
+                let msg = '登録に失敗しました。';
+                if (error.code === 'auth/email-already-in-use') {
+                    msg = 'このメールアドレスは既に使用されています。';
+                } else if (error.code === 'auth/weak-password') {
+                    msg = 'パスワードは6文字以上で設定してください。';
+                } else if (error.code === 'auth/configuration-not-found' || error.code === 'auth/operation-not-allowed') {
+                    msg = '管理者設定エラー：ログイン方法が無効になっています。Firebaseコンソールを確認してください。';
+                } else {
+                    msg += `\n(${error.code})`;
+                }
+                alert(msg);
             } finally {
                 // ボタンを元に戻す
                 submitBtn.disabled = false;

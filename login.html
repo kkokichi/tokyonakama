@@ -96,8 +96,7 @@
                 <form id="login-form">
                     <div class="form-group">
                         <label for="email">メールアドレス</label>
-                        <!-- app.pyに合わせてname="username"としていますが、ラベルはメールアドレスとしています -->
-                        <input type="email" id="email" name="username" placeholder="example@email.com" required>
+                        <input type="email" id="email" name="email" placeholder="example@email.com" required>
                     </div>
                     <div class="form-group">
                         <label for="password">パスワード</label>
@@ -127,7 +126,25 @@
         </div>
     </footer>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
         // ページ読み込み時のフェードイン
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
@@ -137,8 +154,8 @@
         document.getElementById('login-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const submitBtn = this.querySelector('.submit-btn');
             
             // ボタンを無効化
@@ -146,33 +163,36 @@
             submitBtn.textContent = 'ログイン中...';
 
             try {
-                // app.py の /login エンドポイントへリクエスト
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
+                // Firebase Authでログイン
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
 
-                const result = await response.json();
-
-                if (response.ok) {
-                    // ログイン成功時
-                    alert('ログインしました！');
-                    // トークンを保存（必要に応じてlocalStorage等へ）
-                    console.log('Token:', result.token);
-                    localStorage.setItem('authToken', result.token);
-                    
-                    // トップページへリダイレクト
-                    window.location.href = 'index.html';
-                } else {
-                    // ログイン失敗時
-                    alert(result.error || 'ログインに失敗しました。メールアドレスとパスワードをご確認ください。');
+                // Firestoreのログイン情報更新（回数+1, 最終ログイン日時）
+                try {
+                    const userRef = doc(db, "users", user.uid);
+                    await updateDoc(userRef, {
+                        loginCount: increment(1),
+                        lastLogin: serverTimestamp()
+                    });
+                } catch (dbError) {
+                    console.error("Firestore update error:", dbError);
                 }
+
+                alert('ログインしました！');
+                window.location.href = 'index.html';
+
             } catch (error) {
                 console.error('Error:', error);
-                alert('サーバーとの通信に失敗しました。');
+                let msg = 'ログインに失敗しました。';
+                // auth/invalid-credential は最近のSDKでユーザーが存在しない/パスワード違いをまとめたエラーです
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    msg = 'メールアドレスまたはパスワードが間違っています。';
+                } else if (error.code === 'auth/configuration-not-found' || error.code === 'auth/operation-not-allowed') {
+                    msg = '管理者設定エラー：ログイン方法が無効になっています。Firebaseコンソールを確認してください。';
+                } else {
+                    msg += `\n(${error.code})`;
+                }
+                alert(msg);
             } finally {
                 // ボタンを元に戻す
                 submitBtn.disabled = false;

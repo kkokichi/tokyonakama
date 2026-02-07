@@ -203,6 +203,25 @@
                     </ul>
                 </div>
 
+                <!-- ユーザー管理 -->
+                <h2 style="margin-bottom: 30px;">登録ユーザー一覧</h2>
+                <div class="table-wrapper" style="margin-bottom: 40px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>名前</th>
+                                <th>Email</th>
+                                <th>ログイン回数</th>
+                                <th>最終ログイン</th>
+                                <th>登録日時</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-list">
+                            <!-- ここにデータが入ります -->
+                        </tbody>
+                    </table>
+                </div>
+
                 <h2 style="margin-bottom: 30px;">問い合わせ一覧</h2>
                 <div class="table-wrapper">
                     <table>
@@ -251,6 +270,7 @@
         const db = getFirestore(app);
 
         const contactListTbody = document.getElementById('contact-list');
+        const userListTbody = document.getElementById('user-list');
 
         // 簡易パスワード設定 (必要に応じて変更してください)
         const LOGIN_PASS = "admin1234";
@@ -263,6 +283,7 @@
                 document.getElementById('admin-content').style.display = 'block';
                 loadData();
                 loadAnnouncements(); // お知らせも読み込む
+                loadUsers(); // ユーザー一覧も読み込む
             } else {
                 document.getElementById('login-error').style.display = 'block';
             }
@@ -330,6 +351,35 @@
                 console.error("Error getting documents: ", error);
                 alert("データの取得に失敗しました。");
             });
+        }
+
+        // ユーザー一覧読み込み
+        function loadUsers() {
+            const q = query(collection(db, "users"), orderBy("lastLogin", "desc"));
+            getDocs(q)
+            .then((querySnapshot) => {
+                userListTbody.innerHTML = "";
+                if (querySnapshot.empty) {
+                    userListTbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>ユーザーがいません</td></tr>";
+                    return;
+                }
+                querySnapshot.forEach((docSnapshot) => {
+                    const data = docSnapshot.data();
+                    const lastLogin = data.lastLogin ? data.lastLogin.toDate().toLocaleString('ja-JP') : "---";
+                    const createdAt = data.createdAt ? data.createdAt.toDate().toLocaleString('ja-JP') : "---";
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td data-label="名前" style="font-weight:bold;">${data.name || '未設定'}</td>
+                        <td data-label="Email">${data.email || '-'}</td>
+                        <td data-label="ログイン回数">${data.loginCount || 0}回</td>
+                        <td data-label="最終ログイン">${lastLogin}</td>
+                        <td data-label="登録日時">${createdAt}</td>
+                    `;
+                    userListTbody.appendChild(tr);
+                });
+            })
+            .catch((error) => console.error("Error loading users:", error));
         }
 
         // --- お知らせ管理 ---
