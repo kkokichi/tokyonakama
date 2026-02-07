@@ -9,6 +9,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        .event-card {
+            padding: 0 !important; /* .cardのpaddingを打ち消して画像を端まで表示 */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .event-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+        .event-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
         .event-date {
             font-weight: bold;
             font-size: 0.9rem;
@@ -18,6 +37,12 @@
         }
         .event-card h3 {
             margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .event-card p {
+            margin-bottom: 20px;
+            color: #555;
         }
         /* --- 広告用スタイル --- */
         .ad-container {
@@ -52,24 +77,8 @@
 <body>
 
     <header class="header">
-        <a href="index.html" class="logo">下北コミュニティ</a>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">トップ</a></li>
-                <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html">おすすめ</a></li>
-                <li><a href="column.html">コラム</a></li>
-                <li><a href="diagnosis.html">下北16診断</a></li>
-                <li><a href="staff.html">運営募集</a></li>
-                <li><a href="contact.html">お問い合わせ</a></li>
-            </ul>
-        </nav>
-        <button class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
     </header>
+    <script src="header.js"></script>
 
     <section class="section main-content fade-in">
         <div class="container">
@@ -78,41 +87,8 @@
             </div>
             <p style="text-align: center; margin-bottom: 40px;">「こんなことやりたい！」という企画案です。<br>参加してみたいイベントがあれば、お気軽にお問い合わせください！</p>
 
-            <div class="event-grid">
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="カフェ巡り">
-                    <p class="event-date">日付：未定</p>
-                    <h3>☕ 下北沢・隠れ家カフェ巡り</h3>
-                    <p style="margin-bottom: 0;">新しくオープンしたカフェや、路地裏にある隠れ家的なカフェを巡ります。コーヒーを片手におしゃべりしましょう。初めての方も大歓迎です。</p>
-                </div>
-
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1632501641765-e568d28b0015?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ボードゲーム会">
-                    <p class="event-date">日付：未定</p>
-                    <h3>🎲 初心者だらけのボードゲーム会</h3>
-                    <p style="margin-bottom: 0;">会話が苦手でも大丈夫！みんなでワイワイ楽しめる簡単なボードゲームを用意しています。ルール説明から丁寧に行うので、初心者の方も安心してご参加ください。</p>
-                </div>
-
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ランニング">
-                    <p class="event-date">日付：未定</p>
-                    <h3>🏃 みんなでランニング</h3>
-                    <p style="margin-bottom: 0;">週末の朝、公園で軽く走りませんか？運動不足解消やリフレッシュに。終わった後は近くのカフェでモーニングもいいですね。</p>
-                </div>
-
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1628852425822-c49a4a5b5433?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="サウナ">
-                    <p class="event-date">日付：未定</p>
-                    <h3>🧖 みんなでサウナ</h3>
-                    <p style="margin-bottom: 0;">話題のサウナ施設で「ととのう」体験を。サウナ好きはもちろん、初心者も大歓迎。汗を流して心も体もスッキリさせましょう。</p>
-                </div>
-
-                <div class="card event-card fade-in">
-                    <img src="https://images.unsplash.com/photo-1533473359331-097b50025d16?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ドライブ">
-                    <p class="event-date">日付：未定</p>
-                    <h3>🚗 みんなでドライブ</h3>
-                    <p style="margin-bottom: 0;">レンタカーを借りて、少し遠出のプチ旅行。海を見に行ったり、美味しいものを食べに行ったり。行き先はみんなで決めましょう！</p>
-                </div>
+            <div class="event-grid" id="event-grid">
+                <p style="text-align: center; width: 100%; grid-column: 1 / -1;">読み込み中...</p>
             </div>
 
             <!-- ▼▼▼ 広告スペース ▼▼▼ -->
@@ -143,8 +119,234 @@
     <!-- ページトップへ戻るボタン -->
     <a href="#" class="back-to-top">↑</a>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp, setDoc, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // 初期データ（Firestoreが空の場合に使用）
+        const initialEvents = [
+            { id: "event-cafe", title: "☕ 下北沢・隠れ家カフェ巡り", date: "未定", image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", description: "新しくオープンしたカフェや、路地裏にある隠れ家的なカフェを巡ります。コーヒーを片手におしゃべりしましょう。初めての方も大歓迎です。" },
+            { id: "event-boardgame", title: "🎲 初心者だらけのボードゲーム会", date: "未定", image: "https://images.unsplash.com/photo-1632501641765-e568d28b0015?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", description: "会話が苦手でも大丈夫！みんなでワイワイ楽しめる簡単なボードゲームを用意しています。ルール説明から丁寧に行うので、初心者の方も安心してご参加ください。" },
+            { id: "event-running", title: "🏃 みんなでランニング", date: "未定", image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", description: "週末の朝、公園で軽く走りませんか？運動不足解消やリフレッシュに。終わった後は近くのカフェでモーニングもいいですね。" },
+            { id: "event-sauna", title: "🧖 みんなでサウナ", date: "未定", image: "https://images.unsplash.com/photo-1628852425822-c49a4a5b5433?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", description: "話題のサウナ施設で「ととのう」体験を。サウナ好きはもちろん、初心者も大歓迎。汗を流して心も体もスッキリさせましょう。" },
+            { id: "event-drive", title: "🚗 みんなでドライブ", date: "未定", image: "https://images.unsplash.com/photo-1533473359331-097b50025d16?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", description: "レンタカーを借りて、少し遠出のプチ旅行。海を見に行ったり、美味しいものを食べに行ったり。行き先はみんなで決めましょう！" }
+        ];
+
         document.addEventListener("DOMContentLoaded", function() {
+            // スクロール時のフェードインアニメーション設定
+            const observerOptions = {
+                root: null,
+                rootMargin: "0px",
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // 静的なフェードイン要素を監視
+            const staticElements = document.querySelectorAll(".fade-in");
+            staticElements.forEach(el => observer.observe(el));
+
+            const eventGrid = document.getElementById('event-grid');
+
+            // イベント読み込み＆表示
+            async function loadAndDisplayEvents() {
+                const q = query(collection(db, "events"));
+                
+                try {
+                    const snapshot = await getDocs(q);
+
+                    if (snapshot.empty) {
+                        // データがない場合は初期データを投入
+                        eventGrid.innerHTML = '<p style="text-align: center; width: 100%;">初期データを準備中...</p>';
+                        console.log("Initializing events data...");
+                        for (const evt of initialEvents) {
+                            await setDoc(doc(db, "events", evt.id), {
+                                title: evt.title,
+                                date: evt.date,
+                                description: evt.description,
+                                image: evt.image,
+                                capacity: 10, // 初期データに定員追加
+                                currentReservations: 0,
+                                createdAt: serverTimestamp()
+                            });
+                        }
+                        // リロードして表示
+                        window.location.reload();
+                        return;
+                    }
+
+                    eventGrid.innerHTML = '';
+                    snapshot.forEach(docSnapshot => {
+                        const data = docSnapshot.data();
+                        const card = document.createElement('div');
+                        card.className = 'card event-card fade-in';
+                        card.dataset.id = docSnapshot.id;
+                        card.dataset.title = data.title;
+                        card.dataset.date = data.date;
+
+                        // 定員チェック
+                        const capacity = Number(data.capacity) || 0;
+                        const current = Number(data.currentReservations) || 0;
+                        const isFull = capacity > 0 && current >= capacity;
+                        
+                        let btnText = '参加予約する';
+                        let btnDisabled = '';
+                        let btnStyle = '';
+                        if (isFull) {
+                            btnText = '満席';
+                            btnDisabled = 'disabled';
+                            btnStyle = 'background-color: #ccc; box-shadow: none; cursor: not-allowed;';
+                        }
+                        
+                        card.innerHTML = `
+                            <img src="${data.image}" alt="${data.title}">
+                            <div class="event-content">
+                                <p class="event-date">日付：${data.date}</p>
+                                <h3>${data.title} <span style="font-size:0.8rem; color:#666; font-weight:normal;">(残席: ${capacity > 0 ? capacity - current : '-'})</span></h3>
+                                <p>${data.description}</p>
+                                <button class="reserve-btn cta-btn" ${btnDisabled} style="margin-top: auto; font-size: 1rem; padding: 10px; width: 100%; ${btnStyle}">${btnText}</button>
+                            </div>
+                        `;
+                        eventGrid.appendChild(card);
+                    observer.observe(card); // 動的に追加したカードを監視対象に追加
+                    });
+
+                    // 予約ボタンのイベントリスナーを設定
+                    setupReserveButtons();
+                } catch (error) {
+                    console.error("Error loading events:", error);
+                    eventGrid.innerHTML = `<p style="text-align: center; width: 100%; color: red;">イベントの読み込みに失敗しました。<br>${error.message}</p>`;
+                }
+            }
+
+            // --- 予約ボタンの処理 ---
+            function setupReserveButtons() {
+                const reserveBtns = document.querySelectorAll('.reserve-btn');
+                reserveBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        alert('イベントを予約するにはログインが必要です。\nログイン画面へ移動します。');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    const card = e.target.closest('.event-card');
+                    const eventId = card.dataset.id;
+                    const title = card.dataset.title;
+                    const date = card.dataset.date;
+                    const btn = e.target;
+
+                    // ボタンを一時無効化
+                    btn.disabled = true;
+                    btn.textContent = '処理中...';
+
+                    try {
+                        // 最新のイベント情報を取得して定員チェック
+                        const eventRef = doc(db, "events", eventId);
+                        const eventSnap = await getDoc(eventRef);
+                        const eventData = eventSnap.data();
+                        if (eventData.capacity > 0 && (eventData.currentReservations || 0) >= eventData.capacity) {
+                            alert('申し訳ありません、タッチの差で満席となりました。');
+                            btn.textContent = '満席';
+                            return;
+                        }
+
+                        // すでに予約済みかチェック
+                        const q = query(collection(db, "reservations"), where("userId", "==", user.uid), where("eventId", "==", eventId));
+                        const snapshot = await getDocs(q);
+
+                        if (!snapshot.empty) {
+                            alert('このイベントはすでに予約済みです。');
+                            btn.textContent = '予約済み';
+                            return;
+                        }
+
+                        // 予約データを保存
+                        await addDoc(collection(db, "reservations"), {
+                            userId: user.uid,
+                            eventId: eventId,
+                            title: title,
+                            date: date,
+                            reservedAt: serverTimestamp()
+                        });
+
+                        // イベントの予約数を増やす
+                        await updateDoc(eventRef, { currentReservations: increment(1) });
+
+                        alert(`「${title}」の予約が完了しました！\nマイページで確認できます。`);
+                        btn.textContent = '予約済み';
+                        btn.style.backgroundColor = '#ccc';
+                        btn.style.boxShadow = 'none';
+
+                    } catch (error) {
+                        console.error("Error adding reservation: ", error);
+                        alert('予約に失敗しました。もう一度お試しください。');
+                        btn.disabled = false;
+                        btn.textContent = '参加予約する';
+                    }
+                });
+            });
+                
+                // ログイン状態に応じてボタンの表示を変える
+                checkLoginStatus();
+            }
+
+            // ログイン状態に応じてボタンの表示を変える（オプション）
+            function checkLoginStatus() {
+                const user = auth.currentUser;
+                if (user) {
+                    // ログイン済みなら、すでに予約しているイベントのボタンを「予約済み」にする
+                    const q = query(collection(db, "reservations"), where("userId", "==", user.uid));
+                    getDocs(q).then(snapshot => {
+                        snapshot.forEach(doc => {
+                            const data = doc.data();
+                            const targetCard = document.querySelector(`.event-card[data-id="${data.eventId}"]`);
+                            if (targetCard) {
+                                const btn = targetCard.querySelector('.reserve-btn');
+                                if (btn) {
+                                    btn.textContent = '予約済み';
+                                    btn.disabled = true;
+                                    btn.style.backgroundColor = '#ccc';
+                                    btn.style.boxShadow = 'none';
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    checkLoginStatus();
+                }
+            });
+
+            // 初期実行
+            loadAndDisplayEvents();
+
             // --- 位置情報取得と距離表示 ---
             const locationInfo = document.getElementById('location-info');
             // 下北沢駅周辺の座標
@@ -178,46 +380,6 @@
                     }
                 );
             }
-
-            // Hamburger Menu
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            const navLinks = document.querySelectorAll('.main-nav a');
-
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
-
-            // Close menu when a link is clicked
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (nav.classList.contains('is-active')) {
-                        hamburger.classList.remove('is-active');
-                        nav.classList.remove('is-active');
-                    }
-                });
-            });
-
-            // スクロール時のフェードインアニメーション
-            const observerOptions = {
-                root: null,
-                rootMargin: "0px",
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("visible");
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            const elements = document.querySelectorAll(".fade-in");
-            elements.forEach(el => observer.observe(el));
-
             // Back to Top Button
             const backToTopButton = document.querySelector('.back-to-top');
             if (backToTopButton) {

@@ -66,6 +66,7 @@
                 <li><a href="schedule.html">活動予定</a></li>
                 <li><a href="recommend.html">おすすめ</a></li>
                 <li><a href="column.html">コラム</a></li>
+                <li><a href="mystery.html">謎解き</a></li>
                 <li><a href="contact.html">お問い合わせ</a></li>
                 <li><a href="mypage.html" style="color: var(--accent-color); font-weight: bold;">マイページ</a></li>
             </ul>
@@ -93,6 +94,13 @@
 
                 <div class="divider"></div>
 
+                <h3 style="margin-bottom: 20px; font-size: 1.2rem; border-left: 4px solid var(--accent-color); padding-left: 10px;">予約したイベント</h3>
+                <div id="reservation-list">
+                    <p style="text-align: center; color: #888;">読み込み中...</p>
+                </div>
+
+                <div class="divider"></div>
+
                 <button id="logout-btn" class="submit-btn" style="background-color: #999;">ログアウト</button>
             </div>
 
@@ -111,7 +119,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, updateProfile, updateEmail, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
@@ -139,6 +147,9 @@
                     document.getElementById('email').value = user.email || '';
                 }
                 document.querySelector('.main-content').classList.add('visible');
+
+                // 予約情報の読み込み
+                loadReservations(user.uid);
             } else {
                 // 未ログイン：ログイン画面へリダイレクト
                 window.location.href = 'login.html';
@@ -198,6 +209,61 @@
                 });
             }
         });
+
+        // 予約一覧の読み込み
+        async function loadReservations(userId) {
+            const list = document.getElementById('reservation-list');
+            // 複合インデックスエラーを避けるため、orderByはクライアント側で行うか、単純なクエリにします
+            const q = query(collection(db, "reservations"), where("userId", "==", userId));
+            
+            try {
+                const snapshot = await getDocs(q);
+                list.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    list.innerHTML = '<p style="text-align: center; color: #888;">現在、予約しているイベントはありません。</p>';
+                    return;
+                }
+                
+                snapshot.forEach(docSnapshot => {
+                    const data = docSnapshot.data();
+                    const div = document.createElement('div');
+                    div.style.border = '1px solid #eee';
+                    div.style.padding = '15px';
+                    div.style.borderRadius = '8px';
+                    div.style.marginBottom = '15px';
+                    div.style.backgroundColor = '#f9f9f9';
+                    
+                    div.innerHTML = `
+                        <h4 style="margin: 0 0 5px; color: var(--accent-color);">${data.title}</h4>
+                        <p style="margin: 0 0 10px; font-size: 0.9rem; color: #666;">日付: ${data.date}</p>
+                        <button class="cancel-btn" data-id="${docSnapshot.id}" data-event-id="${data.eventId}" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">予約をキャンセル</button>
+                    `;
+                    list.appendChild(div);
+                });
+
+                // キャンセルボタンのイベント設定
+                document.querySelectorAll('.cancel-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const eventId = e.target.dataset.eventId;
+                        if(confirm('本当にこの予約をキャンセルしますか？')) {
+                            await deleteDoc(doc(db, "reservations", e.target.dataset.id));
+                            // イベントの予約数を減らす
+                            if (eventId) {
+                                updateDoc(doc(db, "events", eventId), { currentReservations: increment(-1) });
+                            }
+                            e.target.closest('div').remove();
+                            alert('予約をキャンセルしました。');
+                            // 全て消えた場合の表示更新は省略（リロードすれば反映）
+                        }
+                    });
+                });
+
+            } catch (error) {
+                console.error("Error loading reservations:", error);
+                list.innerHTML = '<p style="text-align: center; color: red;">情報の読み込みに失敗しました。</p>';
+            }
+        }
     </script>
 </body>
 </html>

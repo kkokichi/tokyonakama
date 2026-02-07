@@ -414,25 +414,8 @@
     <!-- End Google Tag Manager (noscript) -->
 
     <header class="header">
-        <a href="index.html" class="logo">下北コミュニティ</a>
-        <div id="location-info" class="location-info"></div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">トップ</a></li>
-                <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html">おすすめ</a></li>
-                <li><a href="column.html">コラム</a></li>
-                <li><a href="staff.html">運営募集</a></li>
-                <li><a href="contact.html">お問い合わせ</a></li>
-                <li><a href="login.html" style="color: var(--accent-color); font-weight: bold;">ログイン</a></li>
-            </ul>
-        </nav>
-        <button class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
     </header>
+    <script src="header.js"></script>
 
     <!-- ① ファーストビュー -->
     <section class="hero">
@@ -950,26 +933,6 @@
                     }
                 );
             }
-
-            // Hamburger Menu
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            const navLinks = document.querySelectorAll('.main-nav a');
-
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
-
-            // Close menu when a link is clicked
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (nav.classList.contains('is-active')) {
-                        hamburger.classList.remove('is-active');
-                        nav.classList.remove('is-active');
-                    }
-                });
-            });
 
             // Back to Top Button
             const backToTopButton = document.querySelector('.back-to-top');
