@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <style>
         .summary-grid {
             display: grid;
@@ -144,27 +144,9 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NHMRTD73"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-
     <header class="header">
-        <a href="index.html" class="logo">下北コミュニティ</a>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">トップ</a></li>
-                <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html">おすすめ</a></li>
-                <li><a href="column.html">コラム</a></li>
-                <li><a href="diagnosis.html">下北16診断</a></li>
-                <li><a href="mystery.html">謎解き</a></li>
-                <li><a href="staff.html">運営募集</a></li>
-                <li><a href="contact.html">お問い合わせ</a></li>
-            </ul>
-        </nav>
-        <button class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
     </header>
+    <script src="assets/js/header.js" defer></script>
 
     <section class="section main-content fade-in">
         <div class="container">
@@ -194,15 +176,9 @@
     </section>
 
     <footer>
-        <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="diagnosis.html">下北16診断</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
-            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
-        </div>
     </footer>
 
-    <a href="#" class="back-to-top">↑</a>
-
-    <script src="diagnosis-data.js"></script>
+    <script src="assets/js/diagnosis-data.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -223,12 +199,6 @@
         document.addEventListener("DOMContentLoaded", function() {
             // 共通UI処理
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
 
             // 一覧生成
             const grid = document.getElementById('summary-grid');
@@ -313,5 +283,6 @@
             loadRanking();
         });
     </script>
+    <script src="assets/js/footer.js" defer></script>
 </body>
 </html>

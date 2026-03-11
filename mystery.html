@@ -1,8 +1,8 @@
     <title>下北沢・上級謎解きゲーム | 下北コミュニティ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/style.css" />
     <style>
         /* --- 謎解きゲーム固有スタイル --- */
         body {
@@ -221,24 +221,8 @@
 <body>
 
     <header class="header">
-        <a href="index.html" class="logo">下北コミュニティ</a>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">トップ</a></li>
-                <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html">おすすめ</a></li>
-                <li><a href="column.html">コラム</a></li>
-                <li><a href="diagnosis.html">下北16診断</a></li>
-                <li><a href="staff.html">運営募集</a></li>
-                <li><a href="contact.html">お問い合わせ</a></li>
-            </ul>
-        </nav>
-        <button class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
     </header>
+    <script src="header.js" defer></script>
 
     <section class="section game-section">
         <div class="container" style="width: 100%; display: flex; justify-content: center;">
@@ -304,33 +288,10 @@
     </section>
 
     <footer>
-        <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="diagnosis.html">下北16診断</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
-            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
-        </div>
     </footer>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // --- 共通UI処理 (ハンバーガーメニュー) ---
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            const navLinks = document.querySelectorAll('.main-nav a');
-
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (nav.classList.contains('is-active')) {
-                        hamburger.classList.remove('is-active');
-                        nav.classList.remove('is-active');
-                    }
-                });
-            });
-
             // --- 謎解きゲームロジック ---
             
             // 問題データ
@@ -597,5 +558,6 @@
             });
         });
     </script>
+    <script src="assets/js/footer.js" defer></script>
 </body>
 </html>

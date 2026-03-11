@@ -7,9 +7,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
         /* --- 固有スタイル --- */
+        #map {
+            height: 400px;
+            margin-bottom: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
         .filter-container {
             display: flex;
             justify-content: center;
@@ -127,24 +136,8 @@
 <body>
 
     <header class="header">
-        <a href="index.html" class="logo">下北コミュニティ</a>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">トップ</a></li>
-                <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html">おすすめ</a></li>
-                <li><a href="column.html">コラム</a></li>
-                <li><a href="diagnosis.html">下北16診断</a></li>
-                <li><a href="staff.html">運営募集</a></li>
-                <li><a href="contact.html">お問い合わせ</a></li>
-            </ul>
-        </nav>
-        <button class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
     </header>
+    <script src="assets/js/header.js" data-path-prefix="" defer></script>
 
     <section class="section main-content">
         <div class="container">
@@ -152,6 +145,9 @@
                 <h2 class="section-title">下北沢のおすすめスポット</h2>
             </div>
             <p class="fade-in" style="text-align: center; margin-bottom: 40px;">活動の前後によく立ち寄るお店や、<br>メンバーおすすめのスポットをご紹介します。</p>
+
+            <!-- Map -->
+            <div id="map" class="fade-in"></div>
 
             <!-- フィルタリングボタン -->
             <div class="filter-container fade-in">
@@ -170,7 +166,7 @@
             <div class="ad-container fade-in" style="margin-top: 60px;">
                 <span class="ad-label">スポンサーリンク</span>
                 <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
-                    <img src="images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius: 8px;">
+                    <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius: 8px;">
                 </a>
                 <p style="font-size:0.9rem; margin-top:15px; margin-bottom:0;">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
             </div>
@@ -185,86 +181,10 @@
     </section>
 
     <footer>
-        <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="diagnosis.html">下北16診断</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
-            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
-        </div>
     </footer>
-
-    <!-- ページトップへ戻るボタン -->
-    <a href="#" class="back-to-top">↑</a>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // --- 位置情報取得と距離表示 ---
-            const locationInfo = document.getElementById('location-info');
-            // 下北沢駅周辺の座標
-            const TARGET_LAT = 35.6612;
-            const TARGET_LNG = 139.6666;
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        
-                        // 直線距離の計算 (Haversine formula)
-                        const R = 6371; // 地球の半径(km)
-                        const dLat = (TARGET_LAT - lat) * Math.PI / 180;
-                        const dLng = (TARGET_LNG - lng) * Math.PI / 180;
-                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                                  Math.cos(lat * Math.PI / 180) * Math.cos(TARGET_LAT * Math.PI / 180) * 
-                                  Math.sin(dLng/2) * Math.sin(dLng/2);
-                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                        const distance = (R * c).toFixed(1); // 小数点第1位まで
-
-                        // Googleマップルート検索URL (公共交通機関)
-                        const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${TARGET_LAT},${TARGET_LNG}&travelmode=transit`;
-
-                        locationInfo.innerHTML = `📍下北沢まで約${distance}km <a href="${mapUrl}" target="_blank">🚆ルート・時間を検索</a>`;
-                        locationInfo.style.display = 'flex';
-                    },
-                    (error) => {
-                        console.log("位置情報の取得に失敗しました", error);
-                    }
-                );
-            }
-
-            // Hamburger Menu
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            const navLinks = document.querySelectorAll('.main-nav a');
-
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (nav.classList.contains('is-active')) {
-                        hamburger.classList.remove('is-active');
-                        nav.classList.remove('is-active');
-                    }
-                });
-            });
-
-            // Back to Top Button
-            const backToTopButton = document.querySelector('.back-to-top');
-            if (backToTopButton) {
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 400) {
-                        backToTopButton.classList.add('visible');
-                    } else {
-                        backToTopButton.classList.remove('visible');
-                    }
-                });
-                backToTopButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            }
-
             // スクロール時のフェードインアニメーション
             const observerOptions = {
                 root: null,
@@ -288,40 +208,40 @@
             // --- スポットデータ ---
             const spots = [
                 // Cafe
-                { name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", description: "reload内にあるスタイリッシュな空間。Wi-Fi・電源完備で作業にも最適。" },
-                { name: "W/O STAND SHIMOKITA", category: "cafe", description: "自販機が入り口の遊び心あるコーヒースタンド。写真映えも抜群。" },
-                { name: "BOOKENDS COFFEE SERVICE", category: "cafe", description: "本に囲まれた空間で、こだわりのスペシャルティコーヒーが楽しめる。" },
-                { name: "喫茶ネグラ", category: "cafe", description: "鮮やかな青い壁が印象的。レトロなクリームソーダが人気。" },
-                { name: "トロワ・シャンブル", category: "cafe", description: "レンガ造りの落ち着いた空間。ネルドリップで淹れる深煎りコーヒーが絶品。" },
-                { name: "CITY COUNTRY CITY", category: "cafe", description: "レコードショップ併設。音楽好きにはたまらない空間。" },
-                { name: "kate coffee", category: "cafe", description: "自家焙煎のスペシャルティコーヒーと、美味しい焼き菓子が楽しめる。" },
-                { name: "ON THE WAY, coffee & cupcake", category: "cafe", description: "見た目も可愛いカップケーキが人気。手土産にも喜ばれる。" },
-                { name: "Brooklyn Roasting Company", category: "cafe", description: "ミカン下北にある広々としたカフェ。開放的なテラス席も。" },
-                { name: "COFFEA EXLIBRIS", category: "cafe", description: "コーヒー豆の種類が豊富。バリスタと相談しながら好みの味を見つけられる。" },
-                { name: "バロンデッセ", category: "cafe", description: "ラテアートが有名。ギャラリーも併設されているアートな空間。" },
-                { name: "モルディブ", category: "cafe", description: "昔ながらの喫茶店。カレーやピラフなど、フードメニューも充実。" },
-                { name: "フリッパーズ 下北沢店", category: "cafe", description: "「奇跡のパンケーキ」で有名。ふわふわ食感がたまらない。" },
+                { name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", description: "reload内にあるスタイリッシュな空間。Wi-Fi・電源完備で作業にも最適。", lat: 35.6622, lng: 139.6645 },
+                { name: "W/O STAND SHIMOKITA", category: "cafe", description: "自販機が入り口の遊び心あるコーヒースタンド。写真映えも抜群。", lat: 35.6603, lng: 139.6685 },
+                { name: "BOOKENDS COFFEE SERVICE", category: "cafe", description: "本に囲まれた空間で、こだわりのスペシャルティコーヒーが楽しめる。", lat: 35.6628, lng: 139.6691 },
+                { name: "喫茶ネグラ", category: "cafe", description: "鮮やかな青い壁が印象的。レトロなクリームソーダが人気。", lat: 35.6609, lng: 139.6680 },
+                { name: "トロワ・シャンブル", category: "cafe", description: "レンガ造りの落ち着いた空間。ネルドリップで淹れる深煎りコーヒーが絶品。", lat: 35.6602, lng: 139.6672 },
+                { name: "CITY COUNTRY CITY", category: "cafe", description: "レコードショップ併設。音楽好きにはたまらない空間。", lat: 35.6600, lng: 139.6675 },
+                { name: "kate coffee", category: "cafe", description: "自家焙煎のスペシャルティコーヒーと、美味しい焼き菓子が楽しめる。", lat: 35.6635, lng: 139.6690 },
+                { name: "ON THE WAY, coffee & cupcake", category: "cafe", description: "見た目も可愛いカップケーキが人気。手土産にも喜ばれる。", lat: 35.6639, lng: 139.6698 },
+                { name: "Brooklyn Roasting Company", category: "cafe", description: "ミカン下北にある広々としたカフェ。開放的なテラス席も。", lat: 35.6622, lng: 139.6645 },
+                { name: "COFFEA EXLIBRIS", category: "cafe", description: "コーヒー豆の種類が豊富。バリスタと相談しながら好みの味を見つけられる。", lat: 35.6630, lng: 139.6640 },
+                { name: "バロンデッセ", category: "cafe", description: "ラテアートが有名。ギャラリーも併設されているアートな空間。", lat: 35.6630, lng: 139.6695 },
+                { name: "モルディブ", category: "cafe", description: "昔ながらの喫茶店。カレーやピラフなど、フードメニューも充実。", lat: 35.6608, lng: 139.6678 },
+                { name: "フリッパーズ 下北沢店", category: "cafe", description: "「奇跡のパンケーキ」で有名。ふわふわ食感がたまらない。", lat: 35.6620, lng: 139.6688 },
                 
                 // Curry
-                { name: "マジックスパイス 東京下北沢店", category: "curry", description: "スープカレーの元祖。辛さの段階が「虚空」まであることで有名。" },
-                { name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", description: "ゴロゴロ野菜がたっぷり入った、北海道発の人気スープカレー店。" },
-                { name: "旧ヤム邸 シモキタ荘", category: "curry", description: "大阪発のスパイスカレー。月替わりの独創的なあいがけカレーが楽しめる。" },
-                { name: "茄子おやじ", category: "curry", description: "40年以上続く老舗。どこか懐かしい、優しい味わいの欧風カレー。" },
-                { name: "般゜若 PANNYA CAFE CURRY", category: "curry", description: "薬膳スパイスカレーの有名店。サラサラのルーが特徴的。" },
-                { name: "カレーの惑星", category: "curry", description: "ドライカレーと数種類のカレーをあいがけで楽しめる。見た目も美しい一皿。" },
-                { name: "SAMA 下北沢店", category: "curry", description: "札幌発のスープカレー店。トマトベースやココナッツベースなど、スープの種類が豊富。" },
-                { name: "NAN STATION", category: "curry", description: "チーズナンが絶品。本格的なインド・ネパール料理が楽しめる。" },
-                { name: "スパイスラーメン 点と線.", category: "curry", description: "スープカレーとラーメンが融合した、新感覚のスパイスラーメン。" },
-                { name: "ポニピリカ", category: "curry", description: "野菜たっぷりのスープカレーが人気。店内もおしゃれで女性に人気。" },
-                { name: "犬拳堂", category: "curry", description: "キーマカレーが名物。濃厚な味わいでファンが多い。" },
-                { name: "カレー食堂 心 下北沢店", category: "curry", description: "スープカレーの草分け的存在。安定の美味しさ。" },
-                { name: "202カリー堂", category: "curry", description: "創作スパイスカレーが楽しめる。SNSでも話題の人気店。" },
-                { name: "無敵のカレー", category: "curry", description: "カツカレーが人気。ボリューム満点でガッツリ食べたい時に。" },
-                { name: "スパイスキッチン ムーナ", category: "curry", description: "本格的な南インド料理が味わえる。ミールスがおすすめ。" },
+                { name: "マジックスパイス 東京下北沢店", category: "curry", description: "スープカレーの元祖。辛さの段階が「虚空」まであることで有名。", lat: 35.6645, lng: 139.6648 },
+                { name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", description: "ゴロゴロ野菜がたっぷり入った、北海道発の人気スープカレー店。", lat: 35.6633, lng: 139.6655 },
+                { name: "旧ヤム邸 シモキタ荘", category: "curry", description: "大阪発のスパイスカレー。月替わりの独創的なあいがけカレーが楽しめる。", lat: 35.6629, lng: 139.6640 },
+                { name: "茄子おやじ", category: "curry", description: "40年以上続く老舗。どこか懐かしい、優しい味わいの欧風カレー。", lat: 35.6640, lng: 139.6650 },
+                { name: "般゜若 PANNYA CAFE CURRY", category: "curry", description: "薬膳スパイスカレーの有名店。サラサラのルーが特徴的。", lat: 35.6648, lng: 139.6695 },
+                { name: "カレーの惑星", category: "curry", description: "ドライカレーと数種類のカレーをあいがけで楽しめる。見た目も美しい一皿。", lat: 35.6642, lng: 139.6649 },
+                { name: "SAMA 下北沢店", category: "curry", description: "札幌発のスープカレー店。トマトベースやココナッツベースなど、スープの種類が豊富。", lat: 35.6603, lng: 139.6682 },
+                { name: "NAN STATION", category: "curry", description: "チーズナンが絶品。本格的なインド・ネパール料理が楽しめる。", lat: 35.6610, lng: 139.6690 },
+                { name: "スパイスラーメン 点と線.", category: "curry", description: "スープカレーとラーメンが融合した、新感覚のスパイスラーメン。", lat: 35.6629, lng: 139.6640 },
+                { name: "ポニピリカ", category: "curry", description: "野菜たっぷりのスープカレーが人気。店内もおしゃれで女性に人気。", lat: 35.6605, lng: 139.6679 },
+                { name: "犬拳堂", category: "curry", description: "キーマカレーが名物。濃厚な味わいでファンが多い。", lat: 35.6638, lng: 139.6692 },
+                { name: "カレー食堂 心 下北沢店", category: "curry", description: "スープカレーの草分け的存在。安定の美味しさ。", lat: 35.6600, lng: 139.6685 },
+                { name: "202カリー堂", category: "curry", description: "創作スパイスカレーが楽しめる。SNSでも話題の人気店。", lat: 35.6630, lng: 139.6640 },
+                { name: "無敵のカレー", category: "curry", description: "カツカレーが人気。ボリューム満点でガッツリ食べたい時に。", lat: 35.6608, lng: 139.6688 },
+                { name: "スパイスキッチン ムーナ", category: "curry", description: "本格的な南インド料理が味わえる。ミールスがおすすめ。", lat: 35.6635, lng: 139.6645 },
 
                 // Spot
-                { name: "reload", category: "spot", description: "個性的なお店が集まる商業施設。散歩するだけでも楽しい。" },
-                { name: "BONUS TRACK", category: "spot", description: "商店街のような雰囲気の商業施設。飲食店や本屋、コワーキングスペースも。" }
+                { name: "reload", category: "spot", description: "個性的なお店が集まる商業施設。散歩するだけでも楽しい。", lat: 35.6622, lng: 139.6645 },
+                { name: "BONUS TRACK", category: "spot", description: "商店街のような雰囲気の商業施設。飲食店や本屋、コワーキングスペースも。", lat: 35.6630, lng: 139.6640 }
             ];
 
             // カテゴリごとの画像（ダミー）
@@ -339,9 +259,17 @@
 
             const grid = document.getElementById('spot-grid');
             const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            // --- Map Initialization ---
+            const map = L.map('map').setView([35.662, 139.667], 16); // Centered on Shimokitazawa
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            const markers = L.layerGroup().addTo(map);
 
             function renderSpots(filter) {
                 grid.innerHTML = '';
+                markers.clearLayers(); // Clear existing markers
                 const filteredSpots = filter === 'all' ? spots : spots.filter(s => s.category === filter);
 
                 filteredSpots.forEach((spot, index) => {
@@ -365,6 +293,18 @@
                     `;
                     grid.appendChild(card);
                     observer.observe(card);
+
+                    // Add marker to map
+                    if (spot.lat && spot.lng) {
+                        const marker = L.marker([spot.lat, spot.lng]);
+                        marker.bindPopup(`<b>${spot.name}</b>`);
+                        markers.addLayer(marker);
+
+                        // カードのホバーでポップアップ表示
+                        card.addEventListener('mouseover', () => marker.openPopup());
+                        card.addEventListener('mouseout', () => marker.closePopup());
+                        marker.on('click', () => card.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+                    }
                 });
             }
 
@@ -385,5 +325,6 @@
             });
         });
     </script>
+    <script src="assets/js/footer.js" data-path-prefix="" defer></script>
 </body>
 </html>

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <style>
         /* --- 診断ページ用スタイル --- */
         .diagnosis-container {
@@ -44,19 +44,58 @@
         .question-screen {
             display: none;
         }
+        .progress-container {
+            position: relative;
+            padding-bottom: 50px; /* バーと犬のスペース確保 */
+            margin-bottom: 30px;
+        }
+        .progress-message {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: bold;
+            margin-bottom: 15px;
+            min-height: 1.5em; /* ガタつき防止 */
+        }
         .progress-bar {
-            width: 100%;
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
             height: 6px;
             background: #eee;
             border-radius: 10px;
-            margin-bottom: 30px;
-            overflow: hidden;
+            z-index: 1;
         }
         .progress-fill {
             height: 100%;
             background: var(--accent-color);
             width: 0%;
             transition: width 0.3s ease;
+        }
+        #dog-icon {
+            position: absolute;
+            bottom: 10px; /* バーの上に乗るように調整 */
+            left: 0;
+            height: 40px;
+            width: auto;
+            transform: translateX(-50%) scaleX(-1); /* 左向きのGIFを右向きに反転 */
+            transition: left 0.5s ease-out;
+            z-index: 2;
+        }
+        #goal-icon {
+            position: absolute;
+            right: -10px;
+            bottom: 5px;
+            font-size: 2rem;
+            z-index: 2;
+        }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out infinite;
         }
         .question-text {
             font-size: 1.3rem;
@@ -178,7 +217,7 @@
 
     <header class="header">
     </header>
-    <script src="header.js"></script>
+    <script src="assets/js/header.js" defer></script>
 
     <section class="section main-content fade-in">
         <div class="container">
@@ -190,13 +229,18 @@
                     <h1>下北16診断</h1>
                     <p>あなたの性格を「下北沢にいそうな人」に例えると？<br>古着、音楽、演劇、カレー...<br>この街でのあなたの「正体」を暴きます。</p>
                     <button id="start-btn" class="submit-btn" style="margin: 0 auto;">診断を始める</button>
-                    <a href="diagnosis-summary.html" style="display: block; margin-top: 20px; color: var(--accent-color); font-size: 0.9rem;">全16タイプの一覧を見る →</a>
+                    <a href="diagnosis-summary.html" class="btn-cta" style="background-color: #27ae60; font-size: 1rem; max-width: 250px; margin-top: 20px;">全16タイプの一覧を見る</a>
                 </div>
 
                 <!-- 質問画面 -->
                 <div id="question-screen" class="diagnosis-card question-screen">
-                    <div class="progress-bar">
-                        <div id="progress-fill" class="progress-fill"></div>
+                    <div class="progress-container">
+                        <div id="progress-message" class="progress-message"></div>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                        <img src="assets/images/walking-dog.gif" id="dog-icon" alt="歩く犬">
+                        <span id="goal-icon">🍖</span>
                     </div>
                     <div id="question-container">
                         <h2 id="question-text" class="question-text"></h2>
@@ -259,14 +303,10 @@
     </section>
 
     <footer>
-        <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="diagnosis.html">下北16診断</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
-            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
-        </div>
     </footer>
 
-    <script src="articles.js"></script> <!-- コラムデータを読み込む -->
-    <script src="diagnosis-data.js"></script> <!-- 診断データを読み込む -->
+    <script src="assets/js/articles.js"></script> <!-- コラムデータを読み込む -->
+    <script src="assets/js/diagnosis-data.js"></script> <!-- 診断データを読み込む -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -381,6 +421,9 @@
             const questionText = document.getElementById('question-text');
             const optionsContainer = document.getElementById('options-container');
             const progressFill = document.getElementById('progress-fill');
+            const progressMessage = document.getElementById('progress-message');
+            const dogIcon = document.getElementById('dog-icon');
+            const goalIcon = document.getElementById('goal-icon');
 
             // 開始ボタン
             startBtn.addEventListener('click', () => {
@@ -396,8 +439,8 @@
                 optionsContainer.innerHTML = '';
 
                 // プログレスバー更新
-                const progress = ((currentQuestionIndex) / questions.length) * 100;
-                progressFill.style.width = `${progress}%`;
+                const progress = (currentQuestionIndex / questions.length) * 100;
+                updateProgressUI(progress);
 
                 // 選択肢生成
                 q.options.forEach(option => {
@@ -407,6 +450,30 @@
                     btn.addEventListener('click', () => handleAnswer(option.scores));
                     optionsContainer.appendChild(btn);
                 });
+            }
+
+            // プログレスUI更新
+            function updateProgressUI(percent) {
+                progressFill.style.width = `${percent}%`;
+                dogIcon.style.left = `${percent}%`;
+
+                // メッセージ更新
+                let msg = "";
+                if (percent < 30) {
+                    msg = "🐶 ゴールのエサを目指して歩いています。最後まで答えてエサを食べさせてあげよう！";
+                } else if (percent < 70) {
+                    msg = "🐶 いい感じ！エサまでまだ少しあるよ！";
+                } else if (percent < 100) {
+                    msg = "あと少しでエサに届くよ！🐶";
+                } else {
+                    msg = "🐶 やった！エサに到着！";
+                }
+                progressMessage.textContent = msg;
+
+                // 100%時の演出
+                if (percent >= 100) {
+                    goalIcon.classList.add('shake');
+                }
             }
 
             // 回答処理
@@ -421,7 +488,11 @@
                 if (currentQuestionIndex < questions.length) {
                     showQuestion();
                 } else {
-                    showResult();
+                    // 100%の演出を見せるため少し待つ
+                    updateProgressUI(100);
+                    setTimeout(() => {
+                        showResult();
+                    }, 1500);
                 }
             }
 
@@ -490,5 +561,6 @@
             }
         });
     </script>
+    <script src="assets/js/footer.js" defer></script>
 </body>
 </html>

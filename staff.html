@@ -658,72 +658,10 @@
     </section>
 
     <footer>
-        <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="diagnosis.html">下北16診断</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
-            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
-        </div>
     </footer>
 
-    <!-- ページトップへ戻るボタン -->
-    <a href="#" class="back-to-top">↑</a>
-
     <script>
-        // スクロール時のフェードインアニメーション
         document.addEventListener("DOMContentLoaded", function() {
-            // --- 位置情報取得と距離表示 ---
-            const locationInfo = document.getElementById('location-info');
-            // 下北沢駅周辺の座標
-            const TARGET_LAT = 35.6612;
-            const TARGET_LNG = 139.6666;
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        
-                        // 直線距離の計算 (Haversine formula)
-                        const R = 6371; // 地球の半径(km)
-                        const dLat = (TARGET_LAT - lat) * Math.PI / 180;
-                        const dLng = (TARGET_LNG - lng) * Math.PI / 180;
-                        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                                  Math.cos(lat * Math.PI / 180) * Math.cos(TARGET_LAT * Math.PI / 180) * 
-                                  Math.sin(dLng/2) * Math.sin(dLng/2);
-                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                        const distance = (R * c).toFixed(1); // 小数点第1位まで
-
-                        // Googleマップルート検索URL (公共交通機関)
-                        const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${TARGET_LAT},${TARGET_LNG}&travelmode=transit`;
-
-                        locationInfo.innerHTML = `📍下北沢まで約${distance}km <a href="${mapUrl}" target="_blank">🚆ルート・時間を検索</a>`;
-                        locationInfo.style.display = 'flex';
-                    },
-                    (error) => {
-                        console.log("位置情報の取得に失敗しました", error);
-                    }
-                );
-            }
-
-            // Hamburger Menu
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            const navLinks = document.querySelectorAll('.main-nav a');
-
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
-
-            // Close menu when a link is clicked
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (nav.classList.contains('is-active')) {
-                        hamburger.classList.remove('is-active');
-                        nav.classList.remove('is-active');
-                    }
-                });
-            });
-
             // スクロール時のフェードインアニメーション
             const observerOptions = {
                 root: null,
@@ -742,24 +680,8 @@
 
             const elements = document.querySelectorAll(".fade-in");
             elements.forEach(el => observer.observe(el));
-
-            // Back to Top Button
-            const backToTopButton = document.querySelector('.back-to-top');
-            if (backToTopButton) {
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 400) {
-                        backToTopButton.classList.add('visible');
-                    } else {
-                        backToTopButton.classList.remove('visible');
-                    }
-                });
-
-                backToTopButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            }
         });
     </script>
+    <script src="footer.js" defer></script>
 </body>
 </html>
