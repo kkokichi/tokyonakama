@@ -146,14 +146,45 @@
             gap: 25px;
         }
 
+        .empathy-guide {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+        }
+        .empathy-guide h3 {
+            margin: 0 0 5px;
+        }
+
+        #empathy-check-count {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            text-align: center;
+            margin-top: 30px;
+            font-weight: bold;
+            color: #555;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-size: 1.1rem;
+        }
+        #empathy-check-count span {
+            font-size: 1.3rem;
+            color: var(--accent-color);
+        }
+
         .empathy-bubble {
             position: relative;
             background: #fff;
-            padding: 20px 25px;
+            padding: 15px 20px 15px 60px;
             border-radius: var(--border-radius);
             font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.07);
             border: 1px solid #fff;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
         }
 
         .empathy-bubble::before {
@@ -175,6 +206,51 @@
             right: 30px;
             border-width: 0 15px 15px 0;
             border-color: transparent #fff transparent transparent;
+        }
+        .empathy-checkbox {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .empathy-bubble.checked .empathy-checkbox {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        .empathy-bubble.checked .empathy-checkbox .checkmark {
+            opacity: 1;
+            color: white;
+            transform: scale(1);
+        }
+        .empathy-bubble:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .empathy-bubble.checked {
+            background-color: var(--accent-light);
+            transform: scale(1.03);
+            border-color: var(--accent-color);
+        }
+        .empathy-bubble .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .empathy-bubble.checked .checkmark {
+            opacity: 1;
+            transform: scale(1);
         }
 
         /* --- 3. 解決策 --- */
@@ -494,18 +570,25 @@
             <div class="section-header">
                 <h2 class="section-title">ふと、こんなことを<br>思う瞬間はありませんか？</h2>
             </div>
-            <div class="empathy-list">
-                <div class="empathy-bubble left fade-in" style="--i: 0; align-self: flex-start; max-width: 80%;">学生時代の友人は結婚や転勤で、気軽に誘えなくなった…</div>
-                <div class="empathy-bubble right fade-in" style="--i: 1; align-self: flex-end; max-width: 80%;">休日はスマホを見ていたら、いつの間にか夕方になっている…</div>
-                <div class="empathy-bubble left fade-in" style="--i: 2; align-self: flex-start; max-width: 80%;">職場の人とは仲が良いけれど、プライベートの話はしづらい…</div>
-                <div class="empathy-bubble right fade-in" style="--i: 3; align-self: flex-end; max-width: 80%;">新しい趣味を始めたいけど、一人だと腰が重い…</div>
-                <div class="empathy-bubble left fade-in" style="--i: 4; align-self: flex-start; max-width: 80%;">「社会人サークル」と検索しても、ガチすぎたり、ノリが若すぎて引いてしまう…</div>
+            <div class="empathy-guide fade-in" style="--i: 0;">
+                <h3>🤔 あなたはいくつ当てはまりますか？</h3>
+                <p style="margin:0; font-size: 0.9rem; color: #666;">当てはまるものにチェックしてください</p>
             </div>
-            <div class="card fade-in" style="--i: 5; margin-top: 40px;">
+            <div class="empathy-list">
+                <div class="empathy-bubble left fade-in" style="--i: 1; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>学生時代の友人は結婚や転勤で、気軽に誘えなくなった…</div>
+                <div class="empathy-bubble right fade-in" style="--i: 2; align-self: flex-end; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>休日はスマホを見ていたら、いつの間にか夕方になっている…</div>
+                <div class="empathy-bubble left fade-in" style="--i: 3; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>職場の人とは仲が良いけれど、プライベートの話はしづらい…</div>
+                <div class="empathy-bubble right fade-in" style="--i: 4; align-self: flex-end; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>新しい趣味を始めたいけど、一人だと腰が重い…</div>
+                <div class="empathy-bubble left fade-in" style="--i: 5; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>「社会人サークル」と検索しても、ガチすぎたり、ノリが若すぎて引いてしまう…</div>
+            </div>
+            <div id="empathy-check-count"></div>
+            <div id="empathy-result" class="card fade-in" style="--i: 6; margin-top: 40px; display: none; background-color: var(--accent-light);">
                 <div class="profile" style="align-items: center; gap: 20px;">
                     <img src="assets/images/profile.webp" alt="主催者の写真" class="profile-img" style="width: 80px; height: 80px;">
                     <div class="profile-text">
-                        <p style="margin:0; font-size:0.95rem; line-height: 1.8;">もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。</p>
+                        <p id="empathy-message" style="margin:0; font-size:0.95rem; line-height: 1.8;">
+                            もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。
+                        </p>
                     </div>
                 </div>
             </div>
@@ -930,6 +1013,49 @@
             window.addEventListener('scroll', updateGradient, { passive: true });
             updateGradient(); // 初期表示
         });
+
+        // --- 共感ゾーンのインタラクション ---
+        const empathyItems = document.querySelectorAll('[data-empathy-item]');
+        const empathyResult = document.getElementById('empathy-result');
+        const empathyMessage = document.getElementById('empathy-message');
+        const checkCountDisplay = document.getElementById('empathy-check-count');
+
+        empathyItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('checked');
+                updateEmpathyResult();
+            });
+        });
+
+        function updateEmpathyResult() {
+            const checkedCount = document.querySelectorAll('.empathy-bubble.checked').length;
+            const totalCount = empathyItems.length;
+            
+            let countMessage = "";
+            if (checkedCount === 0) {
+                countMessage = "まだ当てはまるものはありません";
+            } else if (checkedCount <= 2) {
+                countMessage = "少し共感ポイントがありますね";
+            } else if (checkedCount <= 4) {
+                countMessage = "あなたに合うコミュニティかもしれません";
+            } else {
+                countMessage = "きっとここがあなたの居場所です";
+            }
+            checkCountDisplay.innerHTML = `${countMessage}<br>あなたは <span>${checkedCount}</span> / ${totalCount} 個当てはまっています`;
+
+            if (checkedCount > 0) {
+                empathyResult.style.display = 'block';
+                checkCountDisplay.style.display = 'block'; // カウンターも表示
+                if (checkedCount >= 3) {
+                    empathyMessage.innerHTML = "<b>あなたと同じ悩みを持つ人が、このコミュニティに集まっています。</b><br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。";
+                } else {
+                    empathyMessage.innerHTML = "もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。";
+                }
+            } else {
+                empathyResult.style.display = 'none';
+                checkCountDisplay.style.display = 'block'; // 0個でもカウンターは表示
+            }
+        }
 
         // --- カルーセル ---
         const carousel = document.getElementById('activity-carousel');
