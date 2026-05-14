@@ -228,6 +228,10 @@
                         <input type="number" id="event-capacity" placeholder="例: 10">
                     </div>
                     <div class="form-group">
+                        <label style="font-weight: bold;">タグ (カンマ区切り)</label>
+                        <input type="text" id="event-tags" placeholder="例: 初心者歓迎, 1人参加OK">
+                    </div>
+                    <div class="form-group">
                         <label style="font-weight: bold;">詳細</label>
                         <textarea id="event-desc" class="reply-textarea" rows="3" placeholder="イベントの説明文"></textarea>
                     </div>
@@ -325,7 +329,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, addDoc, setDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, addDoc, setDoc, serverTimestamp, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Firebase設定
         const firebaseConfig = {
@@ -353,6 +357,7 @@
         const eventDateInput = document.getElementById('event-date');
         const eventImageInput = document.getElementById('event-image');
         const eventCapacityInput = document.getElementById('event-capacity');
+        const eventTagsInput = document.getElementById('event-tags');
         const eventDescInput = document.getElementById('event-desc');
 
         // 簡易パスワード設定 (必要に応じて変更してください)
@@ -539,6 +544,7 @@
             const date = eventDateInput.value.trim();
             const image = eventImageInput.value.trim();
             const capacity = eventCapacityInput.value.trim();
+            const tagsInput = eventTagsInput.value.trim();
             const desc = eventDescInput.value.trim();
 
             if (!title) {
@@ -551,6 +557,7 @@
                 date: date || '未定',
                 image: image,
                 capacity: capacity ? parseInt(capacity) : 0,
+                tags: tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(t => t) : [],
                 description: desc,
                 updatedAt: serverTimestamp()
             };
@@ -580,6 +587,7 @@
             eventDateInput.value = '';
             eventImageInput.value = '';
             eventCapacityInput.value = '';
+            eventTagsInput.value = '';
             eventDescInput.value = '';
             eventIdInput.disabled = false; // ID入力可能に戻す
             document.getElementById('save-event-btn').textContent = 'イベントを保存';
@@ -734,19 +742,31 @@
             // 編集（フォームに値をセット）
             if (e.target.classList.contains('btn-edit-event')) {
                 const docId = e.target.dataset.id;
-                const capacity = e.target.dataset.capacity;
-                // Firestoreから最新データを取得しても良いが、ここでは一覧表示用に取得済みと仮定してDOMから取るか、再取得する
-                // 簡易的に再取得します
                 const docRef = doc(db, "events", docId);
-                // ※本来はgetDocすべきですが、ここでは省略して一覧再読み込み時にキャッシュしたデータを使う等の工夫も可
-                // 今回はシンプルに実装
-                alert('ID: ' + docId + ' の内容をフォームにセットします。\n修正後「イベントを保存」を押してください。');
-                eventIdInput.value = docId;
-                eventIdInput.disabled = true; // IDは変更不可にする
-                eventCapacityInput.value = capacity;
-                document.getElementById('save-event-btn').textContent = '更新する';
-                // ※実際の値セットは、loadEventsでデータを保持しておくか、getDocする必要があります。
-                // 簡易実装として、ここではIDセットのみ行い、ユーザーに入力してもらう形にします（実運用ではgetDoc推奨）
+                
+                try {
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        eventIdInput.value = docId;
+                        eventIdInput.disabled = true; // IDは変更不可にする
+                        eventTitleInput.value = data.title || '';
+                        eventDateInput.value = data.date || '';
+                        eventImageInput.value = data.image || '';
+                        eventCapacityInput.value = data.capacity || '';
+                        eventTagsInput.value = data.tags ? data.tags.join(', ') : '';
+                        eventDescInput.value = data.description || '';
+                        
+                        document.getElementById('save-event-btn').textContent = '更新する';
+                        // フォームの位置までスクロール
+                        eventIdInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        alert("イベントが見つかりません。");
+                    }
+                } catch (error) {
+                    console.error("Error fetching event details:", error);
+                    alert("詳細の取得に失敗しました。");
+                }
             }
         });
 
