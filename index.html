@@ -541,6 +541,71 @@
                 order: 4;
             }
         }
+
+        /* --- キャラクター表示スタイル --- */
+        .chara-container {
+            position: fixed;
+            right: 20px;
+            bottom: -160px; /* 初期状態は画面外に隠す */
+            z-index: 1500;
+            cursor: pointer;
+            transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chara-container.active {
+            bottom: 25px; /* スクロールが300pxを超えたら出現 */
+        }
+
+        #shimokita-chara {
+            width: 100px;
+            height: auto;
+            animation: bobbing 2.5s ease-in-out infinite; /* 浮遊アニメーション */
+        }
+
+        /* キャラクター上の吹き出し */
+        .speech-bubble {
+            position: relative;
+            background: #fff;
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .chara-container:hover .speech-bubble {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 吹き出しの三角部分 */
+        .speech-bubble::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 8px 0;
+            border-style: solid;
+            border-color: var(--accent-color) transparent transparent;
+        }
+
+        /* 浮いているような上下運動のアニメーション */
+        @keyframes bobbing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
     </style>
 </head>
 <body class="has-sticky-cta">
@@ -1012,6 +1077,26 @@
 
             window.addEventListener('scroll', updateGradient, { passive: true });
             updateGradient(); // 初期表示
+
+            // --- キャラクターのスクロール・クリック制御 ---
+            const charaContainer = document.getElementById('shimokita-chara-container');
+            
+            window.addEventListener('scroll', () => {
+                // 300pxを超えたら 'active' クラスを付与
+                if (window.scrollY > 300) {
+                    charaContainer.classList.add('active');
+                } else {
+                    charaContainer.classList.remove('active');
+                }
+            }, { passive: true });
+
+            // クリック時にスムーズにトップへ戻る
+            charaContainer.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
         });
 
         // --- 共感ゾーンのインタラクション ---
@@ -1107,6 +1192,13 @@
             });
         }
     </script>
+
+    <!-- キャラクター表示用コンテナ -->
+    <div id="shimokita-chara-container" class="chara-container">
+        <div class="speech-bubble">下北へおいでよ！</div>
+        <img src="assets/images/shimokita-chara.png" alt="下北沢コミュニティキャラクター" id="shimokita-chara">
+    </div>
+
     <script src="assets/js/footer.js" data-path-prefix="" defer></script>
 </body>
 </html>

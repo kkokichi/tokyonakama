@@ -8,12 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
         /* --- 固有スタイル --- */
         #map {
-            height: 400px;
+            height: 450px;
             margin-bottom: 40px;
             border-radius: var(--border-radius);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -25,6 +23,7 @@
             gap: 10px;
             margin-bottom: 40px;
             flex-wrap: wrap;
+            padding: 0 10px;
         }
         .filter-btn {
             padding: 10px 25px;
@@ -41,6 +40,22 @@
             background: var(--accent-color);
             color: white;
         }
+
+        /* カテゴリごとのボタン色設定 */
+        .filter-btn[data-filter="cafe"] { border-color: #e67e22; color: #e67e22; }
+        .filter-btn[data-filter="cafe"].active, .filter-btn[data-filter="cafe"]:hover { background-color: #e67e22; color: white; }
+
+        .filter-btn[data-filter="curry"] { border-color: #f1c40f; color: #b7950b; } /* 可読性のため文字は少し濃い色 */
+        .filter-btn[data-filter="curry"].active, .filter-btn[data-filter="curry"]:hover { background-color: #f1c40f; color: #333; }
+
+        .filter-btn[data-filter="furugi"] { border-color: #27ae60; color: #27ae60; }
+        .filter-btn[data-filter="furugi"].active, .filter-btn[data-filter="furugi"]:hover { background-color: #27ae60; color: white; }
+
+        .filter-btn[data-filter="theater"] { border-color: #8e44ad; color: #8e44ad; }
+        .filter-btn[data-filter="theater"].active, .filter-btn[data-filter="theater"]:hover { background-color: #8e44ad; color: white; }
+
+        .filter-btn[data-filter="spot"] { border-color: #3498db; color: #3498db; }
+        .filter-btn[data-filter="spot"].active, .filter-btn[data-filter="spot"]:hover { background-color: #3498db; color: white; }
         
         .spot-grid {
             display: grid;
@@ -98,6 +113,8 @@
         }
         .cat-cafe { background-color: #e67e22; }
         .cat-curry { background-color: #f1c40f; color: #333; }
+        .cat-furugi { background-color: #27ae60; }
+        .cat-theater { background-color: #8e44ad; }
         .cat-spot { background-color: #3498db; }
         
         .spot-title {
@@ -131,6 +148,64 @@
         .spot-link:hover::after {
             transform: translateX(3px);
         }
+
+        /* リンクボタンのコンテナ（修正①） */
+        .spot-links {
+            display: flex;
+            gap: 15px;
+            margin-top: auto;
+            padding-top: 15px;
+            flex-wrap: wrap;
+        }
+        .spot-link-detail {
+            color: #27ae60; /* カフェ・カレー等に合う緑系 */
+        }
+
+        /* --- モーダルスタイル --- */
+        @media (max-width: 768px) {
+            #map {
+                height: 350px;
+            }
+            .filter-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+            position: relative;
+            animation: fadeInUp 0.3s ease;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            z-index: 10;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .modal-body { padding: 25px; }
+        .modal-img { width: 100%; height: 250px; object-fit: cover; }
+        .modal-btn { margin-top: 20px; width: 100%; }
     </style>
 </head>
 <body>
@@ -152,8 +227,10 @@
             <!-- フィルタリングボタン -->
             <div class="filter-container fade-in">
                 <button class="filter-btn active" data-filter="all">すべて</button>
-                <button class="filter-btn" data-filter="curry">カレー</button>
                 <button class="filter-btn" data-filter="cafe">カフェ・喫茶</button>
+                <button class="filter-btn" data-filter="curry">カレー</button>
+                <button class="filter-btn" data-filter="furugi">古着屋</button>
+                <button class="filter-btn" data-filter="theater">劇場・娯楽</button>
                 <button class="filter-btn" data-filter="spot">その他</button>
             </div>
 
@@ -207,69 +284,109 @@
 
             // --- スポットデータ ---
             const spots = [
-                // Cafe
-                { name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", description: "reload内にあるスタイリッシュな空間。Wi-Fi・電源完備で作業にも最適。", lat: 35.6622, lng: 139.6645 },
-                { name: "W/O STAND SHIMOKITA", category: "cafe", description: "自販機が入り口の遊び心あるコーヒースタンド。写真映えも抜群。", lat: 35.6603, lng: 139.6685 },
-                { name: "BOOKENDS COFFEE SERVICE", category: "cafe", description: "本に囲まれた空間で、こだわりのスペシャルティコーヒーが楽しめる。", lat: 35.6628, lng: 139.6691 },
-                { name: "喫茶ネグラ", category: "cafe", description: "鮮やかな青い壁が印象的。レトロなクリームソーダが人気。", lat: 35.6609, lng: 139.6680 },
-                { name: "トロワ・シャンブル", category: "cafe", description: "レンガ造りの落ち着いた空間。ネルドリップで淹れる深煎りコーヒーが絶品。", lat: 35.6602, lng: 139.6672 },
-                { name: "CITY COUNTRY CITY", category: "cafe", description: "レコードショップ併設。音楽好きにはたまらない空間。", lat: 35.6600, lng: 139.6675 },
-                { name: "kate coffee", category: "cafe", description: "自家焙煎のスペシャルティコーヒーと、美味しい焼き菓子が楽しめる。", lat: 35.6635, lng: 139.6690 },
-                { name: "ON THE WAY, coffee & cupcake", category: "cafe", description: "見た目も可愛いカップケーキが人気。手土産にも喜ばれる。", lat: 35.6639, lng: 139.6698 },
-                { name: "Brooklyn Roasting Company", category: "cafe", description: "ミカン下北にある広々としたカフェ。開放的なテラス席も。", lat: 35.6622, lng: 139.6645 },
-                { name: "COFFEA EXLIBRIS", category: "cafe", description: "コーヒー豆の種類が豊富。バリスタと相談しながら好みの味を見つけられる。", lat: 35.6630, lng: 139.6640 },
-                { name: "バロンデッセ", category: "cafe", description: "ラテアートが有名。ギャラリーも併設されているアートな空間。", lat: 35.6630, lng: 139.6695 },
-                { name: "モルディブ", category: "cafe", description: "昔ながらの喫茶店。カレーやピラフなど、フードメニューも充実。", lat: 35.6608, lng: 139.6678 },
-                { name: "フリッパーズ 下北沢店", category: "cafe", description: "「奇跡のパンケーキ」で有名。ふわふわ食感がたまらない。", lat: 35.6620, lng: 139.6688 },
+                // Cafe (Images added)
+                { name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", description: "reload内にあるスタイリッシュな空間。Wi-Fi・電源完備で作業にも最適。", address: "東京都世田谷区北沢3丁目19-20", img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80" },
+                { name: "W/O STAND SHIMOKITA", category: "cafe", description: "自販機が入り口の遊び心あるコーヒースタンド。写真映えも抜群。", address: "東京都世田谷区北沢2丁目26-10", img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80" },
+                { name: "BOOKENDS COFFEE SERVICE", category: "cafe", description: "本に囲まれた空間で、こだわりのスペシャルティコーヒーが楽しめる。", address: "東京都世田谷区北沢2丁目11-17", img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80" },
+                { name: "喫茶ネグラ", category: "cafe", description: "鮮やかな青い壁が印象的。レトロなクリームソーダが人気。", address: "東京都世田谷区北沢2丁目26-13", img: "https://images.unsplash.com/photo-1559925373-568656600915?auto=format&fit=crop&w=600&q=80" },
+                { name: "トロワ・シャンブル", category: "cafe", description: "レンガ造りの落ち着いた空間。ネルドリップで淹れる深煎りコーヒーが絶品。", address: "東京都世田谷区代沢5丁目36-14", img: "https://images.unsplash.com/photo-1507133750040-4c8b5f922457?auto=format&fit=crop&w=600&q=80" },
+                { name: "CITY COUNTRY CITY", category: "cafe", description: "レコードショップ併設. 音楽好きにはたまらない空間。", address: "東京都世田谷区北沢2丁目12-13", img: "https://images.unsplash.com/photo-1605806616949-1e87b487fc2f?auto=format&fit=crop&w=600&q=80" },
+                { name: "kate coffee", category: "cafe", description: "自家焙煎のスペシャルティコーヒーと、美味しい焼き菓子が楽しめる。", address: "東京都世田谷区北沢2丁目7-11", img: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80" },
+                { name: "ON THE WAY, coffee & cupcake", category: "cafe", description: "見た目も可愛いカップケーキが人気。手土産にも喜ばれる。", address: "東京都世田谷区北沢2丁目16-2", img: "https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=600&q=80" },
+                { name: "Brooklyn Roasting Company", category: "cafe", description: "ミカン下北にある広々としたカフェ。開放的なテラス席も。", address: "東京都世田谷区北沢2丁目24-5", img: "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=600&q=80" },
+                { name: "COFFEA EXLIBRIS", category: "cafe", description: "コーヒー豆の種類が豊富。バリスタと相談しながら好みの味を見つけられる。", address: "東京都世田谷区代沢5丁目32-13", img: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=600&q=80" },
+                { name: "バロンデッセ", category: "cafe", description: "ラテアートが有名。ギャラリーも併設されているアートな空間。", address: "東京都世田谷区北沢2丁目30-11", img: "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80" },
+                { name: "モルディブ", category: "cafe", description: "昔ながらの喫茶店。カレーやピラフなど, フードメニューも充実。", address: "東京都世田谷区北沢2丁目12-2", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80" },
+                { name: "フリッパーズ 下北沢店", category: "cafe", description: "「奇跡のパンケーキ」で有名。ふわふわ食感がたまらない。", address: "東京都世田谷区北沢2丁目26-20", img: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=600&q=80" },
                 
                 // Curry
-                { name: "マジックスパイス 東京下北沢店", category: "curry", description: "スープカレーの元祖。辛さの段階が「虚空」まであることで有名。", lat: 35.6645, lng: 139.6648 },
-                { name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", description: "ゴロゴロ野菜がたっぷり入った、北海道発の人気スープカレー店。", lat: 35.6633, lng: 139.6655 },
-                { name: "旧ヤム邸 シモキタ荘", category: "curry", description: "大阪発のスパイスカレー。月替わりの独創的なあいがけカレーが楽しめる。", lat: 35.6629, lng: 139.6640 },
-                { name: "茄子おやじ", category: "curry", description: "40年以上続く老舗。どこか懐かしい、優しい味わいの欧風カレー。", lat: 35.6640, lng: 139.6650 },
-                { name: "般゜若 PANNYA CAFE CURRY", category: "curry", description: "薬膳スパイスカレーの有名店。サラサラのルーが特徴的。", lat: 35.6648, lng: 139.6695 },
-                { name: "カレーの惑星", category: "curry", description: "ドライカレーと数種類のカレーをあいがけで楽しめる。見た目も美しい一皿。", lat: 35.6642, lng: 139.6649 },
-                { name: "SAMA 下北沢店", category: "curry", description: "札幌発のスープカレー店。トマトベースやココナッツベースなど、スープの種類が豊富。", lat: 35.6603, lng: 139.6682 },
-                { name: "NAN STATION", category: "curry", description: "チーズナンが絶品。本格的なインド・ネパール料理が楽しめる。", lat: 35.6610, lng: 139.6690 },
-                { name: "スパイスラーメン 点と線.", category: "curry", description: "スープカレーとラーメンが融合した、新感覚のスパイスラーメン。", lat: 35.6629, lng: 139.6640 },
-                { name: "ポニピリカ", category: "curry", description: "野菜たっぷりのスープカレーが人気。店内もおしゃれで女性に人気。", lat: 35.6605, lng: 139.6679 },
-                { name: "犬拳堂", category: "curry", description: "キーマカレーが名物。濃厚な味わいでファンが多い。", lat: 35.6638, lng: 139.6692 },
-                { name: "カレー食堂 心 下北沢店", category: "curry", description: "スープカレーの草分け的存在。安定の美味しさ。", lat: 35.6600, lng: 139.6685 },
-                { name: "202カリー堂", category: "curry", description: "創作スパイスカレーが楽しめる。SNSでも話題の人気店。", lat: 35.6630, lng: 139.6640 },
-                { name: "無敵のカレー", category: "curry", description: "カツカレーが人気。ボリューム満点でガッツリ食べたい時に。", lat: 35.6608, lng: 139.6688 },
-                { name: "スパイスキッチン ムーナ", category: "curry", description: "本格的な南インド料理が味わえる。ミールスがおすすめ。", lat: 35.6635, lng: 139.6645 },
+                { name: "マジックスパイス 東京下北沢店", category: "curry", description: "スープカレーの元祖。辛さの段階が「虚空」まであることで有名。", address: "東京都世田谷区北沢1丁目40-15", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80" },
+                { name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", description: "ゴロゴロ野菜がたっぷり入った、北海道発の人気スープカレー店。", address: "東京都世田谷区北沢3丁目31-14", img: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=600&q=80" },
+                { name: "旧ヤム邸 シモキタ荘", category: "curry", description: "大阪発のスパイスカレー。月替わりの独創的なあいがけカレーが楽しめる。", address: "東京都世田谷区代沢5丁目29-9", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80" },
+                { name: "茄子おやじ", category: "curry", description: "40年以上続く老舗。どこか懐かしい、優しい味わいの欧風カレー。", address: "東京都世田谷区代沢5丁目31-8", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" },
+                { name: "般゜若 PANNYA CAFE CURRY", category: "curry", description: "薬膳スパイスカレーの有名店。サラサラのルーが特徴的。", address: "東京都世田谷区北沢2丁目33-6", img: "https://images.unsplash.com/photo-1596797038583-18a68a63934d?auto=format&fit=crop&w=600&q=80" },
+                { name: "カレーの惑星", category: "curry", description: "ドライカレーと数種類のカレーをあいがけで楽しめる. 見た目も美しい一皿。", address: "東京都世田谷区北沢3丁目34-3", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80" },
+                { name: "SAMA 下北沢店", category: "curry", description: "札幌発のスープカレー店。トマトベースやココナッツベースなど, スープの種類が豊富。", address: "東京都世田谷区北沢2丁目9-1", img: "https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=600&q=80" },
+                { name: "NAN STATION", category: "curry", description: "チーズナンが絶品。本格的なインド・ネパール料理が楽しめる。", address: "東京都世田谷区北沢2丁目30-11", img: "https://images.unsplash.com/photo-1585937421612-71a005604d41?auto=format&fit=crop&w=600&q=80" },
+                { name: "スパイスラーメン 点と線.", category: "curry", description: "スープカレーとラーメンが融合した、新感覚のスパイスラーメン。", address: "東京都世田谷区北沢2丁目14-5", img: "https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=600&q=80" },
+                { name: "ポニピリカ", category: "curry", description: "野菜たっぷりのスープカレーが人気。店内もおしゃれで女性に人気。", address: "東京都世田谷区北沢2丁目8-8", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80" },
+                { name: "犬拳堂", category: "curry", description: "キーマカレーが名物. 濃厚な味わいでファンが多い。", address: "東京都世田谷区北沢2丁目38-10", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" },
+                { name: "カレー食堂 心 下北沢店", category: "curry", description: "スープカレーの草分け的存在。安定の美味しさ。", address: "東京都世田谷区北沢2丁目34-8", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80" },
+                { name: "202カリー堂", category: "curry", description: "創作スパイスカレーが楽しめる。SNSでも話題の人気店。", address: "東京都世田谷区代沢5丁目31-10", img: "https://images.unsplash.com/photo-1596797038583-18a68a63934d?auto=format&fit=crop&w=600&q=80" },
+                { name: "無敵のカレー", category: "curry", description: "カツカレーが人気。ボリューム満点でガッツリ食べたい時に。", address: "東京都世田谷区北沢2丁目33-6", img: "https://images.unsplash.com/photo-1585937421612-71a005604d41?auto=format&fit=crop&w=600&q=80" },
+                { name: "スパイスキッチン ムーナ", category: "curry", description: "本格的な南インド料理が味わえる。ミールスがおすすめ。", address: "東京都世田谷区北沢2丁目12-13", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" },
 
-                // Spot
-                { name: "reload", category: "spot", description: "個性的なお店が集まる商業施設。散歩するだけでも楽しい。", lat: 35.6622, lng: 139.6645 },
-                { name: "BONUS TRACK", category: "spot", description: "商店街のような雰囲気の商業施設。飲食店や本屋、コワーキングスペースも。", lat: 35.6630, lng: 139.6640 }
+                // Furugi (古着屋) - ダミーデータ追加
+                { name: "WEGO VINTAGE 下北沢店", category: "furugi", description: "幅広いジャンルの古着が揃う大型店。初心者にもおすすめ。", address: "東京都世田谷区北沢2丁目29-3", img: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=600&q=80" },
+                { name: "FLAMINGO 下北沢店", category: "furugi", description: "アメリカ古着を中心に、個性的なアイテムが豊富に揃う人気店。", address: "東京都世田谷区北沢2丁目25-12", img: "https://images.unsplash.com/photo-1560243563-062bfc001d68?auto=format&fit=crop&w=600&q=80" },
+
+                // Theater (劇場・娯楽) - ダミーデータ追加
+                { name: "本多劇場", category: "theater", description: "下北沢の演劇文化を牽引する代表的な劇場。様々なジャンルの公演が上演されます。", address: "東京都世田谷区北沢2丁目10-15", img: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=600&q=80" },
+                { name: "ザ・スズナリ", category: "theater", description: "レトロな雰囲気が魅力の小劇場。実験的な演劇が多く上演され、演劇ファンに愛されています。", address: "東京都世田谷区北沢1丁目40-18", img: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=600&q=80" },
+
+                // Spot (その他)
+                { name: "reload", category: "spot", description: "個性的なお店が集まる商業施設。散歩するだけでも楽しい。", address: "東京都世田谷区北沢3丁目19-20", img: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&w=600&q=80" },
+                { name: "BONUS TRACK", category: "spot", description: "商店街のような雰囲気の商業施設。飲食店や本屋、コワーキングスペースも。", address: "東京都世田谷区代沢5丁目21-1", img: "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=600&q=80" }
             ];
 
             // カテゴリごとの画像（ダミー）
             const categoryImages = {
                 cafe: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                 curry: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                furugi: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=600&q=80",
+                theater: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=600&q=80",
                 spot: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
             };
 
             const categoryNames = {
                 cafe: "カフェ・喫茶",
                 curry: "カレー",
+                furugi: "古着屋", // 古着屋カテゴリ名を追加
+                theater: "劇場・娯楽", // 劇場・娯楽カテゴリ名を追加
                 spot: "その他"
+            };
+
+            // ピンの色（Googleマップ標準アイコンURL）
+            const markerIcons = {
+                cafe: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                curry: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
+                furugi: "http://maps.google.com/mapfiles/ms/icons/green-dot.png", // 古着屋のピンを緑に設定
+                theater: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png", // 劇場・娯楽のピンを紫に設定
+                spot: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
             };
 
             const grid = document.getElementById('spot-grid');
             const filterBtns = document.querySelectorAll('.filter-btn');
+            const modal = document.getElementById('spot-modal');
+            const closeModal = document.getElementById('modal-close');
             
-            // --- Map Initialization ---
-            const map = L.map('map').setView([35.662, 139.667], 16); // Centered on Shimokitazawa
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-            const markers = L.layerGroup().addTo(map);
+            // --- Google Map Initialization ---
+            let map;
+            let markers = [];
+            let infoWindow;
+            let geocoder; // ジオコーダーのインスタンス保持用
+            let mapInitialized = false;
+
+            // モーダル表示関数
+            function openSpotModal(spot) {
+                document.getElementById('modal-img').src = spot.img || categoryImages[spot.category];
+                document.getElementById('modal-title').textContent = spot.name;
+                document.getElementById('modal-desc').textContent = spot.description;
+                document.getElementById('modal-map-link').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}`;
+                modal.style.display = 'flex';
+            }
+
+            // モーダルを閉じる
+            closeModal.addEventListener('click', () => modal.style.display = 'none');
+            window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
 
             function renderSpots(filter) {
                 grid.innerHTML = '';
-                markers.clearLayers(); // Clear existing markers
+                // Clear existing markers
+                markers.forEach(m => m.setMap(null));
+                markers = [];
+                const bounds = new google.maps.LatLngBounds();
+
                 const filteredSpots = filter === 'all' ? spots : spots.filter(s => s.category === filter);
 
                 filteredSpots.forEach((spot, index) => {
@@ -277,7 +394,7 @@
                     card.className = 'spot-card fade-in';
                     card.style.transitionDelay = `${index * 0.05}s`; // ずらして表示
 
-                    const imgUrl = categoryImages[spot.category];
+                    const imgUrl = spot.img || categoryImages[spot.category];
                     const catName = categoryNames[spot.category];
 
                     card.innerHTML = `
@@ -288,28 +405,76 @@
                             <span class="spot-category cat-${spot.category}">${catName}</span>
                             <h3 class="spot-title">${spot.name}</h3>
                             <p class="spot-description">${spot.description}</p>
-                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" rel="noopener noreferrer" class="spot-link">Googleマップで見る</a>
+                            <div class="spot-links">
+                                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" rel="noopener noreferrer" class="spot-link">Googleマップで見る</a>
+                                <a href="spot_detail.html?name=${encodeURIComponent(spot.name)}" class="spot-link spot-link-detail">おすすめを見る</a>
+                            </div>
                         </div>
                     `;
                     grid.appendChild(card);
                     observer.observe(card);
 
-                    // Add marker to map
-                    if (spot.lat && spot.lng) {
-                        const marker = L.marker([spot.lat, spot.lng]);
-                        marker.bindPopup(`<b>${spot.name}</b>`);
-                        markers.addLayer(marker);
+                    // 住所文字列から座標を取得してマーカーを生成
+                    if (spot.address) {
+                        geocoder.geocode({ address: spot.address }, (results, status) => {
+                            if (status === 'OK') {
+                                const position = results[0].geometry.location;
+                                const marker = new google.maps.Marker({
+                                    position: position,
+                                    map: map,
+                                    title: spot.name,
+                                    icon: markerIcons[spot.category] || "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                                });
+                                markers.push(marker);
+                                bounds.extend(position);
+                                map.fitBounds(bounds); // 全てのマーカーが収まるように表示範囲を調整
 
-                        // カードのホバーでポップアップ表示
-                        card.addEventListener('mouseover', () => marker.openPopup());
-                        card.addEventListener('mouseout', () => marker.closePopup());
-                        marker.on('click', () => card.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+                                // 情報ウィンドウの内容
+                                const infoContent = `
+                                    <div style="padding:5px; max-width:200px;">
+                                        <h4 style="margin:0 0 5px; color:var(--accent-color);">${spot.name}</h4>
+                                        <p style="font-size:0.8rem; margin:0 0 5px; color:#666;">${spot.description}</p>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" style="font-size:0.8rem; color:var(--accent-color); font-weight:bold;">地図で開く</a>
+                                    </div>
+                                `;
+
+                                // カードのホバー・クリック連動
+                                card.addEventListener('mouseover', () => {
+                                    infoWindow.setContent(infoContent);
+                                    infoWindow.open(map, marker);
+                                });
+                                card.addEventListener('mouseout', () => infoWindow.close());
+                                marker.addListener('click', () => {
+                                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    openSpotModal(spot); // ピンクリックでモーダル表示
+                                });
+                            } else {
+                                // ジオコーディング失敗時のエラー出力
+                                console.error('住所の解析に失敗しました (' + spot.name + '): ' + status);
+                            }
+                        });
                     }
                 });
             }
 
-            // 初期表示
-            renderSpots('all');
+            // Google Mapsが読み込まれた後に実行
+            window.initMap = function() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 35.661647, lng: 139.666679 },
+                    zoom: 16,
+                    mapTypeControl: false,
+                    streetViewControl: true,
+                });
+                infoWindow = new google.maps.InfoWindow();
+                geocoder = new google.maps.Geocoder(); // ジオコーダーのインスタンスを生成
+                mapInitialized = true;
+                renderSpots('all');
+                
+                // 自動ズームが強すぎる場合の調整
+                google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
+                    if (this.getZoom() > 18) this.setZoom(18);
+                });
+            };
 
             // フィルタリング処理
             filterBtns.forEach(btn => {
@@ -325,6 +490,21 @@
             });
         });
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCOEPGikU9tjmiewQ0Kimh3_gtIXvhrI0&callback=initMap" async defer></script>
+
+    <!-- モーダルHTML -->
+    <div id="spot-modal" class="modal">
+        <div class="modal-content">
+            <span id="modal-close" class="modal-close">&times;</span>
+            <img id="modal-img" src="" alt="" class="modal-img">
+            <div class="modal-body">
+                <h3 id="modal-title" class="spot-title"></h3>
+                <p id="modal-desc" class="spot-description"></p>
+                <a id="modal-map-link" href="" target="_blank" class="btn-cta modal-btn">Googleマップでナビを開始</a>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/footer.js" data-path-prefix="" defer></script>
 </body>
 </html>

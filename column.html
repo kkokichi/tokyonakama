@@ -92,7 +92,8 @@
         .cat-culture { background-color: #3498db; }
         .cat-deai { background-color: #e74c3c; }
         .cat-active { background-color: #2ecc71; }
-        .cat-cafe { background-color: #8d6e63; }
+        .cat-cafe { background-color: #8d6e63; } /* カフェの色 */
+        .cat-event { background-color: #e84393; } /* イベントの新しい色 */
         
         .article-title {
             margin: 0 0 10px;
@@ -147,6 +148,7 @@
                 <button class="filter-btn" data-filter="gourmet">グルメ</button>
                 <button class="filter-btn" data-filter="culture">カルチャー</button>
                 <button class="filter-btn" data-filter="active">アクティブ</button>
+                <button class="filter-btn" data-filter="event">イベント</button>
                 <button class="filter-btn" data-filter="cafe">カフェ</button>
             </div>
 
@@ -190,6 +192,9 @@
 
                     const catName = categoryNames[article.category];
 
+                    // 遷移先URLのパスを正しいディレクトリ(columns/)配下に修正
+                    const correctUrl = article.detailUrl.startsWith('columns/') ? article.detailUrl : `columns/${article.detailUrl.split('/').pop()}`;
+
                     card.innerHTML = `
                         <div class="article-img-wrapper">
                             <img src="${article.imageUrl}" alt="${article.title}" class="article-img">
@@ -198,7 +203,7 @@
                             <span class="article-category cat-${article.category}">${catName}</span>
                             <h3 class="article-title">${article.title}</h3>
                             <p class="article-excerpt">${article.excerpt}</p>
-                            <a href="${article.detailUrl}" class="article-link">続きを読む</a>
+                            <a href="${correctUrl}" class="article-link">続きを読む</a>
                         </div>
                     `;
                     grid.appendChild(card);

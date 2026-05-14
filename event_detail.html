@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>イベント詳細 | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* 詳細ページ固有スタイル */
+        .detail-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .back-link-wrapper { margin-bottom: 20px; }
+        .event-header { margin-bottom: 30px; text-align: center; }
+        .event-detail-img { width: 100%; max-height: 450px; object-fit: cover; border-radius: var(--border-radius); margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .event-detail-content { background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 40px; }
+        .category-badge { display: inline-block; padding: 5px 15px; border-radius: 50px; color: white; font-weight: bold; font-size: 0.9rem; margin-bottom: 15px; }
+        .cat-festival { background-color: #e74c3c; } /* お祭り・大型イベント */
+        .cat-walk { background-color: #27ae60; }     /* 街歩き */
+        .cat-game { background-color: #8e44ad; }     /* ゲーム・趣味 */
+        .cat-trip { background-color: #3498db; }     /* お出かけ */
+        
+        /* 基本情報カード */
+        .info-summary-card { background: var(--accent-light); padding: 20px; border-radius: 15px; margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-around; align-items: center; border: 1px solid rgba(191,91,59,0.1); }
+        .info-item { text-align: center; }
+        .info-label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .info-value { font-weight: bold; font-size: 1.1rem; color: var(--text-color); }
+        
+        /* 特徴ボックス */
+        .info-box { margin-bottom: 25px; padding: 20px; border-radius: 12px; background: #fdfdfd; border-left: 5px solid var(--accent-color); }
+        .info-box h3 { margin: 0 0 10px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .info-list { padding-left: 20px; margin-bottom: 0; }
+        .info-list li { margin-bottom: 8px; font-size: 0.95rem; }
+
+        /* マップセクション */
+        .map-section { margin-top: 40px; }
+        .map-iframe { width: 100%; height: 350px; border: 0; border-radius: var(--border-radius); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        @media (max-width: 600px) {
+            .info-summary-card { flex-direction: column; align-items: flex-start; padding: 20px 30px; }
+            .info-item { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header"></header>
+    <script src="assets/js/header.js" data-path-prefix="" defer></script>
+
+    <main class="section main-content">
+        <div class="container detail-container">
+            <div id="event-detail-view" style="display:none;">
+                <div class="back-link-wrapper">
+                    <a href="schedule.html" class="back-link">← 活動予定一覧に戻る</a>
+                </div>
+                
+                <div class="event-header">
+                    <span id="event-cat" class="category-badge"></span>
+                    <h2 id="event-title" class="section-title" style="margin-bottom: 10px;"></h2>
+                    <p id="event-date-text" style="font-weight: bold; color: #666;"></p>
+                </div>
+
+                <img id="event-img" src="" alt="" class="event-detail-img">
+
+                <!-- 基本情報カード -->
+                <div class="info-summary-card">
+                    <div class="info-item">
+                        <span class="info-label">参加費</span>
+                        <span id="event-fee" class="info-value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">定員</span>
+                        <span id="event-capacity" class="info-value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">対象層</span>
+                        <span id="event-target" class="info-value"></span>
+                    </div>
+                </div>
+
+                <div class="event-detail-content">
+                    <p id="event-desc" style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 25px;"></p>
+                    
+                    <div class="info-box">
+                        <h3>✨ ここがポイント！</h3>
+                        <ul id="event-highlights" class="info-list"></ul>
+                    </div>
+                    
+                    <div class="info-box" style="border-left-color: #3498db;">
+                        <h3>🏢 会場・アクセス</h3>
+                        <p id="event-venue" style="font-weight: bold; margin-bottom: 5px;"></p>
+                        <p id="event-address" style="font-size: 0.9rem; color: #666;"></p>
+                    </div>
+                </div>
+
+                <div class="map-section">
+                    <iframe id="map-iframe" class="map-iframe" loading="lazy" allowfullscreen src=""></iframe>
+                    <a id="nav-btn" href="" target="_blank" class="btn-cta">Googleマップで場所を確認</a>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px; padding: 30px; background: #fff; border-radius: 16px; border: 1px solid #eee;">
+                    <p style="margin-bottom: 20px; font-weight: bold;">この活動に参加してみませんか？</p>
+                    <a href="contact.html" class="btn-cta" style="max-width: 300px; margin: 0 auto;">参加・お問い合わせはこちら</a>
+                </div>
+            </div>
+
+            <!-- エラー表示 -->
+            <div id="error-view" style="display:none; text-align:center; padding: 100px 0;">
+                <h2>イベントが見つかりませんでした</h2>
+                <a href="schedule.html" class="btn-cta" style="display: inline-block; margin-top: 30px;">一覧に戻る</a>
+            </div>
+        </div>
+    </main>
+
+    <footer></footer>
+    <script src="assets/js/footer.js" data-path-prefix="" defer></script>
+
+    <script>
+        // イベント詳細データ（静的データ）
+        const eventDetails = {
+            "event-senrosai": {
+                title: "下北線路祭 (Shimokita Senro-sai)",
+                category: "festival",
+                categoryName: "お祭り・周年祭",
+                date: "2025年5月下旬予定",
+                fee: "入場無料 (各企画により実費)",
+                capacity: "制限なし",
+                target: "どなたでも大歓迎",
+                description: "「下北線路街」の全面開業を祝う年に一度の周年祭。東北沢駅から世田谷代田駅まで続く約1.7kmのエリア全域で、ライブ、マーケット、ワークショップが開催されます。街の繋がりを感じられる、下北沢で最も活気のある2日間です。",
+                highlights: [
+                    "線路街マーケット：reloadや空き地に地域の人気店が特別出店",
+                    "屋外ライブパフォーマンス：開放的な広場での音楽や演劇",
+                    "街歩きスタンプラリー：線路街を回遊して限定グッズをゲット",
+                    "シモキタ縁日：お子様も楽しめる昔ながらの遊びコーナー"
+                ],
+                venue: "下北線路街 全エリア",
+                address: "東京都世田谷区北沢・代沢・代田周辺",
+                img: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80"
+            },
+            "event-curryfes": {
+                title: "下北沢カレーフェスティバル",
+                category: "festival",
+                categoryName: "グルメイベント",
+                date: "毎年10月開催",
+                fee: "実費 (食べ歩き形式)",
+                capacity: "制限なし",
+                target: "カレー好き・お散歩好き",
+                description: "カレーの聖地、下北沢を代表する秋の巨大イベント。100店舗以上の飲食店が参加し、この期間しか食べられない「ミニカレー」を提供。街全体がスパイシーな香りに包まれます。",
+                highlights: [
+                    "カレー食べ歩き：スタンプラリーでお得に複数店舗をハシゴ",
+                    "限定メニュー：スイーツ店やBarもカレーにちなんだ特別品を販売",
+                    "公式グッズ：毎年変わるオリジナルTシャツが人気"
+                ],
+                venue: "下北沢駅周辺 提携各店舗",
+                address: "東京都世田谷区北沢2丁目",
+                img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80"
+            },
+            "event-cafe": {
+                title: "☕ 下北沢・隠れ家カフェ巡り",
+                category: "walk",
+                categoryName: "街歩き・交流",
+                date: "週末の午後（不定期）",
+                fee: "500円 + 各自の飲食代",
+                capacity: "8名程度",
+                target: "一人参加・カフェ好き",
+                description: "サークルメンバーで、路地裏の静かなカフェや新しくオープンした話題のスポットを巡ります。美味しいコーヒーを飲みながら、ゆるくおしゃべりを楽しみましょう。",
+                highlights: [
+                    "少人数で話しやすい：人見知りの方でも安心のフォロー体制",
+                    "穴場スポット：一人では入りにくい路地裏の名店へご案内",
+                    "お散歩：カフェ間の移動中も街の発見がいっぱい"
+                ],
+                venue: "下北沢駅 周辺のカフェ",
+                address: "東京都世田谷区北沢2-24-2 (集合場所例)",
+                img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80"
+            },
+            "event-boardgame": {
+                title: "🎲 初心者だらけのボードゲーム会",
+                category: "game",
+                categoryName: "ゲーム・趣味",
+                date: "祝日の午後（月1回）",
+                fee: "1,500円 (ドリンク代込)",
+                capacity: "12名",
+                target: "ゲーム初心者・インドア派",
+                description: "会話が苦手でも「ゲーム」があれば自然に仲良くなれる！そんなコンセプトで開催しているボードゲーム交流会です。5分で覚えられる簡単なゲームを中心に用意しています。",
+                highlights: [
+                    "初心者特化：ルール説明から丁寧に行うので未経験OK",
+                    "手ぶらでOK：人気のボドゲを多数用意しています",
+                    "自然な会話：無理に話さなくても、ゲームを通じて笑いが生まれます"
+                ],
+                venue: "下北沢駅前のレンタルスペース",
+                address: "東京都世田谷区北沢2丁目",
+                img: "https://images.unsplash.com/photo-1632501641765-e568d28b0015?auto=format&fit=crop&w=800&q=80"
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+            const eventId = params.get('id');
+            const data = eventDetails[eventId];
+
+            if (data) {
+                document.getElementById('event-detail-view').style.display = 'block';
+                document.getElementById('event-title').textContent = data.title;
+                document.getElementById('event-date-text').textContent = "📅 開催予定：" + data.date;
+                document.getElementById('event-img').src = data.img;
+                document.getElementById('event-cat').textContent = data.categoryName;
+                document.getElementById('event-cat').classList.add('cat-' + data.category);
+                
+                document.getElementById('event-fee').textContent = data.fee;
+                document.getElementById('event-capacity').textContent = data.capacity;
+                document.getElementById('event-target').textContent = data.target;
+                document.getElementById('event-desc').textContent = data.description;
+                
+                document.getElementById('event-venue').textContent = "📍 " + data.venue;
+                document.getElementById('event-address').textContent = data.address;
+
+                const highlightList = document.getElementById('event-highlights');
+                data.highlights.forEach(text => {
+                    const li = document.createElement('li');
+                    li.textContent = text;
+                    highlightList.appendChild(li);
+                });
+
+                document.getElementById('map-iframe').src = `https://maps.google.com/maps?q=${encodeURIComponent(data.venue)}&output=embed`;
+                document.getElementById('nav-btn').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(data.address)}`;
+            } else {
+                document.getElementById('error-view').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

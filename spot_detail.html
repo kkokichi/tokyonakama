@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スポット詳細 | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* 詳細ページ固有スタイル */
+        .detail-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .back-link-wrapper { margin-bottom: 20px; }
+        .spot-header { margin-bottom: 30px; text-align: center; }
+        .spot-detail-img { width: 100%; max-height: 450px; object-fit: cover; border-radius: var(--border-radius); margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .spot-detail-content { background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 40px; }
+        .category-badge { display: inline-block; padding: 5px 15px; border-radius: 50px; color: white; font-weight: bold; font-size: 0.9rem; margin-bottom: 15px; }
+        .cat-cafe { background-color: #e67e22; }
+        .cat-curry { background-color: #f1c40f; color: #333; }
+        .cat-spot { background-color: #3498db; }
+        .spot-desc { font-size: 1.1rem; line-height: 1.8; color: #333; margin-bottom: 25px; }
+        
+        /* 基本情報カード */
+        .info-summary-card { background: var(--accent-light); padding: 20px; border-radius: 15px; margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-around; align-items: center; border: 1px solid rgba(191,91,59,0.1); }
+        .info-item { text-align: center; }
+        .info-label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .info-value { font-weight: bold; font-size: 1.1rem; color: var(--text-color); }
+        .stars { color: #f1c40f; margin-right: 5px; }
+        
+        /* 特徴ボックス */
+        .info-box { margin-bottom: 25px; padding: 20px; border-radius: 12px; background: #fdfdfd; border-left: 5px solid var(--accent-color); }
+        .info-box h3 { margin: 0 0 10px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        
+        /* 口コミセクション */
+        .review-section { margin-top: 50px; }
+        .review-card { background: white; padding: 20px; border-radius: var(--border-radius); border: 1px solid #eee; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .review-header { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
+        .review-author { font-weight: bold; font-size: 0.95rem; }
+        .review-comment { font-size: 0.9rem; line-height: 1.6; color: #555; }
+
+        /* マップセクション */
+        .map-section { margin-top: 40px; }
+        .map-iframe { width: 100%; height: 400px; border: 0; border-radius: var(--border-radius); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        @media (max-width: 600px) {
+            .info-summary-card { flex-direction: column; align-items: flex-start; padding: 20px 30px; }
+            .info-item { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header"></header>
+    <script src="assets/js/header.js" data-path-prefix="" defer></script>
+
+    <main class="section main-content">
+        <div class="container detail-container">
+            <!-- スポット表示エリア -->
+            <div id="spot-detail-view" style="display:none;">
+                <div class="back-link-wrapper">
+                    <a href="recommend.html" class="back-link">← おすすめスポット一覧に戻る</a>
+                </div>
+                
+                <div class="spot-header">
+                    <span id="spot-cat" class="category-badge"></span>
+                    <h2 id="spot-name" class="section-title" style="margin-bottom: 10px;"></h2>
+                </div>
+
+                <img id="spot-img" src="" alt="" class="spot-detail-img">
+
+                <!-- 基本情報カード -->
+                <div class="info-summary-card">
+                    <div class="info-item">
+                        <span class="info-label">総合評価</span>
+                        <span id="spot-rating-val" class="info-value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">価格帯</span>
+                        <span id="spot-price" class="info-value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">おすすめ</span>
+                        <span id="spot-recommended" class="info-value"></span>
+                    </div>
+                </div>
+
+                <div id="spot-main-content" class="spot-detail-content">
+                    <!-- 概要 -->
+                    <p id="spot-desc" class="spot-desc"></p>
+                    
+                    <!-- 看板メニュー -->
+                    <div class="info-box">
+                        <h3>🍴 看板メニュー</h3>
+                        <p id="spot-best-menu"></p>
+                    </div>
+                    
+                    <!-- 訪問のヒント -->
+                    <div class="info-box" style="border-left-color: #3498db;">
+                        <h3>💡 訪問のヒント</h3>
+                        <p id="spot-tips"></p>
+                    </div>
+                </div>
+
+                <!-- 口コミ -->
+                <div class="review-section">
+                    <h3 style="margin-bottom: 20px; text-align: center;">みんなの口コミ</h3>
+                    <div id="review-list"></div>
+                </div>
+
+                <div class="map-section">
+                    <h3 style="margin-bottom: 20px;">アクセス</h3>
+                    <iframe id="map-iframe" class="map-iframe" loading="lazy" allowfullscreen src=""></iframe>
+                    <a id="nav-btn" href="" target="_blank" class="btn-cta">Googleマップでナビを開始</a>
+                </div>
+            </div>
+
+            <!-- エラー表示エリア -->
+            <div id="error-view" style="display:none; text-align:center; padding: 100px 0;">
+                <h2 style="margin-bottom: 20px;">スポットが見つかりませんでした</h2>
+                <p>申し訳ありませんが、お探しのスポット情報は存在しないか、名前が間違っています。</p>
+                <a href="recommend.html" class="btn-cta" style="display: inline-block; margin-top: 30px; max-width: 300px;">おすすめスポット一覧に戻る</a>
+            </div>
+        </div>
+    </main>
+
+    <footer></footer>
+    <script src="assets/js/footer.js" data-path-prefix="" defer></script>
+
+    <script>
+        // スポットデータの配列（詳細データを拡充）
+        const spots = [
+            { 
+                name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", 
+                description: "コーヒーを「体験」することをコンセプトにしたスタイリッシュな空間。Wi-Fi・電源完備で作業にも最適です。豆の焙煎から抽出まで、自分好みのカスタマイズも楽しめます。", 
+                address: "東京都世田谷区北沢3丁目19-20", img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80",
+                rating: 4.3, price: "¥¥", recommended_for: ["一人利用", "作業・勉強", "コーヒー通"],
+                best_menu: "シングルオリジンコーヒー、自家製スコーン",
+                visit_tips: "平日の午前中が比較的空いています。本格的なコーヒー体験をしたいならバリスタに相談してみるのがおすすめ。",
+                reviews: [
+                    { author: "Kさん", rating: 5, comment: "店内の雰囲気が最高にオシャレです。電源もあり、集中して仕事ができました。コーヒーももちろん絶品です。" },
+                    { author: "Tさん", rating: 4, comment: "スコーンとコーヒーの相性が抜群。週末は混むので、予約するか早めに行くのが良さそうです。" },
+                    { author: "Mさん", rating: 4, comment: "抽出器具が選べるのが面白い！コーヒー好きにはたまらない場所だと思います。" }
+                ]
+            },
+            { 
+                name: "W/O STAND SHIMOKITA", category: "cafe", 
+                description: "自販機が入り口になっているユニークなコーヒースタンド。店内のネオンやグラフィックが特徴的で、若者を中心に人気を集めています。", 
+                address: "東京都世田谷区北沢2丁目26-10", img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80",
+                rating: 4.1, price: "¥", recommended_for: ["友人・恋人と", "写真撮影", "サクッと利用"],
+                best_menu: "期間限定カフェラテ、レモネード",
+                visit_tips: "入り口の自販機扉は絶好のフォトスポット。テイクアウトして街歩きするのもおすすめ。",
+                reviews: [
+                    { author: "Sさん", rating: 5, comment: "入り口に驚きました！店員さんもフレンドリーで、ラテもとても美味しかったです。" },
+                    { author: "Aさん", rating: 4, comment: "カップのデザインが毎回可愛くて楽しみです。インスタ映え間違いなしのお店です。" },
+                    { author: "Hさん", rating: 4, comment: "狭い店内ですが雰囲気が良く、サクッと美味しいコーヒーを飲みたい時に重宝します。" }
+                ]
+            },
+            { 
+                name: "BOOKENDS COFFEE SERVICE", category: "cafe", 
+                description: "本に囲まれた落ち着いた空間で、こだわりのコーヒーを楽しめるショップ。リーズナブルながら本格的な味が魅力で、地元の人に愛されています。", 
+                address: "東京都世田谷区北沢2丁目11-17", img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80",
+                rating: 4.5, price: "¥", recommended_for: ["一人利用", "読書", "地元気分"],
+                best_menu: "ブレンドコーヒー、手作りドーナツ",
+                visit_tips: "コーヒー1杯の価格が非常に良心的。店内のベンチで本を読みながらゆっくり過ごすのが醍醐味です。",
+                reviews: [
+                    { author: "Uさん", rating: 5, comment: "下北に来たら必ず寄ります。安くて美味しいコーヒーと、素朴なドーナツに癒やされます。" },
+                    { author: "Nさん", rating: 5, comment: "ここの雰囲気が一番落ち着きます。本を読みながら1時間くらい過ごすのがお気に入りです。" },
+                    { author: "Rさん", rating: 4, comment: "店員さんの距離感が絶妙。気取らずに通える素敵なコーヒースタンドです。" }
+                ]
+            },
+            { 
+                name: "喫茶ネグラ", category: "cafe", 
+                description: "鮮やかな青い壁とアンティーク家具が印象的な純喫茶。現代的なセンスとレトロが融合した空間で、特にクリームソーダがSNSで話題です。", 
+                address: "東京都世田谷区北沢2丁目26-13", img: "https://images.unsplash.com/photo-1559925373-568656600915?auto=format&fit=crop&w=600&q=80",
+                rating: 4.2, price: "¥¥", recommended_for: ["友人・恋人と", "レトロ好き", "映えスイーツ"],
+                best_menu: "色とりどりのクリームソーダ、ナポリタン",
+                visit_tips: "土日はかなり並びます。平日や夕方以降の時間帯を狙うのがおすすめ。",
+                reviews: [
+                    { author: "Eさん", rating: 4, comment: "青いクリームソーダが宝石みたいで綺麗でした！店内もすごく可愛くてテンション上がります。" },
+                    { author: "Wさん", rating: 4, comment: "ナポリタンも昔ながらの味で美味しいです。ゆったりした時間を過ごせました。" },
+                    { author: "Yさん", rating: 4, comment: "下北らしいサブカル感のあるお店。友達を連れて行くと喜ばれます。" }
+                ]
+            },
+            { 
+                name: "トロワ・シャンブル", category: "cafe", 
+                description: "下北沢の象徴的な老舗喫茶。ネルドリップで淹れる深煎りコーヒーと、時代を感じさせる重厚な木のインテリアが、上質な時間を提供します。", 
+                address: "東京都世田谷区代沢5丁目36-14", img: "https://images.unsplash.com/photo-1507133750040-4c8b5f922457?auto=format&fit=crop&w=600&q=80",
+                rating: 4.4, price: "¥¥", recommended_for: ["一人利用", "読書", "大人の時間"],
+                best_menu: "ニレ・ブレンド、レアチーズケーキ",
+                visit_tips: "全席喫煙可能なため、タバコが苦手な方は注意。静かな空間なので、一人でじっくり考え事をしたい時に最適。",
+                reviews: [
+                    { author: "Oさん", rating: 5, comment: "下北沢で一番好きな場所です。ここのレアチーズケーキとコーヒーの組み合わせは至高。" },
+                    { author: "Jさん", rating: 5, comment: "映画のワンシーンのような空間。ネルドリップの深いコクに感動しました。" },
+                    { author: "Iさん", rating: 4, comment: "いつまでも残ってほしい名店。落ち着いて本を読みたい時に行きます。" }
+                ]
+            },
+            { 
+                name: "CITY COUNTRY CITY", category: "cafe", 
+                description: "中古レコードショップを併設したカフェ。音楽愛好家が集まる空間で、パスタなどのフードメニューも絶品と評判です。", 
+                address: "東京都世田谷区北沢2丁目12-13", img: "https://images.unsplash.com/photo-1605806616949-1e87b487fc2f?auto=format&fit=crop&w=600&q=80",
+                rating: 4.3, price: "¥¥", recommended_for: ["音楽好き", "ランチ利用", "一人利用"],
+                best_menu: "本日のパスタ、特製ナポリタン",
+                visit_tips: "レコードを探しながら、お茶も楽しめるのが最高。特にランチのパスタは専門店並みのクオリティです。",
+                reviews: [
+                    { author: "Gさん", rating: 5, comment: "パスタがとにかく美味しい！レコードを選びながら、素敵な音楽の中で食事ができます。" },
+                    { author: "Sさん", rating: 4, comment: "音楽好きにはたまらない隠れ家。一人の時間も充実させてくれる場所です。" },
+                    { author: "Kさん", rating: 4, comment: "友達と行っても、音楽の話題で盛り上がれます。店員さんのセンスが光っています。" }
+                ]
+            },
+            { 
+                name: "kate coffee", category: "cafe", 
+                description: "自家焙煎のスペシャルティコーヒーを楽しめる、アットホームなカフェ。スイーツのファンも多く、地元住民の憩いの場となっています。", 
+                address: "東京都世田谷区北沢2丁目7-11", img: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80",
+                rating: 4.5, price: "¥¥", recommended_for: ["友人・家族と", "一人利用", "コーヒー通"],
+                best_menu: "自家焙煎ブレンド、本日のケーキ",
+                visit_tips: "焙煎したての豆も購入可能。2階にあるので、窓際の席から下北の街並みを眺めるのも一興です。",
+                reviews: [
+                    { author: "Dさん", rating: 5, comment: "コーヒーへのこだわりが伝わってきます。ケーキも手作りの優しさがあって大好きです。" },
+                    { author: "Fさん", rating: 5, comment: "静かにジャズが流れる空間が心地よい。焙煎の香りに包まれて、リラックスできました。" },
+                    { author: "Pさん", rating: 4, comment: "店員さんが優しく、コーヒーの好みを相談できます。通いたくなるお店。" }
+                ]
+            },
+            { 
+                name: "ON THE WAY, coffee & cupcake", category: "cafe", 
+                description: "見た目も華やかなカップケーキが人気のカフェ。一口サイズの幸せが詰まったスイーツは、手土産にも大変喜ばれます。", 
+                address: "東京都世田谷区北沢2丁目16-2", img: "https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=600&q=80",
+                rating: 4.0, price: "¥", recommended_for: ["女子会", "ギフト・手土産", "写真撮影"],
+                best_menu: "ミニカップケーキセット、カフェラテ",
+                visit_tips: "カップケーキは売り切れることがあるので早めの来店を。店の前にあるベンチでの撮影が定番スタイル。",
+                reviews: [
+                    { author: "Zさん", rating: 5, comment: "カップケーキがとにかく可愛い！食べるのがもったいないくらいでした。" },
+                    { author: "Lさん", rating: 4, comment: "手土産に持っていったら、すごく喜ばれました。サイズもちょうどいいです。" },
+                    { author: "Cさん", rating: 4, comment: "カフェラテと一緒にいただくと最高。小さなお店ですが、幸せが詰まっています。" }
+                ]
+            },
+            { 
+                name: "Brooklyn Roasting Company", category: "cafe", 
+                description: "ニューヨーク・ブルックリン発の本格派ロースター。開放的な広い空間とテラス席が特徴で、活気ある雰囲気が楽しめます。", 
+                address: "東京都世田谷区北沢2丁目24-5", img: "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=600&q=80",
+                rating: 4.1, price: "¥¥", recommended_for: ["作業・勉強", "大人数", "開放感重視"],
+                best_menu: "ドラフトコーヒー、自家製ドーナツ",
+                visit_tips: "Wi-Fiが安定しており、ノマドワーカーに人気。テラス席はペット連れもOKです。",
+                reviews: [
+                    { author: "Qさん", rating: 5, comment: "広々としていて作業に没頭できます。下北で一番作業しやすいカフェかも。" },
+                    { author: "Rさん", rating: 4, comment: "ドーナツが食べごたえあって美味しい！海外のような雰囲気が好きです。" },
+                    { author: "Bさん", rating: 4, comment: "駅からのアクセスが良く、待ち合わせにも便利。テラス席の風が心地よいです。" }
+                ]
+            },
+            { 
+                name: "COFFEA EXLIBRIS", category: "cafe", 
+                description: "コーヒーの豆選びから真剣に向き合える専門店。静謐な空間で、バリスタが一杯ずつ丁寧に淹れる究極のコーヒーを楽しめます。", 
+                address: "東京都世田谷区代沢5丁目32-13", img: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=600&q=80",
+                rating: 4.6, price: "¥¥", recommended_for: ["コーヒー通", "一人利用", "静かに過ごしたい"],
+                best_menu: "厳選シングルオリジン、コーヒーゼリー",
+                visit_tips: "非常に静かなお店なので、お喋り目的よりもコーヒーを味わうために行くのが適切。豆の販売も充実しています。",
+                reviews: [
+                    { author: "Eさん", rating: 5, comment: "コーヒーの概念が変わりました。一杯に込められた情報量がすごいです。" },
+                    { author: "Mさん", rating: 5, comment: "洗練された静かな空間。自分へのご褒美に行きたくなる特別な場所です。" },
+                    { author: "Kさん", rating: 4, comment: "本気でコーヒーを勉強したい人におすすめ。バリスタさんの知識が豊富です。" }
+                ]
+            },
+            { 
+                name: "バロンデッセ", category: "cafe", 
+                description: "ラテアートの技術が高く、美しい一杯が楽しめるカフェ。ギャラリーを併設しており、アートを身近に感じながら休憩できます。", 
+                address: "東京都世田谷区北沢2丁目30-11", img: "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80",
+                rating: 4.2, price: "¥¥", recommended_for: ["友人・恋人と", "アート好き", "写真撮影"],
+                best_menu: "カフェラテ、手作りワッフル",
+                visit_tips: "ラテアートの美しさは都内屈指。2階のギャラリースペースで展示を見ながら過ごすのがおすすめのコース。",
+                reviews: [
+                    { author: "Oさん", rating: 5, comment: "ラテアートが可愛すぎて飲むのがもったいなかったです！ワッフルもサクサクで最高。" },
+                    { author: "Hさん", rating: 4, comment: "アートに囲まれてコーヒーが飲める素敵な空間。下北らしい感性に触れられます。" },
+                    { author: "Xさん", rating: 4, comment: "ラテのフォームが非常にきめ細かくて美味しい。技術の高さを感じます。" }
+                ]
+            },
+            { 
+                name: "モルディブ", category: "cafe", 
+                description: "下北沢駅前の便利な場所にありながら、どこか懐かしい昭和の風情を残す喫茶店。カレーなどのランチメニューも充実しています。", 
+                address: "東京都世田谷区北沢2丁目12-2", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80",
+                rating: 4.0, price: "¥", recommended_for: ["一人利用", "ランチ利用", "サクッと休憩"],
+                best_menu: "喫茶店の欧風カレー、アイスコーヒー",
+                visit_tips: "駅近でリーズナブル。ランチタイムは周辺のワーカーや学生で賑わいます。手早く美味しい食事をしたい時に。",
+                reviews: [
+                    { author: "Vさん", rating: 4, comment: "カレーが安くて美味しくて驚きました。駅近でこのクオリティは嬉しい。" },
+                    { author: "Gさん", rating: 4, comment: "気取らない雰囲気が落ち着きます。昔ながらの喫茶店メニューが楽しめます。" },
+                    { author: "Jさん", rating: 4, comment: "一人でも入りやすく、提供も早かったです。時間がない時でも重宝します。" }
+                ]
+            },
+            { 
+                name: "フリッパーズ 下北沢店", category: "cafe", 
+                description: "「奇跡のパンケーキ」で知られる大人気店。ふわふわで溶けるような食感のパンケーキは、スイーツ好きなら一度は体験すべき逸品です。", 
+                address: "東京都世田谷区北沢2丁目26-20", img: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=600&q=80",
+                rating: 4.3, price: "¥¥", recommended_for: ["友人・恋人と", "甘党", "ご褒美スイーツ"],
+                best_menu: "奇跡のパンケーキ プレーン、季節のフルーツパンケーキ",
+                visit_tips: "常に行列ができるため、時間に余裕を持って来店を。ふわふわすぎてフォークが止まらなくなります。",
+                reviews: [
+                    { author: "Pさん", rating: 5, comment: "本当に奇跡の食感！口の中で一瞬でなくなります。甘すぎず、ペロリと食べられました。" },
+                    { author: "Lさん", rating: 4, comment: "見た目のボリュームがありますが、軽いので全然重くないです。季節限定メニューもいつも魅力的。" },
+                    { author: "Kさん", rating: 4, comment: "並ぶ価値はあります。ふわふわ好きにはたまらないお店です。" }
+                ]
+            },
+            { 
+                name: "マジックスパイス 東京下北沢店", category: "curry", 
+                description: "スープカレーの元祖として知られる名店。店内はサイケデリックで独特な装飾に包まれ、辛さの段階が「虚空」まで選べることで有名です。", 
+                address: "東京都世田谷区北沢1丁目40-15", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80",
+                rating: 4.3, price: "¥¥", recommended_for: ["刺激を求める人", "グループ", "カレー通"],
+                best_menu: "チキンスープカレー、アクエリアス（超激辛）",
+                visit_tips: "初めての人は「涅槃」くらいの辛さから始めるのが無難。トッピングのバリエーションが豊富なので、自分流にアレンジを。",
+                reviews: [
+                    { author: "Rさん", rating: 5, comment: "唯一無二の世界観と味！具だくさんでスパイスの奥深さに感動します。" },
+                    { author: "Gさん", rating: 4, comment: "辛いだけでなく、旨味がしっかりあります。トッピングのチキンがホロホロで美味しい。" },
+                    { author: "Sさん", rating: 4, comment: "内装の派手さに驚きますが、味は超本格派。下北カレー文化の原点を感じます。" }
+                ]
+            },
+            { 
+                name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", 
+                description: "野菜の旨味を最大限に引き出した濃厚なスープが特徴。ゴロゴロと入った数十種類の野菜は圧巻で、ヘルシーにカレーを楽しめます。", 
+                address: "東京都世田谷区北沢3丁目31-14", img: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=600&q=80",
+                rating: 4.5, price: "¥¥", recommended_for: ["野菜不足の人", "一人利用", "友人・恋人と"],
+                best_menu: "チキンと一日分の野菜20品目",
+                visit_tips: "野菜はどれも甘く、一つひとつ丁寧に調理されています。スープの種類を選べるので、豆乳ベースもぜひ試してほしい。",
+                reviews: [
+                    { author: "Hさん", rating: 5, comment: "野菜がこんなに美味しいカレーは初めて。20品目あっても全然飽きずに食べられます。" },
+                    { author: "Yさん", rating: 5, comment: "スープが濃厚でご飯が進みます。店員さんも親切で、居心地の良い路地裏のお店です。" },
+                    { author: "Tさん", rating: 4, comment: "大満足のボリューム。野菜をたくさん食べたい時はここ一択です。" }
+                ]
+            },
+            { 
+                name: "旧ヤム邸 シモキタ荘", category: "curry", 
+                description: "大阪から進出したスパイスカレーの超人気店。月替わりの独創的なあいがけカレーが楽しめ、常に新しい味の発見があります。", 
+                address: "東京都世田谷区代沢5丁目29-9", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80",
+                rating: 4.4, price: "¥¥", recommended_for: ["スパイス好き", "カレー通", "グルメな友人"],
+                best_menu: "ぜんがけカレー、キーマカレー各種",
+                visit_tips: "開店前から行列ができることが多いため、整理券情報をSNSでチェックするのがスマート。独創的な組み合わせに驚きます。",
+                reviews: [
+                    { author: "Bさん", rating: 5, comment: "スパイスの使い方が魔法のよう。あいがけで混ぜて食べると、さらに味に深みが出ます。" },
+                    { author: "Uさん", rating: 4, comment: "古民家を改装した雰囲気が最高。毎月変わるメニューが楽しみで、何度も通っています。" },
+                    { author: "Wさん", rating: 4, comment: "他では絶対に味わえない唯一無二のカレー。スパイス好きなら絶対に行くべき。" }
+                ]
+            },
+            { 
+                name: "茄子おやじ", category: "curry", 
+                description: "40年以上愛され続けている老舗の欧風カレー店。店主のこだわりが詰まった、どこか懐かしく深い味わいのカレーが特徴です。", 
+                address: "東京都世田谷区代沢5丁目31-8", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
+                rating: 4.2, price: "¥¥", recommended_for: ["一人利用", "レコード好き", "ホッとしたい時"],
+                best_menu: "スペシャルカレー（茄子・ビーフ・チキン全部入り）",
+                visit_tips: "店内に流れるアナログレコードの音色とともに、ゆったりした時間を過ごせます。茄子のとろけ具合が絶妙です。",
+                reviews: [
+                    { author: "Nさん", rating: 5, comment: "茄子が本当に美味しい！トロトロでカレーのルーと完璧に調和しています。" },
+                    { author: "Aさん", rating: 4, comment: "お店の雰囲気がエモいです。レコードを聴きながら待つ時間が贅沢に感じられます。" },
+                    { author: "Hさん", rating: 4, comment: "飽きのこない、優しくて深い味。下北のカレーといえばここを思い浮かべます。" }
+                ]
+            },
+            { 
+                name: "般゜若 PANNYA CAFE CURRY", category: "curry", 
+                description: "タレントの松尾貴史氏がオーナーを務める薬膳スパイスカレー店。サラサラのルーにスパイスがガツンと効いた、中毒性のある味が魅力です。", 
+                address: "東京都世田谷区北沢2丁目33-6", img: "https://images.unsplash.com/photo-1596797038583-18a68a63934d?auto=format&fit=crop&w=600&q=80",
+                rating: 4.1, price: "¥¥", recommended_for: ["薬膳に興味がある人", "スッキリしたい時", "一人利用"],
+                best_menu: "マハカツカレー、チキンカレー",
+                visit_tips: "「黒いカツ」が乗ったマハカツカレーは見た目のインパクトも抜群。薬膳効果で、食べた後に体がポカポカします。",
+                reviews: [
+                    { author: "Fさん", rating: 5, comment: "スパイスが鮮烈！黒いカツもサクサクで、今まで食べたカツカレーで一番好きです。" },
+                    { author: "Yさん", rating: 4, comment: "食べた後に体が軽くなるような、健康的なスパイスのパワーを感じます。" },
+                    { author: "Oさん", rating: 4, comment: "オシャレな店内で、本格的な薬膳カレーがいただけます。一人でも入りやすい雰囲気。" }
+                ]
+            },
+            { 
+                name: "カレーの惑星", category: "curry", 
+                description: "SNS映えする美しいビジュアルと、多層的なスパイス使いが話題のお店。狭い路地裏にある隠れ家的な雰囲気も人気の一つです。", 
+                address: "東京都世田谷区北沢3丁目34-3", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80",
+                rating: 4.3, price: "¥¥", recommended_for: ["友人・恋人と", "写真撮影", "スパイス好き"],
+                best_menu: "2種あいがけ（キーマと日替わり）、花びらトッピング",
+                visit_tips: "見た目が芸術的で美しいですが、味も超一流。店内の席数が少ないため、少人数での訪問がおすすめ。",
+                reviews: [
+                    { author: "Iさん", rating: 5, comment: "見た目の美しさに負けない美味しさ。スパイスが複雑に絡み合って最高です。" },
+                    { author: "Dさん", rating: 4, comment: "写真で見た通りの華やかさ。キーマカレーの肉の旨味がすごかったです。" },
+                    { author: "Cさん", rating: 4, comment: "路地裏の名店。ここのカレーを食べると、特別な気分になれます。" }
+                ]
+            },
+            { 
+                name: "SAMA 下北沢店", category: "curry", 
+                description: "札幌発祥のスープカレー専門店。トマトベース、ココナッツベースなど5種類のスープから選べるのが特徴で、自分好みの味を追求できます。", 
+                address: "東京都世田谷区北沢2丁目9-1", img: "https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=600&q=80",
+                rating: 4.4, price: "¥¥", recommended_for: ["スープカレー好き", "ガッツリ食べたい人", "一人利用"],
+                best_menu: "チキン野菜カリー、トマトスープ",
+                visit_tips: "ココナッツスープはまろやかでコクがあり、女性に大人気。辛さも細かく指定できるので安心です。",
+                reviews: [
+                    { author: "Mさん", rating: 5, comment: "スープの種類が選べるのがいい！ココナッツベースにしましたが、旨味がすごくて完食しました。" },
+                    { author: "Pさん", rating: 4, comment: "チキンがホロホロで感動。具だくさんで満足感が非常に高いスープカレーです。" },
+                    { author: "Aさん", rating: 4, comment: "安定の美味しさ。店内も清潔感があり、一人でもゆっくり食事を楽しめます。" }
+                ]
+            },
+            { 
+                name: "NAN STATION", category: "curry", 
+                description: "巨大なチーズナンが名物のインド・ネパール料理店。カジュアルな雰囲気で、ボリューム満点の本格カレーをリーズナブルに楽しめます。", 
+                address: "東京都世田谷区北沢2丁目30-11", img: "https://images.unsplash.com/photo-1585937421612-71a005604d41?auto=format&fit=crop&w=600&q=80",
+                rating: 4.0, price: "¥", recommended_for: ["ガッツリ食べたい人", "友人グループ", "学生"],
+                best_menu: "チーズナンセット、バターチキンカレー",
+                visit_tips: "チーズナンのチーズの量が半端ないです。シェアして食べるのもおすすめ。テイクアウトも人気です。",
+                reviews: [
+                    { author: "Tさん", rating: 5, comment: "チーズナンが暴力的な美味しさ（笑）。とろけるチーズがたっぷりで大満足です。" },
+                    { author: "Kさん", rating: 4, comment: "コスパが最強。お腹いっぱい本格的なカレーを食べたい時はここに来ます。" },
+                    { author: "Sさん", rating: 4, comment: "店員さんが元気で活気があります。バターチキンカレーもマイルドで美味しい。" }
+                ]
+            },
+            { 
+                name: "スパイスラーメン 点と線.", category: "curry", 
+                description: "人気スープカレー店「SAMURAI.」が手がけるスパイスラーメン専門店。ラーメンとカレーが融合した新感覚の体験を提供します。", 
+                address: "東京都世田谷区北沢2丁目14-5", img: "https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=600&q=80",
+                rating: 4.3, price: "¥¥", recommended_for: ["ラーメン好き", "新しい味を求める人", "一人利用"],
+                best_menu: "スパイスラーメン、揚げゴボウ追加",
+                visit_tips: "揚げゴボウのトッピングがスープと絶妙に合います。追い飯をして最後までスパイススープを堪能するのがツウの食べ方。",
+                reviews: [
+                    { author: "Eさん", rating: 5, comment: "これは発明！ラーメンでもありカレーでもある、不思議で中毒性のある一杯。" },
+                    { author: "Wさん", rating: 4, comment: "トッピングが豪華。見た目も美しく、スパイスの芳醇な香りが食欲をそそります。" },
+                    { author: "Hさん", rating: 4, comment: "ラーメン好きなら一度は食べてほしい。スパイスの奥深さに圧倒されます。" }
+                ]
+            },
+            { 
+                name: "ポニピリカ", category: "curry", 
+                description: "素材の甘さを活かした和風ベースのスープカレー。可愛らしい内装で、女性一人でも入りやすい優しい雰囲気が魅力です。", 
+                address: "東京都世田谷区北沢2丁目8-8", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80",
+                rating: 4.2, price: "¥¥", recommended_for: ["女性一人", "友人・恋人と", "優しい味を求める時"],
+                best_menu: "エビベースのスープカレー、チキン野菜",
+                visit_tips: "海老の出汁が効いたスープが絶品。辛いのが苦手な人でも食べやすいマイルドな設定も可能です。",
+                reviews: [
+                    { author: "Uさん", rating: 5, comment: "海老スープが濃厚で驚きました。今まで食べたスープカレーで一番の衝撃。" },
+                    { author: "Nさん", rating: 4, comment: "店内がすごくオシャレで落ち着きます。デートにもおすすめできるお店。" },
+                    { author: "Oさん", rating: 4, comment: "野菜の旨味がスープに溶け出しています。優しいけれど、しっかりスパイシー。" }
+                ]
+            },
+            { 
+                name: "犬拳堂", category: "curry", 
+                description: "独特な店名とは裏腹に、超本格的なアジアンカリーを提供。濃厚でコクのあるキーマカレーは、多くのファンを惹きつけて離しません。", 
+                address: "東京都世田谷区北沢2丁目38-10", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80",
+                rating: 4.3, price: "¥¥", recommended_for: ["一人利用", "カレー通", "アジアンテイスト好き"],
+                best_menu: "キーマカリー、アジアンハーブカリー",
+                visit_tips: "店主のこだわりが随所に感じられるお店。トッピングのフライドエッグは必須級の相性です。",
+                reviews: [
+                    { author: "Kさん", rating: 5, comment: "ここのキーマを食べたら、他の店では物足りなくなります。旨味の塊です。" },
+                    { author: "Sさん", rating: 4, comment: "隠れた名店という感じ。スパイスの配合が絶妙で、食後の余韻が凄いです。" },
+                    { author: "Aさん", rating: 4, comment: "丁寧に作られているのが伝わります。一口ごとに新しい味の発見があります。" }
+                ]
+            },
+            { 
+                name: "カレー食堂 心 下北沢店", category: "curry", 
+                description: "スープカレーというジャンルを広めた立役者的存在。安定感のある美味しさと、焦がしバジルの香りが効いたスープが特徴です。", 
+                address: "東京都世田谷区北沢2丁目34-8", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80",
+                rating: 4.1, price: "¥¥", recommended_for: ["スープカレー初心者", "ランチ利用", "一人利用"],
+                best_menu: "骨付きチキンのスープカレー",
+                visit_tips: "下北沢駅からのアクセスも良く、初めてスープカレーを食べる人にもおすすめの王道の味です。",
+                reviews: [
+                    { author: "Lさん", rating: 5, comment: "骨付きチキンがスプーンで崩れるほど柔らかい！バジルの香りがいいアクセント。" },
+                    { author: "Kさん", rating: 4, comment: "間違いない味。スープに深みがあって、時々無性に食べたくなります。" },
+                    { author: "Jさん", rating: 4, comment: "広めの店内でゆっくりできました。ランチセットがお得でおすすめ。" }
+                ]
+            },
+            { 
+                name: "202カリー堂", category: "curry", 
+                description: "スープカレーとスイーツの両方に定評がある、SNSでも話題の人気店。旬の素材を活かした月替わりメニューが魅力です。", 
+                address: "東京都世田谷区代沢5丁目31-10", img: "https://images.unsplash.com/photo-1596797038583-18a68a63934d?auto=format&fit=crop&w=600&q=80",
+                rating: 4.4, price: "¥¥", recommended_for: ["女性一人", "友人・恋人と", "スイーツも楽しみたい人"],
+                best_menu: "濃厚エビスープのカリー、プリン・ア・ラ・モード",
+                visit_tips: "カレーを食べた後のスイーツは必食。プリンなどのデザートも専門店レベルのクオリティです。",
+                reviews: [
+                    { author: "Fさん", rating: 5, comment: "海老スープが最高！そして食後のプリンも絶品すぎて、幸せな時間が過ごせました。" },
+                    { author: "Tさん", rating: 4, comment: "店内のインテリアもオシャレ。カレーの辛さを選べるので、自分好みにできます。" },
+                    { author: "Oさん", rating: 4, comment: "週末はかなり混みますが、待つ価値あり。エビスープの香りがたまりません。" }
+                ]
+            },
+            { 
+                name: "無敵のカレー", category: "curry", 
+                description: "名前の通り、ガッツリと満足感のある欧風カレーを提供。特にカツカレーはボリューム満点で、腹ペコの学生や社会人の強い味方です。", 
+                address: "東京都世田谷区北沢2丁目33-6", img: "https://images.unsplash.com/photo-1585937421612-71a005604d41?auto=format&fit=crop&w=600&q=80",
+                rating: 3.9, price: "¥", recommended_for: ["ガッツリ食べたい人", "一人利用", "学生"],
+                best_menu: "三元豚の厚切りカツカレー",
+                visit_tips: "カツは注文してから揚げるのでアツアツ。ルーの旨味とサクサクのカツの組み合わせはまさに「無敵」。",
+                reviews: [
+                    { author: "Gさん", rating: 4, comment: "カツが厚くてジューシー！ルーも濃厚で、これぞ日本のカレーという安心感があります。" },
+                    { author: "Hさん", rating: 4, comment: "とにかくお腹いっぱい食べたい時はここ。コスパが良いので助かります。" },
+                    { author: "Mさん", rating: 4, comment: "シンプルに美味しいカツカレー。揚げたてのカツが最高のご褒美です。" }
+                ]
+            },
+            { 
+                name: "スパイスキッチン ムーナ", category: "curry", 
+                description: "本格的な南インド料理が味わえる、下北沢でも貴重な存在。ミールス（定食）を中心に、健康的で複雑なスパイスのハーモニーが楽しめます。", 
+                address: "東京都世田谷区北沢2丁目12-13", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80",
+                rating: 4.4, price: "¥¥", recommended_for: ["南インド料理好き", "健康志向", "一人利用"],
+                best_menu: "フィッシュミールス、ドーサ",
+                visit_tips: "ミールスは手で混ぜて食べるのが本格的（スプーンでもOK）。魚のカレーが絶品なので、あればぜひ選んでみて。",
+                reviews: [
+                    { author: "Sさん", rating: 5, comment: "下北にいながら南インドにトリップできます。魚カレーのスパイス使いが天才的。" },
+                    { author: "Kさん", rating: 5, comment: "ミールスはいろんな味が楽しめて飽きません。野菜中心でヘルシーなのも嬉しい。" },
+                    { author: "Aさん", rating: 4, comment: "スパイスが鮮烈ですが、決して辛すぎず、バランスが完璧です。" }
+                ]
+            },
+            { 
+                name: "reload", category: "spot", 
+                description: "「下北線路街」に位置する、個性的なショップが集まる商業施設。回廊のような建築も美しく、散歩するだけで感性が刺激される場所です。", 
+                address: "東京都世田谷区北沢3丁目19-20", img: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&w=600&q=80",
+                rating: 4.2, price: "¥¥ - ¥¥¥", recommended_for: ["散歩", "感性を磨きたい人", "友人・恋人と"],
+                best_menu: "各店舗のコーヒーや限定雑貨",
+                visit_tips: "全館禁煙。開放的な屋上テラスがあり、下北沢の街を一望しながら休憩できます。写真を撮るなら夕暮れ時がおすすめ。",
+                reviews: [
+                    { author: "Yさん", rating: 5, comment: "建物自体がアート。入っているお店もセンスが良く、ただ歩いているだけで楽しいです。" },
+                    { author: "Nさん", rating: 4, comment: "新しい下北沢を感じられる場所。都会の喧騒を離れて、ゆっくりショッピングが楽しめます。" },
+                    { author: "Hさん", rating: 4, comment: "テラス席が最高に気持ちいい。週末の散歩コースに最適です。" }
+                ]
+            },
+            { 
+                name: "BONUS TRACK", category: "spot", 
+                description: "「店主の顔が見える」をコンセプトにした、長屋のような温かみのある商業施設。本屋、飲食店、コワーキングスペースなどが融合した新しいコミュニティの形です。", 
+                address: "東京都世田谷区代沢5丁目21-1", img: "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=600&q=80",
+                rating: 4.4, price: "¥ - ¥¥", recommended_for: ["本好き", "家族連れ", "新しい出会いを求める人"],
+                best_menu: "日記屋月日の日記、本屋B&Bのイベント",
+                visit_tips: "中央の広場では頻繁にイベントが開催されています。ビールを飲みながら本を読める贅沢な時間が過ごせます。",
+                reviews: [
+                    { author: "Tさん", rating: 5, comment: "商店街のような親しみやすさと、新しさが共存している場所。ここに来ると心が落ち着きます。" },
+                    { author: "Mさん", rating: 5, comment: "面白い本屋さんがあったり、珍しい発酵食品のお店があったり、発見が絶えません。" },
+                    { author: "Sさん", rating: 4, comment: "家族で行っても楽しめます。広場で子供を遊ばせながら、親は美味しいコーヒーを飲めます。" }
+                ]
+            }
+        ];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // URLパラメータから店名を取得
+            const params = new URLSearchParams(window.location.search);
+            const spotName = params.get('name');
+            const spot = spots.find(s => s.name === spotName);
+
+            if (spot) {
+                // スポット情報を反映（修正①・②）
+                document.getElementById('spot-detail-view').style.display = 'block';
+                document.getElementById('spot-name').textContent = spot.name;
+                document.getElementById('spot-desc').textContent = spot.description;
+                document.getElementById('spot-img').src = spot.img;
+                document.getElementById('spot-img').alt = spot.name;
+                
+                // 星評価と基本情報の描画
+                const starsHtml = '<span class="stars">' + '★'.repeat(Math.floor(spot.rating)) + '☆'.repeat(5 - Math.floor(spot.rating)) + '</span>';
+                document.getElementById('spot-rating-val').innerHTML = `${starsHtml} ${spot.rating}`;
+                document.getElementById('spot-price').textContent = spot.price;
+                document.getElementById('spot-recommended').textContent = spot.recommended_for.join(' / ');
+                
+                // 看板メニューとヒントの描画
+                document.getElementById('spot-best-menu').textContent = spot.best_menu;
+                document.getElementById('spot-tips').textContent = spot.visit_tips;
+
+                // 口コミの描画（修正⑤）
+                const reviewList = document.getElementById('review-list');
+                spot.reviews.forEach(review => {
+                    const reviewCard = document.createElement('div');
+                    reviewCard.className = 'review-card';
+                    const rStars = '<span class="stars">' + '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating) + '</span>';
+                    reviewCard.innerHTML = `
+                        <div class="review-header">
+                            <span class="review-author">${review.author}</span>
+                            <span>${rStars}</span>
+                        </div>
+                        <p class="review-comment">${review.comment}</p>
+                    `;
+                    reviewList.appendChild(reviewCard);
+                });
+
+                const catBadge = document.getElementById('spot-cat');
+                catBadge.textContent = spot.category === 'cafe' ? 'カフェ・喫茶' : spot.category === 'curry' ? 'カレー' : '商業施設・スポット';
+                catBadge.classList.add('cat-' + spot.category);
+
+                // マップ埋め込み
+                document.getElementById('map-iframe').src = `https://maps.google.com/maps?q=${encodeURIComponent(spot.name)}&output=embed`;
+                document.getElementById('nav-btn').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(spot.name)}`;
+            } else {
+                // スポットが見つからない場合
+                document.getElementById('error-view').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
