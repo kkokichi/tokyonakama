@@ -3,508 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>おすすめスポット | 下北コミュニティ</title>
+    <title>おすすめスポット | SHIMOKITA CULTURE MEDIA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* --- 固有スタイル --- */
+        :root {
+            --bg:         #f0ece6;
+            --bg-dark:    #141210;
+            --ink:        #1a1706;
+            --ink-muted:  #7a756e;
+            --accent:     #bf5b3b;
+            --white:      #ffffff;
+            --radius:     12px;
+            --gap:        20px;
+            --max:        1200px;
+            --pad:        clamp(20px, 5vw, 60px);
+            --section-py: clamp(60px, 10vw, 120px);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Noto Sans JP", sans-serif; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+        img { display: block; }
+        a { text-decoration: none; }
+
+        body::before {
+            content: '';
+            position: fixed; inset: -50%;
+            width: 200%; height: 200%;
+            pointer-events: none; z-index: 9000; opacity: 0.032;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 0.4s steps(1) infinite;
+        }
+        @keyframes grain {
+            0%   { transform: translate(0,0); }
+            25%  { transform: translate(-3%,3%); }
+            50%  { transform: translate(3%,-3%); }
+            75%  { transform: translate(-2%,1%); }
+        }
+
+        .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+        .reveal[data-d="1"] { transition-delay: 0.1s; }
+        .reveal[data-d="2"] { transition-delay: 0.2s; }
+        .reveal[data-d="3"] { transition-delay: 0.3s; }
+
+        /* Page Hero */
+        .page-hero {
+            padding: clamp(80px, 12vw, 120px) 0 clamp(50px, 7vw, 80px);
+            background: var(--bg-dark);
+            color: var(--white);
+        }
+        .page-hero .eyebrow {
+            display: block;
+            font-size: 0.63rem; font-weight: 700;
+            letter-spacing: 0.24em; text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 14px;
+        }
+        .page-hero h1 {
+            font-size: clamp(2.2rem, 7vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.025em; line-height: 1.05;
+            margin-bottom: 18px;
+        }
+        .page-hero p {
+            font-size: clamp(0.88rem, 1.4vw, 1rem);
+            color: rgba(255,255,255,0.5);
+            line-height: 1.9; max-width: 480px;
+        }
+
+        /* Map section */
+        .map-sec {
+            background: var(--bg-dark);
+            padding: 0 0 clamp(40px, 6vw, 60px);
+        }
         #map {
-            height: 450px;
-            margin-bottom: 40px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: clamp(320px, 45vw, 480px);
+            width: 100%;
             z-index: 1;
         }
-        .filter-container {
+        .map-caption {
+            padding: 16px var(--pad) 0;
+            max-width: var(--max);
+            margin: 0 auto;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.06em;
+        }
+
+        /* Spots section */
+        .spots-sec { padding: var(--section-py) 0; }
+
+        .sec-row {
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 40px;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: clamp(28px, 4vw, 44px);
             flex-wrap: wrap;
-            padding: 0 10px;
+            gap: 20px;
+        }
+        .sec-label {
+            display: block;
+            font-size: 0.63rem; font-weight: 700;
+            letter-spacing: 0.24em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 8px;
+        }
+        .sec-title {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 900;
+            letter-spacing: -0.02em; line-height: 1.1;
+        }
+
+        /* Filter */
+        .filter-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .filter-btn {
-            padding: 10px 25px;
-            border: 2px solid var(--accent-color);
-            background: transparent;
-            color: var(--accent-color);
+            padding: 8px 18px;
             border-radius: 50px;
+            border: 1.5px solid rgba(26,23,6,0.18);
+            background: transparent;
+            color: var(--ink-muted);
+            font-size: 0.76rem;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             font-family: inherit;
+            letter-spacing: 0.02em;
         }
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--accent-color);
-            color: white;
-        }
+        .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
+        .filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--white); }
 
-        /* カテゴリごとのボタン色設定 */
-        .filter-btn[data-filter="cafe"] { border-color: #e67e22; color: #e67e22; }
-        .filter-btn[data-filter="cafe"].active, .filter-btn[data-filter="cafe"]:hover { background-color: #e67e22; color: white; }
-
-        .filter-btn[data-filter="curry"] { border-color: #f1c40f; color: #b7950b; } /* 可読性のため文字は少し濃い色 */
-        .filter-btn[data-filter="curry"].active, .filter-btn[data-filter="curry"]:hover { background-color: #f1c40f; color: #333; }
-
-        .filter-btn[data-filter="furugi"] { border-color: #27ae60; color: #27ae60; }
-        .filter-btn[data-filter="furugi"].active, .filter-btn[data-filter="furugi"]:hover { background-color: #27ae60; color: white; }
-
-        .filter-btn[data-filter="theater"] { border-color: #8e44ad; color: #8e44ad; }
-        .filter-btn[data-filter="theater"].active, .filter-btn[data-filter="theater"]:hover { background-color: #8e44ad; color: white; }
-
-        .filter-btn[data-filter="spot"] { border-color: #3498db; color: #3498db; }
-        .filter-btn[data-filter="spot"].active, .filter-btn[data-filter="spot"]:hover { background-color: #3498db; color: white; }
-        
+        /* Grid */
         .spot-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--gap);
         }
-        
-        .spot-card {
-            background: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        .spot-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        
-        .spot-img-wrapper {
-            position: relative;
-            width: 100%;
-            height: 180px;
-            overflow: hidden;
-        }
-        .spot-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-        .spot-card:hover .spot-img {
-            transform: scale(1.05);
-        }
-        
-        .spot-content {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .spot-category {
-            font-size: 0.75rem;
-            color: #fff;
-            margin-bottom: 10px;
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 100px;
-            align-self: flex-start;
-            font-weight: bold;
-        }
-        .cat-cafe { background-color: #e67e22; }
-        .cat-curry { background-color: #f1c40f; color: #333; }
-        .cat-furugi { background-color: #27ae60; }
-        .cat-theater { background-color: #8e44ad; }
-        .cat-spot { background-color: #3498db; }
-        
-        .spot-title {
-            margin: 0 0 10px;
-            font-size: 1.1rem;
-            line-height: 1.4;
-        }
-        
-        .spot-description {
-            font-size: 0.85rem;
-            color: #666;
-            line-height: 1.6;
-            margin: 10px 0;
-        }
+        @media (max-width: 1100px) { .spot-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 760px)  { .spot-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px)  { .spot-grid { grid-template-columns: 1fr; } }
 
-        .spot-link {
+        /* Card */
+        .spot-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .spot-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
+
+        .sp-img { position: relative; aspect-ratio: 4/3; overflow: hidden; }
+        .sp-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .spot-card:hover .sp-img img { transform: scale(1.05); }
+
+        .sp-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+
+        .sp-cat {
+            display: inline-block;
+            font-size: 0.58rem; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(191,91,59,0.08);
+            padding: 3px 9px; border-radius: 3px;
+            margin-bottom: 10px;
+            align-self: flex-start;
+        }
+        .sp-name {
+            font-size: clamp(0.88rem, 1.3vw, 0.98rem);
+            font-weight: 700;
+            line-height: 1.5;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+        .sp-desc {
+            font-size: 0.78rem;
+            color: var(--ink-muted);
+            line-height: 1.75;
+            flex: 1;
+            margin-bottom: 14px;
+        }
+        .sp-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
             margin-top: auto;
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9rem;
+            padding-top: 12px;
+            border-top: 1px solid rgba(26,23,6,0.06);
+        }
+        .sp-link {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--ink-muted);
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
             display: inline-flex;
             align-items: center;
-            padding-top: 15px;
+            gap: 3px;
         }
-        .spot-link::after {
-            content: "→";
-            margin-left: 5px;
-            transition: transform 0.2s;
-        }
-        .spot-link:hover::after {
-            transform: translateX(3px);
-        }
+        .sp-link:hover { color: var(--accent); }
+        .sp-link::after { content: "→"; transition: transform 0.2s; }
+        .sp-link:hover::after { transform: translateX(3px); }
 
-        /* リンクボタンのコンテナ（修正①） */
-        .spot-links {
-            display: flex;
-            gap: 15px;
-            margin-top: auto;
-            padding-top: 15px;
-            flex-wrap: wrap;
+        /* Ad band */
+        .ad-band {
+            padding: 48px 0;
+            text-align: center;
+            border-top: 1px solid rgba(26,23,6,0.08);
         }
-        .spot-link-detail {
-            color: #27ae60; /* カフェ・カレー等に合う緑系 */
-        }
+        .ad-label { font-size: 0.68rem; color: var(--ink-muted); display: block; margin-bottom: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+        .ad-band img { max-width: 300px; border-radius: 8px; margin: 0 auto 12px; }
+        .ad-band p { font-size: 0.8rem; color: var(--ink-muted); }
 
-        /* --- モーダルスタイル --- */
-        @media (max-width: 768px) {
-            #map {
-                height: 350px;
-            }
-            .filter-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
+        /* CTA */
+        .cta-sec {
+            background: var(--bg-dark);
+            padding: clamp(60px, 10vw, 100px) 0;
+            text-align: center;
+            color: var(--white);
         }
+        .cta-sec .eyebrow {
+            display: block;
+            font-size: 0.63rem; font-weight: 700;
+            letter-spacing: 0.24em; text-transform: uppercase;
+            color: rgba(255,255,255,0.35); margin-bottom: 18px;
+        }
+        .cta-sec h2 {
+            font-size: clamp(1.5rem, 3.5vw, 2rem);
+            font-weight: 900; letter-spacing: -0.02em; margin-bottom: 12px;
+        }
+        .cta-sec p { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.85; margin-bottom: 34px; }
+        .cta-btn {
+            display: inline-block;
+            padding: 14px 40px; border-radius: 50px;
+            background: var(--accent); color: var(--white);
+            font-size: 0.88rem; font-weight: 700;
+            transition: opacity 0.2s;
+        }
+        .cta-btn:hover { opacity: 0.85; }
+
+        /* Modal */
         .modal {
             display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
+            position: fixed; z-index: 9500;
+            inset: 0;
+            background: rgba(20,18,16,0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px);
+            padding: 20px;
         }
-        .modal-content {
-            background-color: white;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 500px;
+        .modal.open { display: flex; }
+        .modal-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            width: 100%; max-width: 480px;
             overflow: hidden;
             position: relative;
-            animation: fadeInUp 0.3s ease;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to   { opacity: 1; transform: none; }
         }
         .modal-close {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 28px;
+            top: 14px; right: 14px;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(20,18,16,0.55);
+            backdrop-filter: blur(4px);
+            color: var(--white);
+            font-size: 1.1rem;
             cursor: pointer;
-            color: white;
+            border: none;
+            display: flex; align-items: center; justify-content: center;
             z-index: 10;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: background 0.2s;
         }
-        .modal-body { padding: 25px; }
-        .modal-img { width: 100%; height: 250px; object-fit: cover; }
-        .modal-btn { margin-top: 20px; width: 100%; }
+        .modal-close:hover { background: var(--ink); }
+        .modal-img { width: 100%; height: 220px; object-fit: cover; }
+        .modal-body { padding: 24px; }
+        .modal-cat {
+            font-size: 0.6rem; font-weight: 700;
+            letter-spacing: 0.16em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 8px;
+            display: block;
+        }
+        .modal-title { font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 10px; line-height: 1.4; }
+        .modal-desc { font-size: 0.84rem; color: var(--ink-muted); line-height: 1.75; margin-bottom: 20px; }
+        .modal-btn {
+            display: block;
+            padding: 13px;
+            border-radius: 50px;
+            background: var(--accent);
+            color: var(--white);
+            text-align: center;
+            font-size: 0.84rem;
+            font-weight: 700;
+            transition: opacity 0.2s;
+        }
+        .modal-btn:hover { opacity: 0.85; }
     </style>
 </head>
 <body>
-
-    <header class="header">
-    </header>
+    <header class="header"></header>
     <script src="assets/js/header.js" data-path-prefix="" defer></script>
 
-    <section class="section main-content">
-        <div class="container">
-            <div class="section-header fade-in">
-                <h2 class="section-title">下北沢のおすすめスポット</h2>
+    <!-- Page Hero + Map (dark) -->
+    <div class="map-sec">
+        <section class="page-hero">
+            <div class="wrap">
+                <span class="eyebrow reveal">Spots</span>
+                <h1 class="reveal" data-d="1">おすすめスポット</h1>
+                <p class="reveal" data-d="2">活動の前後によく立ち寄るお店や、<br>メンバーおすすめのスポットをご紹介します。</p>
             </div>
-            <p class="fade-in" style="text-align: center; margin-bottom: 40px;">活動の前後によく立ち寄るお店や、<br>メンバーおすすめのスポットをご紹介します。</p>
+        </section>
+        <div id="map"></div>
+        <p class="map-caption">地図上のピンをクリックすると詳細が表示されます</p>
+    </div>
 
-            <!-- Map -->
-            <div id="map" class="fade-in"></div>
-
-            <!-- フィルタリングボタン -->
-            <div class="filter-container fade-in">
-                <button class="filter-btn active" data-filter="all">すべて</button>
-                <button class="filter-btn" data-filter="cafe">カフェ・喫茶</button>
-                <button class="filter-btn" data-filter="curry">カレー</button>
-                <button class="filter-btn" data-filter="furugi">古着屋</button>
-                <button class="filter-btn" data-filter="theater">劇場・娯楽</button>
-                <button class="filter-btn" data-filter="spot">その他</button>
+    <!-- Spots section -->
+    <section class="spots-sec">
+        <div class="wrap">
+            <div class="sec-row">
+                <div>
+                    <span class="sec-label reveal">Curated List</span>
+                    <h2 class="sec-title reveal" data-d="1">スポット一覧</h2>
+                </div>
+                <div class="filter-wrap reveal" data-d="2">
+                    <button class="filter-btn active" data-filter="all">すべて</button>
+                    <button class="filter-btn" data-filter="cafe">カフェ・喫茶</button>
+                    <button class="filter-btn" data-filter="curry">カレー</button>
+                    <button class="filter-btn" data-filter="furugi">古着屋</button>
+                    <button class="filter-btn" data-filter="theater">劇場・娯楽</button>
+                    <button class="filter-btn" data-filter="spot">その他</button>
+                </div>
             </div>
 
-            <!-- スポット一覧 -->
-            <div id="spot-grid" class="spot-grid">
-                <!-- JSで生成 -->
-            </div>
-
-            <!-- ▼▼▼ 広告スペース ▼▼▼ -->
-            <div class="ad-container fade-in" style="margin-top: 60px;">
-                <span class="ad-label">スポンサーリンク</span>
-                <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
-                    <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius: 8px;">
-                </a>
-                <p style="font-size:0.9rem; margin-top:15px; margin-bottom:0;">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
-            </div>
-            <!-- ▲▲▲ 広告スペース ▲▲▲ -->
-
-            <div class="fade-in" style="text-align: center; margin-top: 50px;">
-                <p style="margin-bottom: 10px;">「ここもおすすめ！」という情報があれば、<br>ぜひ教えてください！</p>
-                <a href="contact.html" class="btn-cta">お問い合わせはこちら</a>
-                <a href="top.html" class="back-link">トップページに戻る</a>
-            </div>
+            <div id="spot-grid" class="spot-grid"></div>
         </div>
     </section>
 
-    <footer>
-    </footer>
+    <div class="ad-band">
+        <div class="wrap">
+            <span class="ad-label">Sponsored</span>
+            <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
+                <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート">
+            </a>
+            <p>【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
+        </div>
+    </div>
+
+    <section class="cta-sec">
+        <div class="wrap">
+            <span class="eyebrow">Contact</span>
+            <h2 class="reveal">「ここもおすすめ！」を教えてください</h2>
+            <p class="reveal" data-d="1">新しいスポット情報やご提案、<br>お気軽にお問い合わせください。</p>
+            <a href="contact.html" class="cta-btn reveal" data-d="2">お問い合わせはこちら</a>
+        </div>
+    </section>
+
+    <footer></footer>
+
+    <!-- Modal -->
+    <div id="spot-modal" class="modal">
+        <div class="modal-card">
+            <button id="modal-close" class="modal-close" aria-label="閉じる">✕</button>
+            <img id="modal-img" src="about:blank" alt="" class="modal-img">
+            <div class="modal-body">
+                <span id="modal-cat" class="modal-cat"></span>
+                <h3 id="modal-title" class="modal-title"></h3>
+                <p id="modal-desc" class="modal-desc"></p>
+                <a id="modal-map-link" href="" target="_blank" rel="noopener noreferrer" class="modal-btn">Googleマップでナビを開始</a>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // スクロール時のフェードインアニメーション
-            const observerOptions = {
-                root: null,
-                rootMargin: "0px",
-                threshold: 0.1
-            };
+            // Reveal animation
+            const revealObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("visible");
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            // このページで最初に読み込まれるfade-in要素を監視
-            const staticFadeInElements = document.querySelectorAll(".fade-in");
-            staticFadeInElements.forEach(el => observer.observe(el));
-
-            // --- スポットデータ ---
             const spots = [
-                // Cafe (Images added)
                 { name: "OGAWA COFFEE LABORATORY 下北沢", category: "cafe", description: "reload内にあるスタイリッシュな空間。Wi-Fi・電源完備で作業にも最適。", address: "東京都世田谷区北沢3丁目19-20", img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80" },
                 { name: "W/O STAND SHIMOKITA", category: "cafe", description: "自販機が入り口の遊び心あるコーヒースタンド。写真映えも抜群。", address: "東京都世田谷区北沢2丁目26-10", img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80" },
                 { name: "BOOKENDS COFFEE SERVICE", category: "cafe", description: "本に囲まれた空間で、こだわりのスペシャルティコーヒーが楽しめる。", address: "東京都世田谷区北沢2丁目11-17", img: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80" },
                 { name: "喫茶ネグラ", category: "cafe", description: "鮮やかな青い壁が印象的。レトロなクリームソーダが人気。", address: "東京都世田谷区北沢2丁目26-13", img: "https://images.unsplash.com/photo-1559925373-568656600915?auto=format&fit=crop&w=600&q=80" },
                 { name: "トロワ・シャンブル", category: "cafe", description: "レンガ造りの落ち着いた空間。ネルドリップで淹れる深煎りコーヒーが絶品。", address: "東京都世田谷区代沢5丁目36-14", img: "https://images.unsplash.com/photo-1507133750040-4c8b5f922457?auto=format&fit=crop&w=600&q=80" },
-                { name: "CITY COUNTRY CITY", category: "cafe", description: "レコードショップ併設. 音楽好きにはたまらない空間。", address: "東京都世田谷区北沢2丁目12-13", img: "https://images.unsplash.com/photo-1605806616949-1e87b487fc2f?auto=format&fit=crop&w=600&q=80" },
+                { name: "CITY COUNTRY CITY", category: "cafe", description: "レコードショップ併設。音楽好きにはたまらない空間。", address: "東京都世田谷区北沢2丁目12-13", img: "https://images.unsplash.com/photo-1605806616949-1e87b487fc2f?auto=format&fit=crop&w=600&q=80" },
                 { name: "kate coffee", category: "cafe", description: "自家焙煎のスペシャルティコーヒーと、美味しい焼き菓子が楽しめる。", address: "東京都世田谷区北沢2丁目7-11", img: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80" },
                 { name: "ON THE WAY, coffee & cupcake", category: "cafe", description: "見た目も可愛いカップケーキが人気。手土産にも喜ばれる。", address: "東京都世田谷区北沢2丁目16-2", img: "https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=600&q=80" },
                 { name: "Brooklyn Roasting Company", category: "cafe", description: "ミカン下北にある広々としたカフェ。開放的なテラス席も。", address: "東京都世田谷区北沢2丁目24-5", img: "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=600&q=80" },
                 { name: "COFFEA EXLIBRIS", category: "cafe", description: "コーヒー豆の種類が豊富。バリスタと相談しながら好みの味を見つけられる。", address: "東京都世田谷区代沢5丁目32-13", img: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=600&q=80" },
                 { name: "バロンデッセ", category: "cafe", description: "ラテアートが有名。ギャラリーも併設されているアートな空間。", address: "東京都世田谷区北沢2丁目30-11", img: "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=600&q=80" },
-                { name: "モルディブ", category: "cafe", description: "昔ながらの喫茶店。カレーやピラフなど, フードメニューも充実。", address: "東京都世田谷区北沢2丁目12-2", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80" },
+                { name: "モルディブ", category: "cafe", description: "昔ながらの喫茶店。カレーやピラフなど、フードメニューも充実。", address: "東京都世田谷区北沢2丁目12-2", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80" },
                 { name: "フリッパーズ 下北沢店", category: "cafe", description: "「奇跡のパンケーキ」で有名。ふわふわ食感がたまらない。", address: "東京都世田谷区北沢2丁目26-20", img: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=600&q=80" },
-                
-                // Curry
                 { name: "マジックスパイス 東京下北沢店", category: "curry", description: "スープカレーの元祖。辛さの段階が「虚空」まであることで有名。", address: "東京都世田谷区北沢1丁目40-15", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80" },
                 { name: "Rojiura Curry SAMURAI. 下北沢店", category: "curry", description: "ゴロゴロ野菜がたっぷり入った、北海道発の人気スープカレー店。", address: "東京都世田谷区北沢3丁目31-14", img: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=600&q=80" },
                 { name: "旧ヤム邸 シモキタ荘", category: "curry", description: "大阪発のスパイスカレー。月替わりの独創的なあいがけカレーが楽しめる。", address: "東京都世田谷区代沢5丁目29-9", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80" },
                 { name: "茄子おやじ", category: "curry", description: "40年以上続く老舗。どこか懐かしい、優しい味わいの欧風カレー。", address: "東京都世田谷区代沢5丁目31-8", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" },
                 { name: "般゜若 PANNYA CAFE CURRY", category: "curry", description: "薬膳スパイスカレーの有名店。サラサラのルーが特徴的。", address: "東京都世田谷区北沢2丁目33-6", img: "https://images.unsplash.com/photo-1596797038583-18a68a63934d?auto=format&fit=crop&w=600&q=80" },
-                { name: "カレーの惑星", category: "curry", description: "ドライカレーと数種類のカレーをあいがけで楽しめる. 見た目も美しい一皿。", address: "東京都世田谷区北沢3丁目34-3", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80" },
-                { name: "SAMA 下北沢店", category: "curry", description: "札幌発のスープカレー店。トマトベースやココナッツベースなど, スープの種類が豊富。", address: "東京都世田谷区北沢2丁目9-1", img: "https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=600&q=80" },
+                { name: "カレーの惑星", category: "curry", description: "ドライカレーと数種類のカレーをあいがけで楽しめる。見た目も美しい一皿。", address: "東京都世田谷区北沢3丁目34-3", img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80" },
+                { name: "SAMA 下北沢店", category: "curry", description: "札幌発のスープカレー店。トマトベースやココナッツベースなど、スープの種類が豊富。", address: "東京都世田谷区北沢2丁目9-1", img: "https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=600&q=80" },
                 { name: "NAN STATION", category: "curry", description: "チーズナンが絶品。本格的なインド・ネパール料理が楽しめる。", address: "東京都世田谷区北沢2丁目30-11", img: "https://images.unsplash.com/photo-1585937421612-71a005604d41?auto=format&fit=crop&w=600&q=80" },
                 { name: "スパイスラーメン 点と線.", category: "curry", description: "スープカレーとラーメンが融合した、新感覚のスパイスラーメン。", address: "東京都世田谷区北沢2丁目14-5", img: "https://images.unsplash.com/photo-1526318896980-cf78c088247c?auto=format&fit=crop&w=600&q=80" },
                 { name: "ポニピリカ", category: "curry", description: "野菜たっぷりのスープカレーが人気。店内もおしゃれで女性に人気。", address: "東京都世田谷区北沢2丁目8-8", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80" },
-                { name: "犬拳堂", category: "curry", description: "キーマカレーが名物. 濃厚な味わいでファンが多い。", address: "東京都世田谷区北沢2丁目38-10", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" },
+                { name: "犬拳堂", category: "curry", description: "キーマカレーが名物。濃厚な味わいでファンが多い。", address: "東京都世田谷区北沢2丁目38-10", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" },
                 { name: "カレー食堂 心 下北沢店", category: "curry", description: "スープカレーの草分け的存在。安定の美味しさ。", address: "東京都世田谷区北沢2丁目34-8", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80" },
                 { name: "202カリー堂", category: "curry", description: "創作スパイスカレーが楽しめる。SNSでも話題の人気店。", address: "東京都世田谷区代沢5丁目31-10", img: "https://images.unsplash.com/photo-1596797038583-18a68a63934d?auto=format&fit=crop&w=600&q=80" },
                 { name: "無敵のカレー", category: "curry", description: "カツカレーが人気。ボリューム満点でガッツリ食べたい時に。", address: "東京都世田谷区北沢2丁目33-6", img: "https://images.unsplash.com/photo-1585937421612-71a005604d41?auto=format&fit=crop&w=600&q=80" },
                 { name: "スパイスキッチン ムーナ", category: "curry", description: "本格的な南インド料理が味わえる。ミールスがおすすめ。", address: "東京都世田谷区北沢2丁目12-13", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" },
-
-                // Furugi (古着屋) - ダミーデータ追加
                 { name: "WEGO VINTAGE 下北沢店", category: "furugi", description: "幅広いジャンルの古着が揃う大型店。初心者にもおすすめ。", address: "東京都世田谷区北沢2丁目29-3", img: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=600&q=80" },
                 { name: "FLAMINGO 下北沢店", category: "furugi", description: "アメリカ古着を中心に、個性的なアイテムが豊富に揃う人気店。", address: "東京都世田谷区北沢2丁目25-12", img: "https://images.unsplash.com/photo-1560243563-062bfc001d68?auto=format&fit=crop&w=600&q=80" },
-
-                // Theater (劇場・娯楽) - ダミーデータ追加
                 { name: "本多劇場", category: "theater", description: "下北沢の演劇文化を牽引する代表的な劇場。様々なジャンルの公演が上演されます。", address: "東京都世田谷区北沢2丁目10-15", img: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=600&q=80" },
                 { name: "ザ・スズナリ", category: "theater", description: "レトロな雰囲気が魅力の小劇場。実験的な演劇が多く上演され、演劇ファンに愛されています。", address: "東京都世田谷区北沢1丁目40-18", img: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=600&q=80" },
-
-                // Spot (その他)
                 { name: "reload", category: "spot", description: "個性的なお店が集まる商業施設。散歩するだけでも楽しい。", address: "東京都世田谷区北沢3丁目19-20", img: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&w=600&q=80" },
                 { name: "BONUS TRACK", category: "spot", description: "商店街のような雰囲気の商業施設。飲食店や本屋、コワーキングスペースも。", address: "東京都世田谷区代沢5丁目21-1", img: "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=600&q=80" }
             ];
 
-            // カテゴリごとの画像（ダミー）
-            const categoryImages = {
-                cafe: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                curry: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                furugi: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=600&q=80",
-                theater: "https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=600&q=80",
-                spot: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-            };
-
             const categoryNames = {
                 cafe: "カフェ・喫茶",
                 curry: "カレー",
-                furugi: "古着屋", // 古着屋カテゴリ名を追加
-                theater: "劇場・娯楽", // 劇場・娯楽カテゴリ名を追加
+                furugi: "古着屋",
+                theater: "劇場・娯楽",
                 spot: "その他"
             };
 
-            // ピンの色（Googleマップ標準アイコンURL）
             const markerIcons = {
-                cafe: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
-                curry: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
-                furugi: "http://maps.google.com/mapfiles/ms/icons/green-dot.png", // 古着屋のピンを緑に設定
-                theater: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png", // 劇場・娯楽のピンを紫に設定
-                spot: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                cafe:    "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+                curry:   "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
+                furugi:  "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+                theater: "http://maps.google.com/mapfiles/ms/icons/purple-dot.png",
+                spot:    "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
             };
 
             const grid = document.getElementById('spot-grid');
             const filterBtns = document.querySelectorAll('.filter-btn');
             const modal = document.getElementById('spot-modal');
-            const closeModal = document.getElementById('modal-close');
-            
-            // --- Google Map Initialization ---
-            let map;
-            let markers = [];
-            let infoWindow;
-            let geocoder; // ジオコーダーのインスタンス保持用
-            let mapInitialized = false;
+            const closeBtn = document.getElementById('modal-close');
 
-            // モーダル表示関数
-            function openSpotModal(spot) {
-                document.getElementById('modal-img').src = spot.img || categoryImages[spot.category];
+            let map, markers = [], infoWindow, geocoder;
+
+            function openModal(spot) {
+                document.getElementById('modal-img').src = spot.img;
+                document.getElementById('modal-img').alt = spot.name;
+                document.getElementById('modal-cat').textContent = categoryNames[spot.category];
                 document.getElementById('modal-title').textContent = spot.name;
                 document.getElementById('modal-desc').textContent = spot.description;
                 document.getElementById('modal-map-link').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}`;
-                modal.style.display = 'flex';
+                modal.classList.add('open');
             }
 
-            // モーダルを閉じる
-            closeModal.addEventListener('click', () => modal.style.display = 'none');
-            window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+            closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
 
             function renderSpots(filter) {
                 grid.innerHTML = '';
-                // Clear existing markers
                 markers.forEach(m => m.setMap(null));
                 markers = [];
                 const bounds = new google.maps.LatLngBounds();
+                const filtered = filter === 'all' ? spots : spots.filter(s => s.category === filter);
 
-                const filteredSpots = filter === 'all' ? spots : spots.filter(s => s.category === filter);
-
-                filteredSpots.forEach((spot, index) => {
+                filtered.forEach((spot, index) => {
                     const card = document.createElement('div');
-                    card.className = 'spot-card fade-in';
-                    card.style.transitionDelay = `${index * 0.05}s`; // ずらして表示
-
-                    const imgUrl = spot.img || categoryImages[spot.category];
-                    const catName = categoryNames[spot.category];
+                    card.className = 'spot-card reveal';
+                    card.style.transitionDelay = `${Math.min(index * 0.04, 0.3)}s`;
 
                     card.innerHTML = `
-                        <div class="spot-img-wrapper">
-                            <img src="${imgUrl}" alt="${spot.name}" class="spot-img">
+                        <div class="sp-img">
+                            <img src="${spot.img}" alt="${spot.name}" loading="lazy">
                         </div>
-                        <div class="spot-content">
-                            <span class="spot-category cat-${spot.category}">${catName}</span>
-                            <h3 class="spot-title">${spot.name}</h3>
-                            <p class="spot-description">${spot.description}</p>
-                            <div class="spot-links">
-                                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" rel="noopener noreferrer" class="spot-link">Googleマップで見る</a>
-                                <a href="spot_detail.html?name=${encodeURIComponent(spot.name)}" class="spot-link spot-link-detail">おすすめを見る</a>
+                        <div class="sp-body">
+                            <span class="sp-cat">${categoryNames[spot.category]}</span>
+                            <h3 class="sp-name">${spot.name}</h3>
+                            <p class="sp-desc">${spot.description}</p>
+                            <div class="sp-links">
+                                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" rel="noopener noreferrer" class="sp-link">地図で見る</a>
+                                <a href="spot_detail.html?name=${encodeURIComponent(spot.name)}" class="sp-link">おすすめを見る</a>
                             </div>
                         </div>
                     `;
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.closest('.sp-link')) openModal(spot);
+                    });
                     grid.appendChild(card);
-                    observer.observe(card);
+                    revealObs.observe(card);
 
-                    // 住所文字列から座標を取得してマーカーを生成
                     if (spot.address) {
                         geocoder.geocode({ address: spot.address }, (results, status) => {
                             if (status === 'OK') {
                                 const position = results[0].geometry.location;
                                 const marker = new google.maps.Marker({
-                                    position: position,
-                                    map: map,
+                                    position, map,
                                     title: spot.name,
                                     icon: markerIcons[spot.category] || "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
                                 });
                                 markers.push(marker);
                                 bounds.extend(position);
-                                map.fitBounds(bounds); // 全てのマーカーが収まるように表示範囲を調整
-
-                                // 情報ウィンドウの内容
-                                const infoContent = `
-                                    <div style="padding:5px; max-width:200px;">
-                                        <h4 style="margin:0 0 5px; color:var(--accent-color);">${spot.name}</h4>
-                                        <p style="font-size:0.8rem; margin:0 0 5px; color:#666;">${spot.description}</p>
-                                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" style="font-size:0.8rem; color:var(--accent-color); font-weight:bold;">地図で開く</a>
-                                    </div>
-                                `;
-
-                                // カードのホバー・クリック連動
-                                card.addEventListener('mouseover', () => {
-                                    infoWindow.setContent(infoContent);
-                                    infoWindow.open(map, marker);
+                                map.fitBounds(bounds);
+                                google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
+                                    if (this.getZoom() > 17) this.setZoom(17);
                                 });
+
+                                const infoContent = `<div style="padding:4px 6px;max-width:180px;font-family:sans-serif;"><p style="font-weight:700;font-size:0.82rem;margin:0 0 4px;">${spot.name}</p><p style="font-size:0.74rem;color:#666;margin:0;">${spot.description}</p></div>`;
+                                card.addEventListener('mouseover', () => { infoWindow.setContent(infoContent); infoWindow.open(map, marker); });
                                 card.addEventListener('mouseout', () => infoWindow.close());
                                 marker.addListener('click', () => {
                                     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    openSpotModal(spot); // ピンクリックでモーダル表示
+                                    openModal(spot);
                                 });
                             } else {
-                                // ジオコーディング失敗時のエラー出力
-                                console.error('住所の解析に失敗しました (' + spot.name + '): ' + status);
+                                console.error('ジオコーディング失敗 (' + spot.name + '): ' + status);
                             }
                         });
                     }
                 });
             }
 
-            // Google Mapsが読み込まれた後に実行
             window.initMap = function() {
                 map = new google.maps.Map(document.getElementById('map'), {
                     center: { lat: 35.661647, lng: 139.666679 },
                     zoom: 16,
                     mapTypeControl: false,
                     streetViewControl: true,
+                    styles: [
+                        { featureType: "all", elementType: "labels.text.fill", stylers: [{ color: "#1a1706" }] },
+                        { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9d6e3" }] },
+                        { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f0ece6" }] },
+                        { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+                        { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#d8e8c8" }] }
+                    ]
                 });
                 infoWindow = new google.maps.InfoWindow();
-                geocoder = new google.maps.Geocoder(); // ジオコーダーのインスタンスを生成
-                mapInitialized = true;
+                geocoder = new google.maps.Geocoder();
                 renderSpots('all');
-                
-                // 自動ズームが強すぎる場合の調整
-                google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
-                    if (this.getZoom() > 18) this.setZoom(18);
-                });
             };
 
-            // フィルタリング処理
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // アクティブクラスの切り替え
                     filterBtns.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-
-                    // 描画
-                    const filter = btn.dataset.filter;
-                    renderSpots(filter);
+                    renderSpots(btn.dataset.filter);
                 });
             });
         });
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCOEPGikU9tjmiewQ0Kimh3_gtIXvhrI0&callback=initMap" async defer></script>
-
-    <!-- モーダルHTML -->
-    <div id="spot-modal" class="modal">
-        <div class="modal-content">
-            <span id="modal-close" class="modal-close">&times;</span>
-            <img id="modal-img" src="" alt="" class="modal-img">
-            <div class="modal-body">
-                <h3 id="modal-title" class="spot-title"></h3>
-                <p id="modal-desc" class="spot-description"></p>
-                <a id="modal-map-link" href="" target="_blank" class="btn-cta modal-btn">Googleマップでナビを開始</a>
-            </div>
-        </div>
-    </div>
-
     <script src="assets/js/footer.js" data-path-prefix="" defer></script>
 </body>
 </html>

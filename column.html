@@ -3,220 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>下北沢コラム | 下北コミュニティ</title>
+    <title>コラム | SHIMOKITA CULTURE MEDIA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* --- フィルタリング --- */
-        .filter-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
+        :root {
+            --bg:         #f0ece6;
+            --bg-dark:    #141210;
+            --ink:        #1a1706;
+            --ink-muted:  #7a756e;
+            --accent:     #bf5b3b;
+            --white:      #ffffff;
+            --radius:     12px;
+            --gap:        20px;
+            --max:        1200px;
+            --pad:        clamp(20px, 5vw, 60px);
+            --section-py: clamp(60px, 10vw, 120px);
         }
-        .filter-btn {
-            padding: 10px 25px;
-            border: 2px solid var(--accent-color);
-            background: transparent;
-            color: var(--accent-color);
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            font-family: inherit;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Noto Sans JP", sans-serif; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+        img { display: block; }
+        a { text-decoration: none; }
+
+        body::before {
+            content: '';
+            position: fixed; inset: -50%;
+            width: 200%; height: 200%;
+            pointer-events: none; z-index: 9000; opacity: 0.032;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 0.4s steps(1) infinite;
         }
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--accent-color);
-            color: white;
-        }
-        
-        /* --- コラムカード --- */
-        .article-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
-        
-        .article-card {
-            background: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        
-        .article-img-wrapper {
-            position: relative;
-            width: 100%;
-            height: 180px;
-            overflow: hidden;
-        }
-        .article-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-        .article-card:hover .article-img {
-            transform: scale(1.05);
-        }
-        
-        .article-content {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .article-category {
-            font-size: 0.75rem;
-            color: #fff;
-            margin-bottom: 10px;
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 100px;
-            align-self: flex-start;
-            font-weight: bold;
-        }
-        .cat-gourmet { background-color: #e67e22; }
-        .cat-culture { background-color: #3498db; }
-        .cat-deai { background-color: #e74c3c; }
-        .cat-active { background-color: #2ecc71; }
-        .cat-cafe { background-color: #8d6e63; } /* カフェの色 */
-        .cat-event { background-color: #e84393; } /* イベントの新しい色 */
-        
-        .article-title {
-            margin: 0 0 10px;
-            font-size: 1.1rem;
-            line-height: 1.4;
+        @keyframes grain {
+            0%   { transform: translate(0,0); }
+            25%  { transform: translate(-3%,3%); }
+            50%  { transform: translate(3%,-3%); }
+            75%  { transform: translate(-2%,1%); }
         }
 
-        .article-excerpt {
-            font-size: 0.9rem;
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
+        .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+        .reveal[data-d="1"] { transition-delay: 0.1s; }
+        .reveal[data-d="2"] { transition-delay: 0.2s; }
+        .reveal[data-d="3"] { transition-delay: 0.3s; }
+
+        /* Page Hero */
+        .page-hero {
+            padding: clamp(80px, 12vw, 120px) 0 clamp(50px, 7vw, 80px);
+            background: var(--bg-dark); color: var(--white);
         }
-        
-        .article-link {
-            margin-top: auto;
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            padding-top: 15px;
+        .page-hero .eyebrow {
+            display: block; font-size: 0.63rem; font-weight: 700;
+            letter-spacing: 0.24em; text-transform: uppercase;
+            color: rgba(255,255,255,0.4); margin-bottom: 14px;
         }
-        .article-link::after {
-            content: "→";
-            margin-left: 5px;
-            transition: transform 0.2s;
+        .page-hero h1 {
+            font-size: clamp(2.2rem, 7vw, 4rem);
+            font-weight: 900; letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 18px;
         }
-        .article-link:hover::after {
-            transform: translateX(3px);
+        .page-hero p { font-size: clamp(0.88rem, 1.4vw, 1rem); color: rgba(255,255,255,0.5); line-height: 1.9; max-width: 480px; }
+
+        /* Articles section */
+        .articles-sec { padding: var(--section-py) 0; }
+
+        .sec-row {
+            display: flex; align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: clamp(28px, 4vw, 44px);
+            flex-wrap: wrap; gap: 20px;
         }
+        .sec-label { display: block; font-size: 0.63rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        .sec-title { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
+
+        /* Filter */
+        .filter-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+        .filter-btn {
+            padding: 8px 18px; border-radius: 50px;
+            border: 1.5px solid rgba(26,23,6,0.18);
+            background: transparent; color: var(--ink-muted);
+            font-size: 0.76rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease;
+            font-family: inherit; letter-spacing: 0.02em;
+        }
+        .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
+        .filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--white); }
+
+        /* Grid */
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--gap);
+        }
+        @media (max-width: 1100px) { .article-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 760px)  { .article-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px)  { .article-grid { grid-template-columns: 1fr; } }
+
+        /* Card */
+        .article-card {
+            background: var(--white); border-radius: var(--radius);
+            overflow: hidden; display: flex; flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .article-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
+
+        .ac-img { position: relative; aspect-ratio: 16/9; overflow: hidden; }
+        .ac-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .article-card:hover .ac-img img { transform: scale(1.05); }
+
+        .ac-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+
+        .ac-meta {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 10px;
+        }
+        .ac-cat {
+            font-size: 0.58rem; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--accent); background: rgba(191,91,59,0.08);
+            padding: 3px 9px; border-radius: 3px;
+        }
+        .ac-date { font-size: 0.68rem; color: var(--ink-muted); letter-spacing: 0.04em; }
+
+        .ac-title {
+            font-size: clamp(0.88rem, 1.3vw, 0.96rem);
+            font-weight: 700; line-height: 1.55; color: var(--ink); margin-bottom: 10px;
+        }
+        .ac-excerpt {
+            font-size: 0.78rem; color: var(--ink-muted);
+            line-height: 1.75; flex: 1; margin-bottom: 16px;
+        }
+        .ac-link {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.74rem; font-weight: 700;
+            color: var(--ink-muted); margin-top: auto;
+            transition: color 0.2s;
+        }
+        .ac-link::after { content: "→"; transition: transform 0.2s; }
+        .ac-link:hover { color: var(--accent); }
+        .ac-link:hover::after { transform: translateX(4px); }
     </style>
 </head>
 <body>
-
-    <header class="header">
-    </header>
+    <header class="header"></header>
     <script src="assets/js/header.js" data-path-prefix="" defer></script>
 
-    <section class="section main-content fade-in">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">下北沢コラム</h2>
-            </div>
-            <p style="text-align: center; margin-bottom: 40px;">下北沢の魅力や、サークル活動の裏側などを<br>ブログ形式でお届けします。</p>
-
-            <!-- フィルタリングボタン -->
-            <div class="filter-container">
-                <button class="filter-btn active" data-filter="all">すべて</button>
-                <button class="filter-btn" data-filter="deai">出会い・サークル</button>
-                <button class="filter-btn" data-filter="gourmet">グルメ</button>
-                <button class="filter-btn" data-filter="culture">カルチャー</button>
-                <button class="filter-btn" data-filter="active">アクティブ</button>
-                <button class="filter-btn" data-filter="event">イベント</button>
-                <button class="filter-btn" data-filter="cafe">カフェ</button>
-            </div>
-
-            <!-- コラム一覧 -->
-            <div id="article-grid" class="article-grid">
-                <!-- JSで生成 -->
-            </div>
-
-            <div style="text-align: center; margin-top: 50px;">
-                <a href="top.html" class="back-link">トップページに戻る</a>
-            </div>
+    <section class="page-hero">
+        <div class="wrap">
+            <span class="eyebrow reveal">Column</span>
+            <h1 class="reveal" data-d="1">下北沢コラム</h1>
+            <p class="reveal" data-d="2">下北沢の魅力や、サークル活動の裏側などを<br>ブログ形式でお届けします。</p>
         </div>
     </section>
 
-    <footer>
-    </footer>
+    <section class="articles-sec">
+        <div class="wrap">
+            <div class="sec-row">
+                <div>
+                    <span class="sec-label reveal">Stories</span>
+                    <h2 class="sec-title reveal" data-d="1">記事一覧</h2>
+                </div>
+                <div class="filter-wrap reveal" data-d="2">
+                    <button class="filter-btn active" data-filter="all">すべて</button>
+                    <button class="filter-btn" data-filter="deai">出会い・サークル</button>
+                    <button class="filter-btn" data-filter="gourmet">グルメ</button>
+                    <button class="filter-btn" data-filter="culture">カルチャー</button>
+                    <button class="filter-btn" data-filter="active">アクティブ</button>
+                    <button class="filter-btn" data-filter="event">イベント</button>
+                    <button class="filter-btn" data-filter="cafe">カフェ</button>
+                </div>
+            </div>
+
+            <div id="article-grid" class="article-grid"></div>
+        </div>
+    </section>
+
+    <footer></footer>
 
     <script src="assets/js/articles.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // articles と categoryNames は articles.js から読み込まれます
+            const revealObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
             const grid = document.getElementById('article-grid');
             const filterBtns = document.querySelectorAll('.filter-btn');
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("visible");
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
 
             function renderArticles(filter) {
                 grid.innerHTML = '';
-                const filteredArticles = filter === 'all' ? articles : articles.filter(a => a.category === filter);
+                const filtered = filter === 'all' ? articles : articles.filter(a => a.category === filter);
 
-                filteredArticles.forEach((article, index) => {
+                filtered.forEach((article, index) => {
                     const card = document.createElement('div');
-                    card.className = 'article-card fade-in';
-                    card.style.animationDelay = `${index * 0.05}s`;
+                    card.className = 'article-card reveal';
+                    card.style.transitionDelay = `${Math.min(index * 0.04, 0.3)}s`;
 
-                    const catName = categoryNames[article.category];
-
-                    // 遷移先URLのパスを正しいディレクトリ(columns/)配下に修正
+                    const catName = categoryNames[article.category] || article.category;
                     const correctUrl = article.detailUrl.startsWith('columns/') ? article.detailUrl : `columns/${article.detailUrl.split('/').pop()}`;
 
                     card.innerHTML = `
-                        <div class="article-img-wrapper">
-                            <img src="${article.imageUrl}" alt="${article.title}" class="article-img">
+                        <div class="ac-img">
+                            <img src="${article.imageUrl}" alt="${article.title}" loading="lazy">
                         </div>
-                        <div class="article-content">
-                            <span class="article-category cat-${article.category}">${catName}</span>
-                            <h3 class="article-title">${article.title}</h3>
-                            <p class="article-excerpt">${article.excerpt}</p>
-                            <a href="${correctUrl}" class="article-link">続きを読む</a>
+                        <div class="ac-body">
+                            <div class="ac-meta">
+                                <span class="ac-cat">${catName}</span>
+                                ${article.date ? `<span class="ac-date">${article.date}</span>` : ''}
+                            </div>
+                            <h3 class="ac-title">${article.title}</h3>
+                            <p class="ac-excerpt">${article.excerpt}</p>
+                            <a href="${correctUrl}" class="ac-link">続きを読む</a>
                         </div>
                     `;
                     grid.appendChild(card);
-                    observer.observe(card);
+                    revealObs.observe(card);
                 });
             }
 
-            window.renderArticles = renderArticles; // Firestore追加後の再描画用
-
-            // 初期表示
+            window.renderArticles = renderArticles;
             renderArticles('all');
 
-            // フィルタリング処理
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     filterBtns.forEach(b => b.classList.remove('active'));
@@ -224,12 +234,8 @@
                     renderArticles(btn.dataset.filter);
                 });
             });
-
-            // ページ全体のフェードイン
-            document.querySelector('.main-content.fade-in')?.classList.add('visible');
         });
     </script>
-    <!-- Firestore に保存されたコラムを取得して一覧に追加 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -244,13 +250,7 @@
             measurementId: "G-BWM0Q87Q93"
         };
 
-        const catMap = {
-            "グルメ": "gourmet",
-            "カルチャー": "culture",
-            "アクティブ": "active",
-            "コミュニティ": "deai",
-            "ライフスタイル": "cafe"
-        };
+        const catMap = { "グルメ": "gourmet", "カルチャー": "culture", "アクティブ": "active", "コミュニティ": "deai", "ライフスタイル": "cafe" };
 
         function stripHtml(html) {
             const el = document.createElement('div');
@@ -264,20 +264,16 @@
                 const db   = getFirestore(app);
                 const snap = await getDocs(query(collection(db, 'columns'), orderBy('createdAt', 'desc')));
                 if (snap.empty) return;
-
                 snap.forEach(docSnap => {
                     const d = docSnap.data();
                     articles.push({
-                        id: `fs_${docSnap.id}`,
-                        title: d.title,
+                        id: `fs_${docSnap.id}`, title: d.title,
                         category: catMap[d.category] || 'culture',
                         excerpt: d.body ? stripHtml(d.body).slice(0, 80) + '…' : d.title,
-                        imageUrl: d.coverImage || '',
-                        detailUrl: `columns/column-view.html?id=${docSnap.id}`,
+                        imageUrl: d.coverImage || '', detailUrl: `columns/column-view.html?id=${docSnap.id}`,
                         date: d.date || ''
                     });
                 });
-
                 const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
                 window.renderArticles?.(activeFilter);
             } catch (e) {

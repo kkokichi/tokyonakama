@@ -1,0 +1,195 @@
+/* ========================================
+   column-detail.css — コラム詳細ページ共通CSS
+   SHIMOKITA CULTURE MEDIA
+======================================== */
+:root {
+    --bg:         #f0ece6;
+    --bg-dark:    #141210;
+    --ink:        #1a1706;
+    --ink-muted:  #7a756e;
+    --accent:     #bf5b3b;
+    --white:      #ffffff;
+    --radius:     12px;
+    --pad:        clamp(20px, 5vw, 60px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "Noto Sans JP", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+}
+
+img { display: block; }
+a { text-decoration: none; }
+
+/* Grain texture */
+body::before {
+    content: '';
+    position: fixed; inset: -50%;
+    width: 200%; height: 200%;
+    pointer-events: none; z-index: 9000; opacity: 0.032;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain 0.4s steps(1) infinite;
+}
+@keyframes grain {
+    0%   { transform: translate(0,0); }
+    25%  { transform: translate(-3%,3%); }
+    50%  { transform: translate(3%,-3%); }
+    75%  { transform: translate(-2%,1%); }
+}
+
+/* Override section/container from style.css */
+.section.main-content {
+    background: var(--bg) !important;
+    padding: 0 !important;
+}
+.container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Article layout */
+.column-article {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(48px, 8vw, 96px) var(--pad);
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+/* Back link (top nav) — placed before column-header via JS or manually */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 36px;
+    transition: color 0.2s;
+}
+.back-link:hover { color: var(--ink); }
+.back-link::before { content: "←"; }
+
+/* Header */
+.column-header {
+    text-align: left;
+    margin-bottom: 36px;
+}
+
+/* Category badge — override all per-file color rules */
+.column-category {
+    display: inline-block !important;
+    font-size: 0.6rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+    color: var(--accent) !important;
+    background: rgba(191,91,59,0.09) !important;
+    padding: 4px 12px !important;
+    border-radius: 4px !important;
+    margin-bottom: 18px !important;
+    /* Remove rounded pill */
+    border-radius: 4px !important;
+}
+
+/* Title */
+.column-title {
+    font-size: clamp(1.5rem, 4.5vw, 2.4rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.022em !important;
+    line-height: 1.25 !important;
+    color: var(--ink) !important;
+    margin: 0 0 16px !important;
+}
+
+/* Date */
+.column-date {
+    font-size: 0.72rem !important;
+    color: var(--ink-muted) !important;
+    letter-spacing: 0.06em !important;
+    font-weight: 400 !important;
+}
+
+/* Eyecatch image */
+.column-eyecatch {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 480px !important;
+    object-fit: cover !important;
+    border-radius: var(--radius) !important;
+    margin-bottom: 48px !important;
+    box-shadow: none !important;
+}
+
+/* Article body */
+.column-body {
+    font-size: clamp(0.96rem, 1.5vw, 1.05rem) !important;
+    line-height: 1.95 !important;
+    color: var(--ink) !important;
+}
+
+.column-body p {
+    margin-bottom: 26px !important;
+    color: var(--ink) !important;
+}
+
+.column-body h2 {
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.01em !important;
+    color: var(--ink) !important;
+    margin: 52px 0 20px !important;
+    padding-bottom: 12px !important;
+    border-bottom: 2px solid rgba(191,91,59,0.16) !important;
+}
+
+.column-body h3 {
+    font-size: clamp(1rem, 2vw, 1.15rem) !important;
+    font-weight: 700 !important;
+    color: var(--ink) !important;
+    margin: 36px 0 14px !important;
+}
+
+.column-body ul, .column-body ol {
+    padding-left: 1.4em !important;
+    margin-bottom: 24px !important;
+}
+.column-body li { margin-bottom: 8px !important; line-height: 1.8 !important; }
+
+.column-body strong { font-weight: 700 !important; color: var(--ink) !important; }
+
+/* Back link at bottom */
+.container > div > a.back-link,
+.container > [style] > a.back-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    color: var(--ink-muted) !important;
+    padding: 12px 28px !important;
+    border-radius: 50px !important;
+    border: 1.5px solid rgba(26,23,6,0.18) !important;
+    transition: all 0.2s !important;
+    margin-bottom: 60px !important;
+    text-decoration: none !important;
+}
+.container > div > a.back-link:hover,
+.container > [style] > a.back-link:hover {
+    background: var(--ink) !important;
+    color: var(--white) !important;
+    border-color: var(--ink) !important;
+}
+
+/* Bottom back-link wrapper */
+.container > div[style] {
+    text-align: center;
+    padding: 0 var(--pad) 60px;
+}

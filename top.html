@@ -6,614 +6,300 @@
     <title>下北コミュニティ | 下北沢 20-30代社会人サークル</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* --- コンポーネント --- */
-        /* --- 1. ファーストビュー --- */
-        .hero-new {
-            position: relative;
-            overflow: hidden;
-            color: white;
-            padding: 140px 20px 120px;
-            text-align: center;
-            display: grid;
-            align-items: center;
-            justify-content: center;
+        :root {
+            --bg:         #f0ece6;
+            --bg-dark:    #141210;
+            --ink:        #1a1706;
+            --ink-muted:  #7a756e;
+            --accent:     #bf5b3b;
+            --white:      #ffffff;
+            --radius:     12px;
+            --pad:        clamp(20px, 5vw, 60px);
+            --section-py: clamp(60px, 10vw, 120px);
         }
-        .hero-video-wrapper {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            transform: translate(-50%, -50%);
-            z-index: -2;
-        }
-        .hero-video-wrapper video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.45); /* 視認性確保のためのオーバーレイ */
-            z-index: -1;
-        }
-        .hero-new .container {
-            position: relative; /* z-indexを有効にするため */
-            z-index: 1;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Noto Sans JP", sans-serif; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+        img { display: block; }
+        a { text-decoration: none; }
 
-        .hero-new h1 {
-            font-size: 2.2rem;
-            margin: 20px 0 24px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            line-height: 1.4;
-        }
-
-        .hero-new p {
-            font-size: 1.05rem;
-            margin-bottom: 30px;
-            font-weight: 400;
-            opacity: 0.95;
-        }
-
-        .badges {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .badge {
-            background: rgba(255,255,255,0.9);
-            color: var(--text-color);
-            padding: 6px 14px;
-            border-radius: var(--border-radius);
-            font-size: 0.85rem;
-            font-weight: bold;
-            letter-spacing: 0.05em;
-        }
-
-        /* --- 診断バナー --- */
-        .diagnosis-banner {
-            padding-top: 0;
-            padding-bottom: 30px;
-        }
-        .diagnosis-card-link {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: white;
-            padding: 25px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            text-decoration: none;
-            color: var(--text-color);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        .diagnosis-card-link:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-        }
-        .diagnosis-icon {
-            font-size: 3rem;
-            line-height: 1;
-        }
-        .diagnosis-text h3 {
-            margin: 0 0 5px;
-            font-size: 1.2rem;
-            color: var(--accent-color);
-        }
-        .diagnosis-text p {
-            margin: 0;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-        .diagnosis-arrow {
-            margin-left: auto;
-            font-weight: bold;
-            white-space: nowrap;
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-        .sub-cta-links {
-            margin-top: 40px;
-            text-align: center;
-        }
-        .sub-cta-links .btn-cta:last-child {
-            margin-bottom: 0;
-        }
-        @media (max-width: 600px) {
-            .diagnosis-card-link {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-            }
-        }
-
-        /* --- 2. 共感ゾーン --- */
-        .empathy-list {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .empathy-guide {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 30px;
-        }
-        .empathy-guide h3 {
-            margin: 0 0 5px;
-        }
-
-        #empathy-check-count {
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: var(--border-radius);
-            padding: 15px 20px;
-            text-align: center;
-            margin-top: 30px;
-            font-weight: bold;
-            color: #555;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            font-size: 1.1rem;
-        }
-        #empathy-check-count span {
-            font-size: 1.3rem;
-            color: var(--accent-color);
-        }
-
-        .empathy-bubble {
-            position: relative;
-            background: #fff;
-            padding: 15px 20px 15px 60px;
-            border-radius: var(--border-radius);
-            font-weight: bold;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.07);
-            border: 1px solid #fff;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .empathy-bubble::before {
+        body::before {
             content: '';
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-style: solid;
+            position: fixed; inset: -50%;
+            width: 200%; height: 200%;
+            pointer-events: none; z-index: 9000; opacity: 0.032;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 0.4s steps(1) infinite;
+        }
+        @keyframes grain {
+            0%   { transform: translate(0,0); }
+            25%  { transform: translate(-3%,3%); }
+            50%  { transform: translate(3%,-3%); }
+            75%  { transform: translate(-2%,1%); }
         }
 
-        .empathy-bubble.left::before {
-            bottom: -10px;
-            left: 30px;
-            border-width: 15px 15px 0 0;
-            border-color: #fff transparent transparent transparent;
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+        .reveal[data-d="1"] { transition-delay: 0.1s; }
+        .reveal[data-d="2"] { transition-delay: 0.2s; }
+        .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .fade-in.visible { opacity: 1; transform: none; }
+
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--pad); }
+        .sec { padding: var(--section-py) 0; }
+        .sec-dark { background: var(--bg-dark); color: var(--white); }
+
+        .sec-eyebrow { display: block; font-size: 0.63rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+        .sec-dark .sec-eyebrow { color: rgba(255,255,255,0.4); }
+        .sec-title { font-size: clamp(1.6rem, 4.5vw, 2.6rem); font-weight: 900; letter-spacing: -0.022em; line-height: 1.2; margin-bottom: 40px; }
+        .sec-dark .sec-title { color: var(--white); }
+
+        /* Card — used by dynamic Firebase content */
+        .card { background: var(--white); border-radius: var(--radius); padding: 22px 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+
+        /* ① Hero */
+        .hero-new {
+            position: relative; overflow: hidden;
+            min-height: 100svh;
+            display: flex; align-items: center; justify-content: center;
         }
-        .empathy-bubble.right::before {
-            bottom: -10px;
-            right: 30px;
-            border-width: 0 15px 15px 0;
-            border-color: transparent #fff transparent transparent;
+        .hero-video-wrapper { position: absolute; inset: 0; z-index: 0; }
+        .hero-video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+        .hero-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.52); z-index: 1; }
+        .hero-new .container {
+            position: relative; z-index: 2;
+            text-align: center; color: var(--white);
+            padding: 0 var(--pad); max-width: 760px;
         }
-        .empathy-checkbox {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
-            border: 2px solid #ccc;
-            border-radius: 6px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .hero-lead { font-size: clamp(0.85rem, 1.3vw, 0.96rem); color: rgba(255,255,255,0.55); margin-bottom: 12px; }
+        .hero-new h1 {
+            font-size: clamp(1.8rem, 5.5vw, 3.4rem);
+            font-weight: 900; letter-spacing: -0.025em;
+            line-height: 1.2; margin-bottom: 20px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
         }
-        .empathy-bubble.checked .empathy-checkbox {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        .empathy-bubble.checked .empathy-checkbox .checkmark {
-            opacity: 1;
-            color: white;
-            transform: scale(1);
-        }
-        .empathy-bubble:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        .empathy-bubble.checked {
-            background-color: var(--accent-light);
-            transform: scale(1.03);
-            border-color: var(--accent-color);
-        }
-        .empathy-bubble .checkmark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            font-size: 1.5rem;
-            opacity: 0;
+        .hero-new p { font-size: clamp(0.88rem, 1.4vw, 1rem); color: rgba(255,255,255,0.65); line-height: 1.9; margin-bottom: 32px; }
+        .hero-cta {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 16px 36px; background: var(--accent);
+            color: var(--white); border-radius: 50px;
+            font-size: 0.95rem; font-weight: 700; letter-spacing: 0.04em;
             transition: opacity 0.2s, transform 0.2s;
         }
-        .empathy-bubble.checked .checkmark {
-            opacity: 1;
-            transform: scale(1);
-        }
+        .hero-cta:hover { opacity: 0.9; transform: translateY(-2px); }
+        .hero-cta::after { content: " →"; }
 
-        /* --- 3. 解決策 --- */
-        .solution {
-            background-color: var(--secondary-bg);
-            text-align: center;
+        /* ② Empathy */
+        .empathy-guide {
+            background: var(--white); border-radius: var(--radius);
+            padding: 20px 24px; margin-bottom: 24px; text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
-        .solution-text {
-            font-size: 1.1rem;
-            line-height: 2;
-        }
+        .empathy-guide h3 { font-size: 0.96rem; font-weight: 700; margin-bottom: 4px; }
+        .empathy-guide p { font-size: 0.82rem; color: var(--ink-muted); margin: 0; }
 
-        /* --- 4. イベント紹介 (Bento Grid) --- */
-        .carousel-wrapper {
+        .empathy-list { display: flex; flex-direction: column; gap: 14px; }
+        .empathy-bubble {
             position: relative;
-            max-width: 100%;
-            margin: 0 auto;
+            background: var(--white); border-radius: var(--radius);
+            padding: 16px 20px 16px 60px;
+            font-size: 0.92rem; font-weight: 700; line-height: 1.6;
+            border: 1.5px solid transparent;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            cursor: pointer; display: flex; align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
         }
+        .empathy-bubble:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.09); }
+        .empathy-bubble.checked { background: rgba(191,91,59,0.06); border-color: var(--accent); }
+        .empathy-bubble.left { align-self: flex-start; max-width: 82%; }
+        .empathy-bubble.right { align-self: flex-end; max-width: 82%; }
+
+        .empathy-checkbox {
+            position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+            width: 26px; height: 26px;
+            border: 2px solid rgba(0,0,0,0.18); border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .empathy-bubble.checked .empathy-checkbox { background: var(--accent); border-color: var(--accent); }
+        .empathy-checkbox .checkmark { color: var(--white); font-size: 0.85rem; opacity: 0; transform: scale(0.4); transition: opacity 0.2s, transform 0.2s; }
+        .empathy-bubble.checked .empathy-checkbox .checkmark { opacity: 1; transform: scale(1); }
+
+        #empathy-check-count {
+            margin-top: 20px; padding: 16px 20px;
+            background: var(--white); border-radius: var(--radius);
+            text-align: center; font-size: 0.9rem; font-weight: 700; color: var(--ink-muted);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        #empathy-check-count span { color: var(--accent); font-size: 1.15rem; }
+
+        #empathy-result {
+            margin-top: 24px; background: var(--white); border-radius: var(--radius);
+            padding: 24px; display: flex; align-items: center; gap: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            border: 1.5px solid rgba(191,91,59,0.18);
+        }
+        .empathy-result-img { flex-shrink: 0; width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
+        #empathy-message { font-size: 0.88rem; line-height: 1.85; color: var(--ink-muted); margin: 0; }
+
+        /* ③ Solution */
+        .solution-text p { font-size: clamp(0.92rem, 1.4vw, 1rem); line-height: 2.1; color: rgba(255,255,255,0.7); margin-bottom: 18px; }
+        .solution-text p:last-child { margin-bottom: 0; }
+        .solution-text b { color: var(--white); }
+
+        /* ④ Activity carousel */
+        .carousel-wrapper { position: relative; padding: 0 10px; }
         .carousel-container {
-            display: flex;
-            overflow-x: auto;
+            display: flex; overflow-x: auto;
             scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
-            scrollbar-width: none; /* Firefox */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; gap: 16px;
         }
-        .carousel-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari */
-        }
-        .carousel-item {
-            flex: 0 0 90%;
-            scroll-snap-align: center;
-            margin-right: 15px;
-        }
-        .carousel-item:last-child {
-            margin-right: 0;
-        }
-        .carousel-nav {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .carousel-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background-color: #ccc;
-            border-radius: 50%;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+        .carousel-container::-webkit-scrollbar { display: none; }
+        .carousel-item { flex: 0 0 88%; scroll-snap-align: start; }
+        @media (min-width: 640px) { .carousel-item { flex: 0 0 46%; } }
+        @media (min-width: 960px) { .carousel-item { flex: 0 0 calc(25% - 12px); } }
+
+        .event-card { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+        .event-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+        .event-card-body { padding: 20px; }
+        .event-card-body h3 { font-size: 0.96rem; font-weight: 700; margin-bottom: 10px; color: var(--ink); }
+        .event-card-body p { font-size: 0.82rem; color: var(--ink-muted); line-height: 1.75; margin: 0; }
+
+        .carousel-nav { text-align: center; margin-top: 20px; }
+        .carousel-dot { display: inline-block; width: 8px; height: 8px; background: rgba(26,23,6,0.15); border-radius: 50%; margin: 0 4px; cursor: pointer; transition: background 0.2s; }
         .carousel-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(255, 255, 255, 0.8);
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; top: 40%; transform: translateY(-50%);
+            background: var(--white); border: none; border-radius: 50%;
+            width: 40px; height: 40px; font-size: 18px; cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12); z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s, color 0.2s;
         }
-        .carousel-arrow-left {
-            left: -20px;
-        }
-        .carousel-arrow-right {
-            right: -20px;
-        }
+        .carousel-arrow:hover { background: var(--ink); color: var(--white); }
+        .carousel-arrow-left { left: -10px; }
+        .carousel-arrow-right { right: -10px; }
+        .carousel-note { text-align: center; font-size: 0.78rem; color: var(--ink-muted); margin-top: 20px; }
 
-        /* --- 4.5 ギャラリー --- */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        @media (min-width: 600px) {
-            .gallery-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 15px;
-            }
-        }
-        .gallery-grid img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: var(--border-radius);
-            transition: transform 0.3s;
-        }
-        .gallery-grid img:hover {
-            transform: scale(1.02);
-        }
+        /* ⑤ Shimokita reason */
+        .reason-grid { display: grid; gap: 36px; align-items: center; }
+        @media (min-width: 768px) { .reason-grid { grid-template-columns: 1fr 1.3fr; gap: 60px; } }
+        .reason-img { width: 100%; height: 360px; object-fit: cover; border-radius: var(--radius); }
+        .reason-text p { font-size: 0.94rem; line-height: 2; color: var(--ink-muted); margin-bottom: 16px; }
+        .reason-text p:last-child { margin-bottom: 0; }
+        .reason-text b { color: var(--ink); font-weight: 700; }
 
-        /* --- 5. 下北沢の理由 --- */
-        .shimokita-reason {
-            background-color: #f0ece6; /* 落ち着いたベージュ */
-            border-top: 1px solid #e6e0d8;
-            border-bottom: 1px solid #e6e0d8;
+        /* ⑥ Profile */
+        .profile-card {
+            background: var(--white); border-radius: var(--radius); padding: 32px;
+            display: flex; align-items: center; gap: 28px;
+            box-shadow: 0 2px 14px rgba(0,0,0,0.06);
         }
-        .shimokita-content {
-            display: grid;
-            gap: 30px;
-            align-items: center;
-        }
-        @media (min-width: 768px) {
-            .shimokita-content {
-                grid-template-columns: 1fr 1.2fr;
-                gap: 50px;
-            }
-        }
-        .shimokita-img {
-            width: 100%;
-            height: 350px;
-            object-fit: cover;
-            border-radius: var(--border-radius);
-        }
+        @media (max-width: 600px) { .profile-card { flex-direction: column; text-align: center; } }
+        .profile-img { flex-shrink: 0; width: 110px; height: 110px; border-radius: 50%; object-fit: cover; }
+        .profile-text h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+        .profile-text p { font-size: 0.88rem; color: var(--ink-muted); line-height: 1.9; margin: 0; }
 
-
-        /* --- 6. 主催者紹介 --- */
-        .profile {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-        .profile-img {
-            flex-shrink: 0;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        /* スマホでは縦並びにする */
-        @media (max-width: 600px) {
-            .profile {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-        .profile-text h3 {
-            margin-top: 0;
-        }
-
-        /* --- 6. 参加者の声 --- */
+        /* ⑦ Voice cards */
         .voice-card {
-            /* --- Glassmorphism Style --- */
-            position: relative;
-            background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 30px 25px;
-            border-radius: var(--border-radius);
-            margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--white); border-radius: var(--radius);
+            padding: 26px; margin-bottom: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .voice-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-        }
-        
-        .voice-meta {
-            font-size: 0.9rem;
-            color: #555;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        /* --- 7. FAQ --- */
-        .faq-item {
-            /* --- Glassmorphism Style --- */
-            background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-
-        .faq-q {
-            font-weight: bold;
-            color: var(--accent-color);
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        /* --- 追加: モダンなカードスタイル (Event Card用) --- */
-        .event-card {
-            /* style.cssの.cardを継承 */
-        }
-        .event-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .event-card h3, .event-card p {
-            padding: 0 20px;
-        }
-        .event-card h3 {
-            margin-top: 20px;
-        }
-        .event-card p {
-            margin-bottom: 25px;
-        }
-
-
-        /* --- 返信表示用スタイル --- */
+        .voice-card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.09); }
+        .voice-meta { display: block; font-size: 0.75rem; color: var(--ink-muted); letter-spacing: 0.04em; margin-bottom: 10px; }
+        .voice-card h3 { font-size: 0.96rem; font-weight: 700; margin-bottom: 10px; }
+        .voice-card p { font-size: 0.86rem; color: var(--ink-muted); line-height: 1.9; margin: 0; }
         .admin-reply {
-            background-color: rgba(230, 233, 249, 0.5); /* 元の背景を半透明に */
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(191,91,59,0.05); border-radius: 8px;
+            padding: 14px; margin-top: 14px;
+            border: 1px solid rgba(191,91,59,0.12);
         }
-        .reply-meta {
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            margin-bottom: 5px;
-            display: block;
-        }
-        /* --- 広告用スタイル --- */
-        .ad-container {
-            margin: 40px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            text-align: center;
-            background: rgba(255, 255, 255, 0.2);
-            max-width: 728px; /* 一般的な広告サイズ */
-        }
-        .ad-label {
-            font-size: 0.8rem;
-            color: #888;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .ad-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #e9e9e9;
-            color: #aaa;
-            min-height: 90px; /* 一般的な広告の高さ */
-            width: 100%;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-        /* --- 位置情報表示用 --- */
-        .location-info {
-            font-size: 0.8rem;
-            margin-left: 15px;
-            display: none; /* JSで表示制御 */
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.9);
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: #333;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .location-info a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 1px dotted var(--accent-color);
-        }
-        @media (max-width: 900px) {
-            .header {
-                flex-wrap: wrap;
-                padding-bottom: 10px;
-            }
-            .location-info {
-                width: 100%;
-                flex: 0 0 100%;
-                justify-content: center;
-                margin: 10px 0 0;
-                order: 4;
-            }
-        }
+        .reply-meta { display: block; font-size: 0.72rem; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
 
-        /* --- キャラクター表示スタイル --- */
+        /* FAQ */
+        .faq-item {
+            background: var(--white); border-radius: var(--radius);
+            padding: 22px 24px; margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .faq-item:last-child { margin-bottom: 0; }
+        .faq-q { display: block; font-weight: 700; font-size: 0.94rem; color: var(--ink); margin-bottom: 10px; }
+        .faq-q::before { content: "Q. "; color: var(--accent); }
+        .faq-a { font-size: 0.86rem; color: var(--ink-muted); line-height: 1.85; margin: 0; }
+        .faq-a::before { content: "A. "; font-weight: 700; color: var(--ink); }
+
+        /* Ad */
+        .ad-container { max-width: 728px; margin: 0 auto; padding: 24px; border-radius: var(--radius); border: 1px solid rgba(26,23,6,0.1); text-align: center; background: var(--white); }
+        .ad-label { font-size: 0.72rem; color: var(--ink-muted); margin-bottom: 12px; display: block; }
+
+        /* Sub CTA */
+        .sub-cta-links { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 36px; }
+        .sub-cta-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 50px; color: var(--white); font-size: 0.86rem; font-weight: 700; transition: opacity 0.2s, transform 0.2s; }
+        .sub-cta-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* CTA section */
+        .cta-sec { text-align: center; }
+        .cta-sec p { font-size: 0.94rem; color: rgba(255,255,255,0.6); line-height: 2; margin-bottom: 12px; }
+        .cta-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 18px 44px; background: var(--accent);
+            color: var(--white); border-radius: 50px;
+            font-size: 1rem; font-weight: 700; letter-spacing: 0.04em;
+            margin-top: 20px; transition: opacity 0.2s, transform 0.2s;
+        }
+        .cta-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .cta-btn::after { content: " →"; }
+
+        /* Sticky CTA */
+        .sticky-cta {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 8000; padding: 14px 32px;
+            background: var(--accent); color: var(--white);
+            border-radius: 50px; white-space: nowrap;
+            font-weight: 700; font-size: 0.9rem; letter-spacing: 0.04em;
+            box-shadow: 0 8px 24px rgba(191,91,59,0.38);
+            transition: opacity 0.2s;
+        }
+        .sticky-cta:hover { opacity: 0.9; }
+
+        /* Character */
         .chara-container {
-            position: fixed;
-            right: 20px;
-            bottom: -160px; /* 初期状態は画面外に隠す */
-            z-index: 1500;
+            position: fixed; right: 20px; bottom: -180px; z-index: 1500;
             cursor: pointer;
             transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center;
         }
-
-        .chara-container.active {
-            bottom: 25px; /* スクロールが300pxを超えたら出現 */
-        }
-
-        #shimokita-chara {
-            width: 100px;
-            height: auto;
-            animation: bobbing 2.5s ease-in-out infinite; /* 浮遊アニメーション */
-        }
-
-        /* キャラクター上の吹き出し */
+        .chara-container.active { bottom: 90px; }
+        #shimokita-chara { width: 90px; height: auto; animation: bobbing 2.5s ease-in-out infinite; }
+        @keyframes bobbing { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         .speech-bubble {
-            position: relative;
-            background: #fff;
-            border: 2px solid var(--accent-color);
-            border-radius: 12px;
-            padding: 8px 15px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            margin-bottom: 12px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            pointer-events: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative; background: var(--white);
+            border: 2px solid var(--accent); border-radius: 12px;
+            padding: 7px 14px; font-size: 0.8rem; font-weight: 700;
+            color: var(--accent); margin-bottom: 10px;
+            opacity: 0; transform: translateY(8px);
+            transition: all 0.3s; white-space: nowrap; pointer-events: none;
         }
-
-        .chara-container:hover .speech-bubble {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 吹き出しの三角部分 */
+        .chara-container:hover .speech-bubble { opacity: 1; transform: translateY(0); }
         .speech-bubble::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 10px 8px 0;
-            border-style: solid;
-            border-color: var(--accent-color) transparent transparent;
+            content: ""; position: absolute;
+            bottom: -10px; left: 50%; transform: translateX(-50%);
+            border-width: 10px 8px 0; border-style: solid;
+            border-color: var(--accent) transparent transparent;
         }
 
-        /* 浮いているような上下運動のアニメーション */
-        @keyframes bobbing {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
+        .announce-strip { background: rgba(26,23,6,0.03); }
     </style>
 </head>
-<body class="has-sticky-cta">
-    <header class="header">
-    </header>
+<body>
+    <header class="header"></header>
     <script src="assets/js/header.js" data-path-prefix="" defer></script>
 
-    <!-- ① ファーストビュー -->
+    <!-- ① Hero -->
     <section class="hero-new">
         <div class="hero-video-wrapper">
             <video autoplay loop muted playsinline poster="assets/images/hero-poster.jpg">
@@ -623,50 +309,58 @@
         </div>
         <div class="hero-overlay"></div>
         <div class="container">
-            <p style="font-size: 1rem; opacity: 0.9; margin-bottom: 0;">会社と家の往復だけじゃ、なんだか少し、息が詰まりませんか？</p>
+            <p class="hero-lead">会社と家の往復だけじゃ、なんだか少し、息が詰まりませんか？</p>
             <h1>下北沢で、コーヒー片手に<br>「会社以外の友達」と話す週末。</h1>
             <p>無理せず、飾らず、ゆるく繋がる。</p>
+            <a href="contact.html" class="hero-cta">参加してみる</a>
         </div>
     </section>
 
-    <!-- ② 共感ゾーン -->
-    <section class="section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">ふと、こんなことを<br>思う瞬間はありませんか？</h2>
-            </div>
-            <div class="empathy-guide fade-in" style="--i: 0;">
-                <h3>🤔 あなたはいくつ当てはまりますか？</h3>
-                <p style="margin:0; font-size: 0.9rem; color: #666;">当てはまるものにチェックしてください</p>
+    <!-- ② Empathy -->
+    <section class="sec">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">Empathy</span>
+            <h2 class="sec-title reveal">ふと、こんなことを<br>思う瞬間はありませんか？</h2>
+            <div class="empathy-guide reveal">
+                <h3>あなたはいくつ当てはまりますか？</h3>
+                <p>当てはまるものにチェックしてください</p>
             </div>
             <div class="empathy-list">
-                <div class="empathy-bubble left fade-in" style="--i: 1; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>学生時代の友人は結婚や転勤で、気軽に誘えなくなった…</div>
-                <div class="empathy-bubble right fade-in" style="--i: 2; align-self: flex-end; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>休日はスマホを見ていたら、いつの間にか夕方になっている…</div>
-                <div class="empathy-bubble left fade-in" style="--i: 3; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>職場の人とは仲が良いけれど、プライベートの話はしづらい…</div>
-                <div class="empathy-bubble right fade-in" style="--i: 4; align-self: flex-end; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>新しい趣味を始めたいけど、一人だと腰が重い…</div>
-                <div class="empathy-bubble left fade-in" style="--i: 5; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>「社会人サークル」と検索しても、ガチすぎたり、ノリが若すぎて引いてしまう…</div>
+                <div class="empathy-bubble left fade-in" style="--i:1;" data-empathy-item>
+                    <div class="empathy-checkbox"><span class="checkmark">✔</span></div>
+                    学生時代の友人は結婚や転勤で、気軽に誘えなくなった…
+                </div>
+                <div class="empathy-bubble right fade-in" style="--i:2;" data-empathy-item>
+                    <div class="empathy-checkbox"><span class="checkmark">✔</span></div>
+                    休日はスマホを見ていたら、いつの間にか夕方になっている…
+                </div>
+                <div class="empathy-bubble left fade-in" style="--i:3;" data-empathy-item>
+                    <div class="empathy-checkbox"><span class="checkmark">✔</span></div>
+                    職場の人とは仲が良いけれど、プライベートの話はしづらい…
+                </div>
+                <div class="empathy-bubble right fade-in" style="--i:4;" data-empathy-item>
+                    <div class="empathy-checkbox"><span class="checkmark">✔</span></div>
+                    新しい趣味を始めたいけど、一人だと腰が重い…
+                </div>
+                <div class="empathy-bubble left fade-in" style="--i:5;" data-empathy-item>
+                    <div class="empathy-checkbox"><span class="checkmark">✔</span></div>
+                    「社会人サークル」と検索しても、ガチすぎたり、ノリが若すぎて引いてしまう…
+                </div>
             </div>
             <div id="empathy-check-count"></div>
-            <div id="empathy-result" class="card fade-in" style="--i: 6; margin-top: 40px; display: none; background-color: var(--accent-light);">
-                <div class="profile" style="align-items: center; gap: 20px;">
-                    <img src="assets/images/profile.webp" alt="主催者の写真" class="profile-img" style="width: 80px; height: 80px;">
-                    <div class="profile-text">
-                        <p id="empathy-message" style="margin:0; font-size:0.95rem; line-height: 1.8;">
-                            もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。
-                        </p>
-                    </div>
-                </div>
+            <div id="empathy-result" style="display:none;">
+                <img src="assets/images/profile.webp" alt="主催者" class="empathy-result-img">
+                <p id="empathy-message">もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。</p>
             </div>
         </div>
     </section>
 
-    <!-- ③ 解決策提示 -->
-    <section class="section solution fade-in">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">「頑張らなくていい」<br>それが一番大切なルール</h2>
-            </div>
-            <div class="solution-text">
+    <!-- ③ Solution -->
+    <section class="sec sec-dark">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">Philosophy</span>
+            <h2 class="sec-title reveal">「頑張らなくていい」<br>それが一番大切なルール</h2>
+            <div class="solution-text reveal">
                 <p>ここは、名刺交換をする異業種交流会でもなければ、ウェイウェイ盛り上がる合コンでもありません。</p>
                 <p>ただ、好きな街「下北沢」に集まって、美味しいカレーを食べたり、ボードゲームで笑ったり。</p>
                 <p>会社での肩書きを脱いで、<b>「学生時代の放課後」のような、なんでもない時間を共有する。</b></p>
@@ -675,212 +369,190 @@
         </div>
     </section>
 
-    <!-- ④ イベント紹介 -->
-    <section class="section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">下北沢を拠点に、<br>こんな活動をしています</h2>
-            </div>
-            
+    <!-- ④ Activities -->
+    <section class="sec">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">Activities</span>
+            <h2 class="sec-title reveal">下北沢を拠点に、<br>こんな活動をしています</h2>
             <div class="carousel-wrapper">
                 <button class="carousel-arrow carousel-arrow-left" id="carousel-prev" aria-label="前へ">‹</button>
                 <button class="carousel-arrow carousel-arrow-right" id="carousel-next" aria-label="次へ">›</button>
                 <div class="carousel-container" id="activity-carousel">
-                    <!-- Activity 1 -->
                     <div class="carousel-item">
-                        <div class="card event-card fade-in" style="--i: 0;">
+                        <div class="event-card">
                             <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="カフェでの交流">
-                            <h3>☕ まったり交流</h3>
-                            <p><b>下北沢カフェ・古着屋巡り</b><br>「あのお店、気になってたんだよね」をみんなで消化。月1回、おしゃれなカフェでただお喋りするだけの会も人気です。</p>
+                            <div class="event-card-body">
+                                <h3>☕ まったり交流</h3>
+                                <p><b>下北沢カフェ・古着屋巡り</b><br>「あのお店、気になってたんだよね」をみんなで消化。月1回、おしゃれなカフェでただお喋りするだけの会も人気です。</p>
+                            </div>
                         </div>
                     </div>
-                    <!-- Activity 2 -->
                     <div class="carousel-item">
-                        <div class="card event-card fade-in" style="--i: 1;">
+                        <div class="event-card">
                             <img src="https://images.unsplash.com/photo-1632501641765-e568d28b0015?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ボードゲーム会">
-                            <h3>🎲 趣味の共有</h3>
-                            <p><b>インドア派も安心</b><br>会話が苦手でも大丈夫。ボードゲームや映画鑑賞なら、無理に話そうとしなくても自然と仲良くなれます。</p>
+                            <div class="event-card-body">
+                                <h3>🎲 趣味の共有</h3>
+                                <p><b>インドア派も安心</b><br>会話が苦手でも大丈夫。ボードゲームや映画鑑賞なら、無理に話そうとしなくても自然と仲良くなれます。</p>
+                            </div>
                         </div>
                     </div>
-                    <!-- Activity 3 -->
                     <div class="carousel-item">
-                        <div class="card event-card fade-in" style="--i: 2;">
+                        <div class="event-card">
                             <img src="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ゆるいスポーツ">
-                            <h3>🏃 ゆるくリフレッシュ</h3>
-                            <p><b>「ガチじゃない」スポーツ</b><br>経験者お断り？と思うくらいゆるいフットサルやバドミントン。ミスしても笑って許せる雰囲気です。</p>
+                            <div class="event-card-body">
+                                <h3>🏃 ゆるくリフレッシュ</h3>
+                                <p><b>「ガチじゃない」スポーツ</b><br>経験者お断り？と思うくらいゆるいフットサルやバドミントン。ミスしても笑って許せる雰囲気です。</p>
+                            </div>
                         </div>
                     </div>
-                    <!-- Activity 4 -->
                     <div class="carousel-item">
-                        <div class="card event-card fade-in" style="--i: 3;">
+                        <div class="event-card">
                             <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="週末のドライブ">
-                            <h3>🚗 ちょっとお出かけ</h3>
-                            <p><b>週末プチ旅行</b><br>たまには少し足を延ばして、みんなでドライブや日帰り温泉へ。非日常な体験を共有すれば、もっと仲良くなれるはず。</p>
+                            <div class="event-card-body">
+                                <h3>🚗 ちょっとお出かけ</h3>
+                                <p><b>週末プチ旅行</b><br>たまには少し足を延ばして、みんなでドライブや日帰り温泉へ。非日常な体験を共有すれば、もっと仲良くなれるはず。</p>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="carousel-nav" id="carousel-nav"></div>
             </div>
-            <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 30px; margin-bottom: 0;">※一部、今後の活動イメージを含みます。実際の活動内容はLINEでご確認ください。</p>
+            <p class="carousel-note reveal">※一部、今後の活動イメージを含みます。実際の活動内容はLINEでご確認ください。</p>
         </div>
     </section>
 
-    <!-- ⑤ 下北沢を拠点にする理由 -->
-    <section class="section shimokita-reason fade-in">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">なぜ、渋谷でも新宿でもなく<br>「下北沢」なのか？</h2>
-            </div>
-            <div class="shimokita-content">
-                <img src="assets/images/shimokita.webp" alt="下北沢の街並み" class="shimokita-img">
-                <div>
+    <!-- ⑤ Shimokita reason -->
+    <section class="sec">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">Why Shimokita</span>
+            <h2 class="sec-title reveal">なぜ、渋谷でも新宿でもなく<br>「下北沢」なのか？</h2>
+            <div class="reason-grid">
+                <img src="assets/images/shimokita.webp" alt="下北沢の街並み" class="reason-img reveal">
+                <div class="reason-text reveal" data-d="1">
                     <p>それは、下北沢が<b>「気取らなくていい街」</b>だからです。</p>
                     <p>キラキラした港区のような緊張感もなければ、ビジネス街のような堅苦しさもない。</p>
                     <p>古着にスニーカーで歩けるこの街の空気感は、初対面の緊張を驚くほどほぐしてくれます。</p>
-                    <p style="margin-bottom: 0;">路地裏の隠れ家カフェや、ディープな居酒屋。「こんなお店あったんだ！」という発見が、会話のきっかけを自然に作ってくれるのです。</p>
+                    <p>路地裏の隠れ家カフェや、ディープな居酒屋。「こんなお店あったんだ！」という発見が、会話のきっかけを自然に作ってくれるのです。</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ⑥ 主催者紹介 -->
-    <section class="section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">主催者はこんな人です</h2>
-            </div>
-            <div class="card fade-in">
-                <div class="profile">
-                    <img src="assets/images/profile.webp" alt="主催者の写真" class="profile-img">
-                    <div class="profile-text">
-                        <h3>主催：らいと (20代後半)</h3>
-                        <p style="margin-bottom: 0;">趣味はカフェ巡りと散歩とサウナ、筋トレ。上京したての頃、会社以外に話せる人がいなくて寂しい思いをしました。「休日にふらっと集まれる仲間がほしいな」という軽い気持ちでこの会を始めました。人見知りの方も大歓迎なので、気軽に遊びに来てください！</p>
-                    </div>
+    <!-- ⑥ Profile -->
+    <section class="sec">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">Organizer</span>
+            <h2 class="sec-title reveal">主催者はこんな人です</h2>
+            <div class="profile-card reveal">
+                <img src="assets/images/profile.webp" alt="主催者の写真" class="profile-img">
+                <div class="profile-text">
+                    <h3>主催：らいと (20代後半)</h3>
+                    <p>趣味はカフェ巡りと散歩とサウナ、筋トレ。上京したての頃、会社以外に話せる人がいなくて寂しい思いをしました。「休日にふらっと集まれる仲間がほしいな」という軽い気持ちでこの会を始めました。人見知りの方も大歓迎なので、気軽に遊びに来てください！</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ⑦ 参加者の声 -->
-    <section class="section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">「最初はすごく不安でした」<br>参加メンバーの声</h2>
-            </div>
-            
-            <div class="voice-card fade-in" style="--i: 0;">
+    <!-- ⑦ Voices -->
+    <section class="sec">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">Voices</span>
+            <h2 class="sec-title reveal">「最初はすごく不安でした」<br>参加メンバーの声</h2>
+            <div class="voice-card reveal">
                 <span class="voice-meta">26歳 女性・事務職</span>
                 <h3>「人見知りな私でも、2回目から馴染めました」</h3>
                 <p>1人で参加するのが怖くて、申し込みボタンを押すまで3日悩みました（笑）。でも行ってみたら、みんな「1人で来ました」って人ばかり。無理にテンションを上げなくていい雰囲気が、すごく居心地よかったです。</p>
             </div>
-
-            <div class="voice-card fade-in" style="--i: 1;">
+            <div class="voice-card reveal">
                 <span class="voice-meta">29歳 男性・エンジニア</span>
                 <h3>「上京したての孤独感がなくなりました」</h3>
                 <p>地方から出てきて友達がおらず、休日はずっと家。このサークルは「意識高い系」じゃないのが自分に合ってました。下北のカレー屋巡りが楽しくて、週末が待ち遠しくなりました。</p>
             </div>
-            <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 30px; margin-bottom: 0;">※これらは個人の感想を元に作成した活動イメージです。</p>
+            <p class="carousel-note reveal">※これらは個人の感想を元に作成した活動イメージです。</p>
         </div>
     </section>
 
-    <!-- お知らせセクション -->
-    <section class="section" style="padding-top: 30px; padding-bottom: 0;">
-        <div class="container">
-            <div class="section-header" style="margin-bottom: 30px;">
-                <h2 class="section-title">📢 お知らせ</h2>
-            </div>
+    <!-- Announcements -->
+    <section class="sec announce-strip" style="padding: clamp(48px,7vw,80px) 0;">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">News</span>
+            <h2 class="sec-title reveal" style="margin-bottom: 24px;">お知らせ</h2>
             <div id="announcement-list">
-                <p style="text-align: center; color: #888;">読み込み中...</p>
+                <p style="text-align:center; color:var(--ink-muted);">読み込み中...</p>
             </div>
         </div>
     </section>
 
-
-
-    <!-- ▼▼▼ 広告スペース ▼▼▼ -->
-    <section class="section">
-        <div class="container">
-            <div class="ad-container fade-in">
+    <!-- Ad -->
+    <section style="padding: clamp(28px,4vw,48px) 0;">
+        <div class="wrap">
+            <div class="ad-container reveal">
                 <span class="ad-label">スポンサーリンク</span>
                 <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
-                    <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius: 8px;">
+                    <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius:8px; margin:0 auto;">
                 </a>
-                <p style="font-size:0.9rem; margin-top:15px; margin-bottom:0;">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
+                <p style="font-size:0.86rem; margin-top:14px; margin-bottom:0; color:var(--ink-muted);">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
             </div>
         </div>
     </section>
-    <!-- ▲▲▲ 広告スペース ▲▲▲ -->
 
-    <!-- ⑦.5 最新のお問い合わせ -->
-    <section class="section" style="background-color: #f9f9f9;">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">最近届いたお問い合わせ</h2>
-            </div>
-            <p style="text-align: center; margin-bottom: 30px;">フォームから実際に届いたメッセージを、個人情報を伏せてご紹介します。</p>
+    <!-- Recent Inquiries -->
+    <section class="sec" style="padding-top: clamp(40px,6vw,72px);">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">Community</span>
+            <h2 class="sec-title reveal">最近届いたお問い合わせ</h2>
+            <p class="reveal" style="font-size:0.88rem; color:var(--ink-muted); margin-bottom:28px; line-height:1.85;">フォームから実際に届いたメッセージを、個人情報を伏せてご紹介します。</p>
             <div id="inquiry-list">
-                <p style="text-align: center; color: #888;">読み込み中...</p>
+                <p style="text-align:center; color:var(--ink-muted);">読み込み中...</p>
             </div>
-            <div class="sub-cta-links fade-in">
-                <a href="diagnosis.html" class="btn-cta" style="background-color: #8e44ad;">🎭 あなたのタイプは？下北16診断をやってみる</a>
-                <a href="recommend.html" class="btn-cta" style="background-color: #27ae60;">📍 下北沢のおすすめスポットを見る</a>
-                <a href="column.html" class="btn-cta" style="background-color: #3498db;">📝 下北沢のコラムを読む</a>
+            <div class="sub-cta-links reveal">
+                <a href="diagnosis.html" class="sub-cta-btn" style="background:#8e44ad;">🎭 あなたのタイプは？下北16診断をやってみる</a>
+                <a href="recommend.html" class="sub-cta-btn" style="background:#27ae60;">📍 下北沢のおすすめスポットを見る</a>
+                <a href="column.html" class="sub-cta-btn" style="background:#3498db;">📝 下北沢のコラムを読む</a>
             </div>
         </div>
     </section>
 
-    <!-- ⑧ よくある不安・Q&A -->
-    <section class="section" style="background-color: #fff;">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">参加前の<br>「ちょっとした不安」にお答えします</h2>
-            </div>
-            
-            <div class="faq-item fade-in" style="--i: 0;">
+    <!-- FAQ -->
+    <section class="sec">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">FAQ</span>
+            <h2 class="sec-title reveal">参加前の<br>「ちょっとした不安」にお答えします</h2>
+            <div class="faq-item reveal">
                 <span class="faq-q">本当に1人で参加しても浮きませんか？</span>
-                <p>A. はい、むしろ1人参加が9割です。グループが出来上がっていて入りにくい…ということはありません。運営スタッフが必ずフォローします。</p>
+                <p class="faq-a">はい、むしろ1人参加が9割です。グループが出来上がっていて入りにくい…ということはありません。運営スタッフが必ずフォローします。</p>
             </div>
-
-            <div class="faq-item fade-in" style="--i: 1;">
+            <div class="faq-item reveal">
                 <span class="faq-q">人見知りで、話せるか不安です…</span>
-                <p>A. 無理に話さなくてOKです。ボードゲームや映画など、話術がいらない企画も多いです。「ただその場にいるだけ」でも歓迎する空気感を大切にしています。</p>
+                <p class="faq-a">無理に話さなくてOKです。ボードゲームや映画など、話術がいらない企画も多いです。「ただその場にいるだけ」でも歓迎する空気感を大切にしています。</p>
             </div>
-
-            <div class="faq-item fade-in" style="--i: 2;">
+            <div class="faq-item reveal">
                 <span class="faq-q">変な勧誘とかありませんか？</span>
-                <p>A. ネットワークビジネス、宗教、強引なナンパ等は発見次第、即退会としています。純粋に友達作りを楽しみたい人だけが残るよう、管理を徹底しています。</p>
+                <p class="faq-a">ネットワークビジネス、宗教、強引なナンパ等は発見次第、即退会としています。純粋に友達作りを楽しみたい人だけが残るよう、管理を徹底しています。</p>
             </div>
         </div>
     </section>
 
-    <!-- ⑨ 最終CTA -->
-    <section class="section fade-in">
-        <div class="container" style="text-align: center;">
-            <div class="section-header">
-                <h2 class="section-title">まずは「雰囲気」を知るだけでOK</h2>
-            </div>
-            <p>ここまで読んでいただき、ありがとうございます。<br>少しでも興味を持っていただけたら、お気軽にお問い合わせください。</p>
-            <p>イベントへの参加希望はもちろん、「こんなことしたい！」というご提案も大歓迎です。</p>
-            <p>あなたからのご連絡をお待ちしています！</p>
-            
-            <a href="contact.html" class="btn-cta">
-                参加希望・お問い合わせはこちら
-            </a>
+    <!-- ⑨ CTA -->
+    <section class="sec sec-dark cta-sec">
+        <div class="wrap">
+            <span class="sec-eyebrow reveal">Join Us</span>
+            <h2 class="sec-title reveal">まずは「雰囲気」を知るだけでOK</h2>
+            <p class="reveal">ここまで読んでいただき、ありがとうございます。<br>少しでも興味を持っていただけたら、お気軽にお問い合わせください。</p>
+            <p class="reveal">イベントへの参加希望はもちろん、「こんなことしたい！」というご提案も大歓迎です。</p>
+            <p class="reveal">あなたからのご連絡をお待ちしています！</p>
+            <a href="contact.html" class="cta-btn reveal">参加希望・お問い合わせはこちら</a>
         </div>
     </section>
 
-    <footer>
-    </footer>
+    <footer></footer>
 
-    <!-- スクロール追従ボタン（スマホ用） -->
-    <a href="contact.html" class="btn-cta sticky-cta">
-        お問い合わせはこちら
-    </a>
+    <a href="contact.html" class="sticky-cta">お問い合わせはこちら</a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getCountFromServer, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
@@ -892,95 +564,56 @@
             measurementId: "G-BWM0Q87Q93"
         };
 
-        // Firebaseの初期化
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // ログイン状態の監視とヘッダー切り替え
         document.addEventListener('DOMContentLoaded', () => {
-            // header.js がヘッダーを生成するのを待つ
             onAuthStateChanged(auth, (user) => {
                 const loginLink = document.querySelector('.login-link');
                 if (!loginLink) return;
-                if (user) {
-                    // ログイン中
-                    loginLink.textContent = 'マイページ';
-                    loginLink.href = 'mypage.html';
-                } else {
-                    // 未ログイン（デフォルトのまま）
-                    loginLink.textContent = 'ログイン';
-                    loginLink.href = 'login.html';
-                }
+                if (user) { loginLink.textContent = 'マイページ'; loginLink.href = 'mypage.html'; }
+                else { loginLink.textContent = 'ログイン'; loginLink.href = 'login.html'; }
             });
         });
 
-        // --- Observer for fade-in animation ---
-        const observer = new IntersectionObserver((entries, observer) => {
+        const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("visible");
-                    // 一度表示されたら監視を止める
-                    observer.unobserve(entry.target);
-                }
+                if (entry.isIntersecting) { entry.target.classList.add("visible"); obs.unobserve(entry.target); }
             });
         }, { threshold: 0.1 });
 
-        // DOM読み込み後に初期要素を監視
         document.addEventListener('DOMContentLoaded', () => {
-            const elements = document.querySelectorAll(".fade-in");
-            elements.forEach(el => observer.observe(el));
+            document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
         });
 
-        // 最新のお問い合わせを表示
         async function showRecentInquiries() {
             const listContainer = document.getElementById('inquiry-list');
             try {
-                // 最新20件を取得してから、クライアント側で「表示可」のものをフィルタリングする
-                // (Firestoreで複合インデックスを作らずに済むようにするため)
                 const q = query(collection(db, "contacts"), orderBy("createdAt", "desc"), limit(20));
                 const querySnapshot = await getDocs(q);
-                
                 const visibleDocs = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    if (data.displayOnSite === 'visible') {
-                        visibleDocs.push(data);
-                    }
+                    if (data.displayOnSite === 'visible') visibleDocs.push(data);
                 });
-
-                if (visibleDocs.length === 0) {
-                    listContainer.innerHTML = '<p style="text-align: center;">まだメッセージはありません。</p>';
-                    return;
-                }
-
-                listContainer.innerHTML = ''; // Loadingメッセージを消去
-
-                // 最新3件まで表示
+                if (visibleDocs.length === 0) { listContainer.innerHTML = '<p style="text-align:center;">まだメッセージはありません。</p>'; return; }
+                listContainer.innerHTML = '';
                 const displayDocs = visibleDocs.slice(0, 3);
-                let i = 0; // アニメーション遅延用のカウンター
+                let i = 0;
                 displayDocs.forEach((data) => {
                     const card = document.createElement('div');
                     card.className = 'voice-card fade-in';
                     card.style.setProperty('--i', i++);
-                    
-                    // メタ情報
                     let displayName = '匿名希望';
-                    if (data.publicPreference === 'named' && data.name) {
-                        displayName = data.name;
-                    }
-
+                    if (data.publicPreference === 'named' && data.name) displayName = data.name;
                     const meta = document.createElement('span');
                     meta.className = 'voice-meta';
                     meta.textContent = `${displayName} (${data.type || 'その他'})`;
                     card.appendChild(meta);
-
-                    // 問い合わせ内容
                     const p = document.createElement('p');
                     p.textContent = data.message;
                     card.appendChild(p);
-
-                    // 返信がある場合のみ表示
                     if (data.reply) {
                         const replyDiv = document.createElement('div');
                         replyDiv.className = 'admin-reply';
@@ -991,50 +624,38 @@
                         replyDiv.appendChild(replyP);
                         card.appendChild(replyDiv);
                     }
-                    
                     listContainer.appendChild(card);
-                    observer.observe(card); // 動的に追加した要素を監視対象に
+                    observer.observe(card);
                 });
             } catch (error) {
                 console.error("Error fetching inquiries:", error);
-                listContainer.innerHTML = '<p style="text-align: center; color: #888;">読み込みに失敗しました</p>';
+                listContainer.innerHTML = '<p style="text-align:center; color:var(--ink-muted);">読み込みに失敗しました</p>';
             }
         }
         showRecentInquiries();
 
-        // お知らせ一覧を表示
         async function showAnnouncements() {
             const listContainer = document.getElementById('announcement-list');
             try {
-                const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(5)); // 最新5件まで
+                const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(5));
                 const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    listContainer.innerHTML = '<p style="text-align: center;">現在、新しいお知らせはありません。</p>';
-                    return;
-                }
-
-                listContainer.innerHTML = ''; // ローディング表示をクリア
+                if (querySnapshot.empty) { listContainer.innerHTML = '<p style="text-align:center;">現在、新しいお知らせはありません。</p>'; return; }
+                listContainer.innerHTML = '';
                 let i = 0;
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
                     const date = data.createdAt.toDate().toLocaleDateString('ja-JP');
-
                     const item = document.createElement('div');
                     item.className = 'card fade-in';
                     item.style.setProperty('--i', i++);
-                    item.style.marginBottom = '15px';
-                    item.innerHTML = `
-                        <p style="font-size: 0.85rem; color: #888; margin-bottom: 5px;">${date}</p>
-                        <p style="font-weight: bold; margin-bottom: 0;">${data.text}</p>
-                    `;
+                    item.style.marginBottom = '12px';
+                    item.innerHTML = `<p style="font-size:0.8rem; color:var(--ink-muted); margin-bottom:5px;">${date}</p><p style="font-weight:700; margin-bottom:0;">${data.text}</p>`;
                     listContainer.appendChild(item);
                     observer.observe(item);
                 });
-
             } catch (error) {
                 console.error("Error fetching announcements:", error);
-                listContainer.innerHTML = '<p style="text-align: center; color: #888;">お知らせの読み込みに失敗しました。</p>';
+                listContainer.innerHTML = '<p style="text-align:center; color:var(--ink-muted);">お知らせの読み込みに失敗しました。</p>';
             }
         }
         showAnnouncements();
@@ -1042,107 +663,68 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // --- 背景グラデーションアニメーション ---
+            // Reveal observer for static elements
+            const revealObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+            // Background gradient animation (preserved)
             const body = document.body;
-            // 開始色 (ページのトップ)
-            const startColor1 = { r: 249, g: 231, b: 216 }; // #f9e7d8
-            const startColor2 = { r: 230, g: 233, b: 249 }; // #e6e9f9
-
-            // 終了色 (ページのボトム)
-            const endColor1 = { r: 252, g: 221, b: 236 }; // #fcddec - 温かみのあるピンク
-            const endColor2 = { r: 221, g: 221, b: 252 }; // #ddddfc - 明るい紫
-
-            // 線形補間関数
-            function lerp(start, end, amount) {
-                return (1 - amount) * start + amount * end;
-            }
-
+            const startColor1 = { r: 249, g: 231, b: 216 };
+            const startColor2 = { r: 230, g: 233, b: 249 };
+            const endColor1   = { r: 252, g: 221, b: 236 };
+            const endColor2   = { r: 221, g: 221, b: 252 };
+            function lerp(start, end, amount) { return (1 - amount) * start + amount * end; }
             function updateGradient() {
                 const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-                const currentScroll = Math.max(0, window.scrollY);
-                const scrollFraction = maxScroll > 0 ? currentScroll / maxScroll : 0;
-
-                const r1 = Math.round(lerp(startColor1.r, endColor1.r, scrollFraction));
-                const g1 = Math.round(lerp(startColor1.g, endColor1.g, scrollFraction));
-                const b1 = Math.round(lerp(startColor1.b, endColor1.b, scrollFraction));
-
-                const r2 = Math.round(lerp(startColor2.r, endColor2.r, scrollFraction));
-                const g2 = Math.round(lerp(startColor2.g, endColor2.g, scrollFraction));
-                const b2 = Math.round(lerp(startColor2.b, endColor2.b, scrollFraction));
-
-                // CSSカスタムプロパティを更新
-                body.style.setProperty('--grad-start', `rgb(${r1}, ${g1}, ${b1})`);
-                body.style.setProperty('--grad-end', `rgb(${r2}, ${g2}, ${b2})`);
+                const scrollFraction = maxScroll > 0 ? Math.max(0, window.scrollY) / maxScroll : 0;
+                body.style.setProperty('--grad-start', `rgb(${Math.round(lerp(startColor1.r,endColor1.r,scrollFraction))},${Math.round(lerp(startColor1.g,endColor1.g,scrollFraction))},${Math.round(lerp(startColor1.b,endColor1.b,scrollFraction))})`);
+                body.style.setProperty('--grad-end', `rgb(${Math.round(lerp(startColor2.r,endColor2.r,scrollFraction))},${Math.round(lerp(startColor2.g,endColor2.g,scrollFraction))},${Math.round(lerp(startColor2.b,endColor2.b,scrollFraction))})`);
             }
-
             window.addEventListener('scroll', updateGradient, { passive: true });
-            updateGradient(); // 初期表示
+            updateGradient();
 
-            // --- キャラクターのスクロール・クリック制御 ---
+            // Character scroll / click
             const charaContainer = document.getElementById('shimokita-chara-container');
-            
             window.addEventListener('scroll', () => {
-                // 300pxを超えたら 'active' クラスを付与
-                if (window.scrollY > 300) {
-                    charaContainer.classList.add('active');
-                } else {
-                    charaContainer.classList.remove('active');
-                }
+                if (window.scrollY > 300) charaContainer.classList.add('active');
+                else charaContainer.classList.remove('active');
             }, { passive: true });
-
-            // クリック時にスムーズにトップへ戻る
-            charaContainer.addEventListener('click', () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
+            charaContainer.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
         });
 
-        // --- 共感ゾーンのインタラクション ---
+        // Empathy zone
         const empathyItems = document.querySelectorAll('[data-empathy-item]');
         const empathyResult = document.getElementById('empathy-result');
         const empathyMessage = document.getElementById('empathy-message');
         const checkCountDisplay = document.getElementById('empathy-check-count');
 
         empathyItems.forEach(item => {
-            item.addEventListener('click', () => {
-                item.classList.toggle('checked');
-                updateEmpathyResult();
-            });
+            item.addEventListener('click', () => { item.classList.toggle('checked'); updateEmpathyResult(); });
         });
 
         function updateEmpathyResult() {
             const checkedCount = document.querySelectorAll('.empathy-bubble.checked').length;
             const totalCount = empathyItems.length;
-            
-            let countMessage = "";
-            if (checkedCount === 0) {
-                countMessage = "まだ当てはまるものはありません";
-            } else if (checkedCount <= 2) {
-                countMessage = "少し共感ポイントがありますね";
-            } else if (checkedCount <= 4) {
-                countMessage = "あなたに合うコミュニティかもしれません";
-            } else {
-                countMessage = "きっとここがあなたの居場所です";
-            }
+            let countMessage = checkedCount === 0 ? "まだ当てはまるものはありません"
+                : checkedCount <= 2 ? "少し共感ポイントがありますね"
+                : checkedCount <= 4 ? "あなたに合うコミュニティかもしれません"
+                : "きっとここがあなたの居場所です";
             checkCountDisplay.innerHTML = `${countMessage}<br>あなたは <span>${checkedCount}</span> / ${totalCount} 個当てはまっています`;
-
             if (checkedCount > 0) {
-                empathyResult.style.display = 'block';
-                checkCountDisplay.style.display = 'block'; // カウンターも表示
-                if (checkedCount >= 3) {
-                    empathyMessage.innerHTML = "<b>あなたと同じ悩みを持つ人が、このコミュニティに集まっています。</b><br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。";
-                } else {
-                    empathyMessage.innerHTML = "もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。";
-                }
+                empathyResult.style.display = 'flex';
+                checkCountDisplay.style.display = 'block';
+                empathyMessage.innerHTML = checkedCount >= 3
+                    ? "<b>あなたと同じ悩みを持つ人が、このコミュニティに集まっています。</b><br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。"
+                    : "もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。";
             } else {
                 empathyResult.style.display = 'none';
-                checkCountDisplay.style.display = 'block'; // 0個でもカウンターは表示
+                checkCountDisplay.style.display = 'block';
             }
         }
 
-        // --- カルーセル ---
+        // Carousel
         const carousel = document.getElementById('activity-carousel');
         const navContainer = document.getElementById('carousel-nav');
         const prevBtn = document.getElementById('carousel-prev');
@@ -1150,31 +732,23 @@
         if (carousel && navContainer) {
             const items = carousel.querySelectorAll('.carousel-item');
             const itemCount = items.length;
-
-            // ドットナビゲーションを生成
             for (let i = 0; i < itemCount; i++) {
                 const dot = document.createElement('span');
                 dot.classList.add('carousel-dot');
                 dot.dataset.index = i;
                 navContainer.appendChild(dot);
             }
-
             const dots = navContainer.querySelectorAll('.carousel-dot');
-            dots[0].style.backgroundColor = 'var(--accent-color)';
+            dots[0].style.backgroundColor = 'var(--accent)';
 
-            // スクロールに応じてドットを更新
             carousel.addEventListener('scroll', () => {
                 const scrollLeft = carousel.scrollLeft;
                 const itemWidth = items[0].offsetWidth;
-                const currentIndex = Math.round(scrollLeft / (itemWidth + 15)); // 15はmargin-right
-
-                dots.forEach(dot => dot.style.backgroundColor = '#ccc');
-                if (dots[currentIndex]) {
-                    dots[currentIndex].style.backgroundColor = 'var(--accent-color)';
-                }
+                const currentIndex = Math.round(scrollLeft / (itemWidth + 16));
+                dots.forEach(dot => dot.style.backgroundColor = 'rgba(26,23,6,0.15)');
+                if (dots[currentIndex]) dots[currentIndex].style.backgroundColor = 'var(--accent)';
             });
 
-            // ドットクリックでスクロール
             dots.forEach(dot => {
                 dot.addEventListener('click', () => {
                     const index = parseInt(dot.dataset.index);
@@ -1182,18 +756,11 @@
                 });
             });
 
-            // 矢印ボタンのクリックイベント
-            prevBtn.addEventListener('click', () => {
-                carousel.scrollBy({ left: -carousel.offsetWidth * 0.9, behavior: 'smooth' });
-            });
-
-            nextBtn.addEventListener('click', () => {
-                carousel.scrollBy({ left: carousel.offsetWidth * 0.9, behavior: 'smooth' });
-            });
+            prevBtn.addEventListener('click', () => { carousel.scrollBy({ left: -carousel.offsetWidth * 0.9, behavior: 'smooth' }); });
+            nextBtn.addEventListener('click', () => { carousel.scrollBy({ left: carousel.offsetWidth * 0.9, behavior: 'smooth' }); });
         }
     </script>
 
-    <!-- キャラクター表示用コンテナ -->
     <div id="shimokita-chara-container" class="chara-container">
         <div class="speech-bubble">下北へおいでよ！</div>
         <img src="assets/images/shimokita-chara.png" alt="下北沢コミュニティキャラクター" id="shimokita-chara">

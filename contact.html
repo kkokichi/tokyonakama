@@ -6,236 +6,320 @@
     <title>お問い合わせ | 下北コミュニティ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* --- ラジオボタンのスタイル --- */
-        .form-group-radio {
-            display: flex;
-            gap: 20px;
-            align-items: center;
+        :root {
+            --bg:        #f0ece6;
+            --bg-dark:   #141210;
+            --ink:       #1a1706;
+            --ink-muted: #7a756e;
+            --accent:    #bf5b3b;
+            --white:     #ffffff;
+            --radius:    12px;
+            --pad:       clamp(20px, 5vw, 60px);
         }
-        .form-group-radio label {
-            font-weight: normal;
-            margin-bottom: 0;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Noto Sans JP", sans-serif; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+        img { display: block; }
+        a { text-decoration: none; }
+
+        body::before {
+            content: '';
+            position: fixed; inset: -50%;
+            width: 200%; height: 200%;
+            pointer-events: none; z-index: 9000; opacity: 0.032;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 0.4s steps(1) infinite;
         }
-        .form-group-radio input {
-            width: auto;
+        @keyframes grain {
+            0%   { transform: translate(0,0); }
+            25%  { transform: translate(-3%,3%); }
+            50%  { transform: translate(3%,-3%); }
+            75%  { transform: translate(-2%,1%); }
         }
-        /* --- contact.html用スタイル --- */
-        .contact-form {
-            max-width: 600px;
-            margin: 0 auto;
+
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+        .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .fade-in.visible { opacity: 1; transform: none; }
+
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--pad); }
+
+        /* Page hero */
+        .page-hero {
+            padding: clamp(80px,12vw,120px) 0 clamp(50px,7vw,80px);
+            background: var(--bg-dark); color: var(--white);
         }
-        .form-group {
-            margin-bottom: 20px;
+        .page-hero .eyebrow {
+            display: block; font-size: 0.63rem; font-weight: 700;
+            letter-spacing: 0.24em; text-transform: uppercase;
+            color: rgba(255,255,255,0.4); margin-bottom: 14px;
         }
+        .page-hero h1 { font-size: clamp(2rem, 6vw, 3.6rem); font-weight: 900; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 16px; }
+        .page-hero p { font-size: clamp(0.88rem, 1.4vw, 1rem); color: rgba(255,255,255,0.5); line-height: 1.9; max-width: 480px; }
+
+        /* Form section */
+        .form-sec { padding: clamp(60px,10vw,120px) 0; }
+        .form-inner { max-width: 640px; margin: 0 auto; }
+
+        .form-intro {
+            text-align: center; margin-bottom: 40px;
+            font-size: 0.92rem; color: var(--ink-muted); line-height: 1.9;
+        }
+        .form-intro .highlight {
+            font-weight: 700; color: var(--ink);
+            background: linear-gradient(transparent 65%, rgba(191,91,59,0.15) 65%);
+        }
+
+        /* Form groups */
+        .form-group { margin-bottom: 22px; }
         .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
+            display: block; margin-bottom: 8px;
+            font-size: 0.88rem; font-weight: 700; color: var(--ink);
         }
-        .form-group input,
+        .form-group input[type="text"],
+        .form-group input[type="email"],
         .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-family: inherit;
-            font-size: 1rem;
-            box-sizing: border-box; /* paddingを含めてwidth 100%にする */
+            width: 100%; padding: 12px 16px;
+            border: 1.5px solid rgba(26,23,6,0.15);
+            border-radius: var(--radius);
+            font-family: inherit; font-size: 0.96rem;
+            background: var(--white); color: var(--ink);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
         }
-        .form-group textarea {
-            min-height: 150px;
-            resize: vertical;
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(191,91,59,0.12);
         }
+        .form-group textarea { min-height: 150px; resize: vertical; }
+
+        /* Radio groups */
+        .form-group-radio { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; }
+        .form-group-radio label {
+            font-weight: 400; margin-bottom: 0; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; font-size: 0.9rem;
+        }
+        .form-group-radio input[type="radio"] { width: auto; accent-color: var(--accent); cursor: pointer; }
+        .form-note { font-size: 0.8rem; color: var(--ink-muted); margin-top: 6px; line-height: 1.7; }
+
+        /* Submit / action buttons */
         .submit-btn {
-            display: block;
-            width: 100%;
-            max-width: 250px;
-            margin: 30px auto 0;
-            padding: 15px;
-            background-color: var(--accent-color);
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border-radius: 100px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .submit-btn:hover {
-            background-color: var(--accent-hover);
-        }
-        /* --- 占い結果追加スタイル --- */
-        .uranai-details {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .uranai-item-row {
-            margin: 5px 0;
-            font-weight: bold;
-            color: #555;
-        }
-        .share-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
-        }
-        .btn-share {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
-            border-radius: 50px;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9rem;
+            display: block; width: 100%; max-width: 260px;
+            margin: 32px auto 0; padding: 15px;
+            background: var(--accent); color: var(--white);
+            text-align: center; font-weight: 700; font-size: 1rem;
+            border-radius: 50px; border: none; cursor: pointer;
             transition: opacity 0.2s, transform 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-family: inherit;
         }
-        .btn-share:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
+        .submit-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .submit-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+        /* Confirmation area */
+        #confirmation-area { display: none; }
+        .confirm-box {
+            background: var(--white); border-radius: var(--radius);
+            padding: 24px; margin-bottom: 28px;
+            border: 1px solid rgba(26,23,6,0.08);
         }
-        .btn-twitter {
-            background-color: #000; /* X brand color */
+        .confirm-box p { font-size: 0.9rem; color: var(--ink); margin-bottom: 12px; line-height: 1.7; }
+        .confirm-box p:last-child { margin-bottom: 0; }
+        .confirm-box strong { color: var(--ink-muted); font-size: 0.78rem; letter-spacing: 0.04em; display: block; margin-bottom: 2px; }
+        .confirm-actions { display: flex; gap: 14px; justify-content: center; }
+        .btn-secondary {
+            display: block; padding: 14px 28px;
+            background: rgba(26,23,6,0.08); color: var(--ink-muted);
+            border-radius: 50px; border: none; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; font-family: inherit;
+            transition: background 0.2s;
         }
-        .btn-line {
-            background-color: #06C755;
+        .btn-secondary:hover { background: rgba(26,23,6,0.14); }
+        .btn-primary {
+            display: block; padding: 14px 28px;
+            background: var(--accent); color: var(--white);
+            border-radius: 50px; border: none; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; font-family: inherit;
+            transition: opacity 0.2s;
         }
-        .btn-yay {
-            background-color: #FF7A00;
-        }
-        .btn-instagram {
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-        }
-        /* --- 広告用スタイル --- */
-        .ad-container {
-            margin: 40px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled { opacity: 0.5; cursor: default; }
+
+        /* Uranai area */
+        #uranai-area { display: none; }
+        .uranai-card {
+            max-width: 600px; margin: 0 auto;
+            background: var(--white); border-radius: var(--radius);
+            padding: clamp(32px,5vw,48px);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
             text-align: center;
-            background: rgba(255, 255, 255, 0.2);
-            max-width: 728px;
         }
-        .ad-label {
-            font-size: 0.8rem;
-            color: #888;
-            margin-bottom: 10px;
-            display: block;
+        .uranai-label {
+            display: block; font-size: 0.63rem; font-weight: 700;
+            letter-spacing: 0.24em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 14px;
         }
-        .ad-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #e9e9e9;
-            color: #aaa;
-            min-height: 90px;
-            width: 100%;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: bold;
+        .uranai-card h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 900; letter-spacing: -0.02em; margin-bottom: 16px; }
+        .uranai-card > p { font-size: 0.9rem; color: var(--ink-muted); line-height: 1.85; margin-bottom: 24px; }
+        #uranai-unsei { font-size: 3rem; font-weight: 900; margin: 0 0 8px; }
+        #uranai-title { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-bottom: 14px; }
+        #uranai-description { font-size: 0.94rem; line-height: 1.85; color: var(--ink-muted); margin-bottom: 0; }
+
+        .uranai-details {
+            margin: 20px 0; padding: 16px 20px;
+            background: var(--bg); border-radius: var(--radius);
+            border: 1px solid rgba(26,23,6,0.08);
         }
-        /* --- 占い結果アニメーション --- */
+        .uranai-item-row { font-size: 0.88rem; font-weight: 700; color: var(--ink-muted); margin: 6px 0; }
+        #uranai-spot a { color: var(--accent); text-decoration: underline; }
+
+        .uranai-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 24px; }
+        .btn-retry {
+            padding: 10px 24px; border-radius: 50px;
+            border: 1.5px solid rgba(26,23,6,0.18);
+            background: transparent; color: var(--ink-muted);
+            font-size: 0.84rem; font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .btn-retry:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+        .btn-retry:disabled { opacity: 0.4; cursor: default; }
+        .btn-spots {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 14px 28px; background: #27ae60; color: var(--white);
+            border-radius: 50px; font-size: 0.9rem; font-weight: 700;
+            transition: opacity 0.2s;
+        }
+        .btn-spots:hover { opacity: 0.9; }
+
+        /* Share buttons */
+        .share-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+        .btn-share {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 10px 18px; border-radius: 50px;
+            color: var(--white); font-weight: 700; font-size: 0.84rem;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .btn-share:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-twitter  { background: #000; }
+        .btn-line     { background: #06C755; }
+        .btn-yay      { background: #FF7A00; }
+        .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+        /* Ad */
+        .ad-container {
+            max-width: 728px; margin: 0 auto;
+            padding: 24px; border-radius: var(--radius);
+            border: 1px solid rgba(26,23,6,0.1);
+            text-align: center; background: var(--white);
+        }
+        .ad-label { font-size: 0.72rem; color: var(--ink-muted); margin-bottom: 12px; display: block; }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.8rem; font-weight: 700;
+            color: var(--ink-muted); letter-spacing: 0.04em;
+            padding: 12px 28px; border-radius: 50px;
+            border: 1.5px solid rgba(26,23,6,0.18);
+            transition: all 0.2s;
+        }
+        .back-link::before { content: "←"; }
+        .back-link:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
         @keyframes fadeInScale {
             from { opacity: 0; transform: scale(0.95) translateY(10px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
-        .anim-fade-in {
-            animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
+        .anim-fade-in { animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     </style>
 </head>
 <body>
-
-    <header class="header">
-    </header>
+    <header class="header"></header>
     <script src="assets/js/header.js" defer></script>
 
-    <section class="section main-content fade-in">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">お問い合わせ・参加希望</h2>
-            </div>
-            
+    <!-- Page hero -->
+    <section class="page-hero">
+        <div class="wrap">
+            <span class="eyebrow reveal">Contact</span>
+            <h1 class="reveal">お問い合わせ・<br>参加希望</h1>
+            <p class="reveal">サークルに関するご質問、イベントへの参加希望、<br>運営への参加希望などお気軽にどうぞ。</p>
+        </div>
+    </section>
+
+    <!-- Form section -->
+    <section class="form-sec">
+        <div class="wrap">
             <div id="form-wrapper">
-                <p style="text-align: center; margin-bottom: 40px;">サークルに関するご質問、イベントへの参加希望、運営への参加希望など、<br>こちらからお気軽にご連絡ください。<br><br><span style="font-weight: bold; background: linear-gradient(transparent 70%, var(--accent-light) 70%);">送信後、あなたの今日の運勢を占う「下北占い」ができます！</span></p>
+                <div class="form-inner">
+                    <p class="form-intro reveal">
+                        こちらからお気軽にご連絡ください。<br>
+                        <span class="highlight">送信後、あなたの今日の運勢を占う「下北占い」ができます！</span>
+                    </p>
 
-                <form id="contact-form" class="contact-form">
-                    <div class="form-group">
-                        <label>お問い合わせ種別</label>
-                        <div class="form-group-radio">
-                            <label><input type="radio" name="type" value="運営希望" checked> 運営に参加したい</label>
-                            <label><input type="radio" name="type" value="イベント参加希望"> イベントに参加したい</label>
-                            <label><input type="radio" name="type" value="その他"> その他</label>
+                    <form id="contact-form">
+                        <div class="form-group reveal">
+                            <label>お問い合わせ種別</label>
+                            <div class="form-group-radio">
+                                <label><input type="radio" name="type" value="運営希望" checked> 運営に参加したい</label>
+                                <label><input type="radio" name="type" value="イベント参加希望"> イベントに参加したい</label>
+                                <label><input type="radio" name="type" value="その他"> その他</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">お名前</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">メールアドレス</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">お問い合わせ内容</label>
-                        <textarea id="message" name="message" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>サイトへの掲載について</label>
-                        <div class="form-group-radio" style="flex-wrap: wrap;">
-                            <label><input type="radio" name="publicPreference" value="private" checked> 掲載しない</label>
-                            <label><input type="radio" name="publicPreference" value="anonymous"> 掲載する（匿名）</label>
-                            <label><input type="radio" name="publicPreference" value="named"> 掲載する（名前を表示）</label>
+                        <div class="form-group reveal">
+                            <label for="name">お名前</label>
+                            <input type="text" id="name" name="name" required>
                         </div>
-                        <p style="font-size: 0.85rem; color: #666; margin-top: 5px; margin-bottom: 0;">※「掲載する」を選択された場合、トップページの「最近届いたお問い合わせ」に紹介させていただくことがあります。</p>
-                    </div>
-                    <button type="submit" id="check-btn" class="submit-btn">確認画面へ</button>
-                </form>
+                        <div class="form-group reveal">
+                            <label for="email">メールアドレス</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group reveal">
+                            <label for="message">お問い合わせ内容</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <div class="form-group reveal">
+                            <label>サイトへの掲載について</label>
+                            <div class="form-group-radio">
+                                <label><input type="radio" name="publicPreference" value="private" checked> 掲載しない</label>
+                                <label><input type="radio" name="publicPreference" value="anonymous"> 掲載する（匿名）</label>
+                                <label><input type="radio" name="publicPreference" value="named"> 掲載する（名前を表示）</label>
+                            </div>
+                            <p class="form-note">※「掲載する」を選択された場合、トップページの「最近届いたお問い合わせ」に紹介させていただくことがあります。</p>
+                        </div>
+                        <button type="submit" id="check-btn" class="submit-btn">確認画面へ</button>
+                    </form>
 
-                <!-- 確認画面エリア -->
-                <div id="confirmation-area" class="contact-form" style="display: none;">
-                    <h3 style="text-align: center; margin-bottom: 20px;">以下の内容で送信しますか？</h3>
-                    <div id="confirm-content" style="background: rgba(255,255,255,0.6); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-                        <!-- JSで内容挿入 -->
-                    </div>
-                    <div style="display: flex; gap: 15px; justify-content: center;">
-                        <button type="button" id="back-btn" class="submit-btn" style="background-color: #999; margin-top: 0;">戻る</button>
-                        <button type="button" id="real-submit-btn" class="submit-btn" style="margin-top: 0;">送信して占う</button>
+                    <!-- Confirmation -->
+                    <div id="confirmation-area">
+                        <h3 style="text-align:center; font-size:1rem; font-weight:700; margin-bottom:20px;">以下の内容で送信しますか？</h3>
+                        <div id="confirm-content" class="confirm-box"></div>
+                        <div class="confirm-actions">
+                            <button type="button" id="back-btn" class="btn-secondary">戻る</button>
+                            <button type="button" id="real-submit-btn" class="btn-primary">送信して占う</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 占い結果表示エリア -->
-            <div id="uranai-area" style="display: none; text-align: center; margin-top: 40px;">
-                <div class="card" style="max-width: 600px; margin-left: auto; margin-right: auto;">
-                    <h2 class="section-title" style="display: inline-block; margin-bottom: 20px;">本日の下北占い</h2>
-                    <p>お問い合わせありがとうございます！<br>あなたの今日の運勢はこちらです。</p>                    
-                    <!-- 運勢表示を追加 -->
-                    <p id="uranai-unsei" style="font-size: 3rem; font-weight: 700; margin: 25px 0 10px;"></p>
-
-                    <h3 id="uranai-title" style="color: var(--accent-color); margin-top: 15px; margin-bottom: 15px;"></h3>
-                    <p id="uranai-description" style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 0;"></p>
-                    
+            <!-- Uranai result -->
+            <div id="uranai-area" style="margin-top:48px;">
+                <div class="uranai-card">
+                    <span class="uranai-label">Fortune</span>
+                    <h2>本日の下北占い</h2>
+                    <p>お問い合わせありがとうございます！<br>あなたの今日の運勢はこちらです。</p>
+                    <p id="uranai-unsei"></p>
+                    <h3 id="uranai-title"></h3>
+                    <p id="uranai-description"></p>
                     <div class="uranai-details">
-                        <p class="uranai-item-row">ラッキーアイテム：<span id="uranai-item" style="color: var(--text-color);"></span></p>
+                        <p class="uranai-item-row">ラッキーアイテム：<span id="uranai-item"></span></p>
                         <p class="uranai-item-row">ラッキースポット：<span id="uranai-spot"></span></p>
                     </div>
-
-                    <button id="retry-btn" class="submit-btn" style="margin: 20px auto; background-color: #aaa; font-size: 0.9rem; padding: 10px;">もう一度占う</button>
-
-                    <a href="recommend.html" class="submit-btn" style="margin: 15px auto 25px; background-color: #27ae60; font-size: 1rem; padding: 15px; text-decoration: none;">下北沢のおすすめスポットを見る</a>
-
+                    <div class="uranai-actions">
+                        <button id="retry-btn" class="btn-retry">もう一度占う</button>
+                        <a href="recommend.html" class="btn-spots">📍 下北沢のおすすめスポットを見る</a>
+                    </div>
                     <div class="share-buttons">
                         <a href="#" id="share-twitter" class="btn-share btn-twitter" target="_blank">Xでシェア</a>
                         <a href="#" id="share-line" class="btn-share btn-line" target="_blank">LINEでシェア</a>
@@ -245,55 +329,43 @@
                 </div>
             </div>
 
-            <!-- ▼▼▼ 広告スペース ▼▼▼ -->
-            <div class="ad-container fade-in">
-                <span class="ad-label">スポンサーリンク</span>
-                <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
-                    <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius: 8px;">
-                </a>
-                <p style="font-size:0.9rem; margin-top:15px; margin-bottom:0;">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
-            </div>
-            <!-- ▲▲▲ 広告スペース ▲▲▲ -->
-
-            <div style="text-align: center; margin-top: 50px;">
-                 <a href="top.html" class="back-link">トップページに戻る</a>
+            <!-- Ad -->
+            <div style="padding: clamp(40px,6vw,72px) 0;">
+                <div class="ad-container fade-in">
+                    <span class="ad-label">スポンサーリンク</span>
+                    <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
+                        <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius:8px; margin:0 auto;">
+                    </a>
+                    <p style="font-size:0.86rem; margin-top:14px; margin-bottom:0; color:var(--ink-muted);">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
+                </div>
             </div>
 
+            <div style="text-align:center; padding-bottom: clamp(48px,8vw,96px);">
+                <a href="top.html" class="back-link">トップページに戻る</a>
+            </div>
         </div>
     </section>
 
-    <footer>
-    </footer>
+    <footer></footer>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         document.addEventListener("DOMContentLoaded", function() {
-            // スクロール時のフェードインアニメーション
-            const observerOptions = {
-                root: null,
-                rootMargin: "0px",
-                threshold: 0.1
-            };
+            // Reveal observer
+            const revealObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("visible");
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
+            // Fade-in observer
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add("visible"); obs.unobserve(entry.target); } });
+            }, { threshold: 0.1 });
+            document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
 
-            const elements = document.querySelectorAll(".fade-in");
-            elements.forEach(el => observer.observe(el));
-
-            // --- Firebase & Form Submission ---
-
-            // Your web app's Firebase configuration
             const firebaseConfig = {
                 apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
                 authDomain: "tokyonakama-e7331.firebaseapp.com",
@@ -304,20 +376,16 @@
                 measurementId: "G-BWM0Q87Q93"
             };
 
-            // Firebaseを初期化
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-            // Analyticsを初期化
             const analytics = getAnalytics(app);
 
             const form = document.getElementById('contact-form');
             const formWrapper = document.getElementById('form-wrapper');
-            
             const confirmationArea = document.getElementById('confirmation-area');
             const confirmContent = document.getElementById('confirm-content');
             const backBtn = document.getElementById('back-btn');
             const realSubmitBtn = document.getElementById('real-submit-btn');
-
             const uranaiArea = document.getElementById('uranai-area');
             const uranaiUnsei = document.getElementById('uranai-unsei');
             const uranaiTitle = document.getElementById('uranai-title');
@@ -333,55 +401,46 @@
 
             function getUnseiColor(unsei) {
                 switch (unsei) {
-                    case '大吉': return '#e74c3c'; // 赤
-                    case '中吉': return '#f39c12'; // オレンジ
-                    case '下吉': return '#2ecc71'; // 緑
-                    case '凶':   return '#3498db'; // 青
-                    case '大凶': return '#34495e'; // 濃いグレー
-                    default: return 'var(--accent-color)';
+                    case '大吉': return '#e74c3c';
+                    case '中吉': return '#f39c12';
+                    case '下吉': return '#2ecc71';
+                    case '凶':   return '#3498db';
+                    case '大凶': return '#34495e';
+                    default: return 'var(--accent)';
                 }
             }
 
-            // 確認画面への遷移
             form.addEventListener('submit', (e) => {
-                e.preventDefault(); // デフォルトのフォーム送信をキャンセル
-                
-                // フォームからデータを取得
+                e.preventDefault();
                 const inquiryType = form.type.value;
                 const name = form.name.value;
                 const email = form.email.value;
                 const message = form.message.value;
                 const publicPreference = form.publicPreference.value;
-                
                 let publicText = "掲載しない";
                 if (publicPreference === 'anonymous') publicText = "掲載する（匿名）";
                 if (publicPreference === 'named') publicText = "掲載する（名前を表示）";
 
-                // 確認画面に表示
                 confirmContent.innerHTML = `
-                    <p><strong>お問い合わせ種別:</strong><br>${inquiryType}</p>
-                    <p><strong>お名前:</strong><br>${name}</p>
-                    <p><strong>メールアドレス:</strong><br>${email}</p>
-                    <p><strong>お問い合わせ内容:</strong><br>${message.replace(/\n/g, '<br>')}</p>
-                    <p><strong>サイトへの掲載:</strong><br>${publicText}</p>
+                    <p><strong>お問い合わせ種別</strong>${inquiryType}</p>
+                    <p><strong>お名前</strong>${name}</p>
+                    <p><strong>メールアドレス</strong>${email}</p>
+                    <p><strong>お問い合わせ内容</strong>${message.replace(/\n/g, '<br>')}</p>
+                    <p><strong>サイトへの掲載</strong>${publicText}</p>
                 `;
 
-                // 表示切り替え
                 form.style.display = 'none';
                 confirmationArea.style.display = 'block';
                 window.scrollTo({ top: formWrapper.offsetTop - 50, behavior: 'smooth' });
             });
 
-            // 戻るボタン
             backBtn.addEventListener('click', () => {
                 confirmationArea.style.display = 'none';
                 form.style.display = 'block';
                 window.scrollTo({ top: formWrapper.offsetTop - 50, behavior: 'smooth' });
             });
 
-            // 占い実行関数
             const drawFortune = () => {
-                // アニメーションリセット（リフロー強制）
                 uranaiArea.classList.remove('anim-fade-in');
                 void uranaiArea.offsetWidth;
                 uranaiArea.classList.add('anim-fade-in');
@@ -395,57 +454,40 @@
                 uranaiDescription.textContent = result.description;
                 uranaiItem.textContent = result.luckyItem;
 
-                // ラッキースポットをリンク付きで表示
-                uranaiSpot.innerHTML = ''; // 中身をクリア
+                uranaiSpot.innerHTML = '';
                 const spotLink = document.createElement('a');
                 spotLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(result.luckySpot.name)}`;
                 spotLink.textContent = result.luckySpot.name;
-                spotLink.target = '_blank'; // 新しいタブで開く
+                spotLink.target = '_blank';
                 spotLink.rel = 'noopener noreferrer';
-                spotLink.style.color = 'var(--text-color)';
-                spotLink.style.textDecoration = 'underline';
                 uranaiSpot.appendChild(spotLink);
 
-                // シェア用リンクの生成
-                const shareUrl = window.location.href.split('?')[0]; // クエリパラメータを除外
+                const shareUrl = window.location.href.split('?')[0];
                 const shareText = `🔮本日の下北占い🔮\n\n運勢：${result.unsei}✨\n「${result.title}」\n\n今日のラッキーアイテムは...${result.luckyItem}！\nラッキースポットは...${result.luckySpot.name}！\n\n週末は下北沢でゆるく繋がろう！\n#下北コミュニティ #下北沢 #社会人サークル`;
-                
-                // X (Twitter)
+
                 shareTwitter.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                // LINE
                 shareLine.href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText + "\n" + shareUrl)}`;
-                // Yay! (Web共有URLがないため、クリップボードコピー + サイトへ遷移)
                 shareYay.onclick = (e) => {
                     e.preventDefault();
                     const textToCopy = shareText + "\n" + shareUrl;
                     navigator.clipboard.writeText(textToCopy).then(() => {
                         alert('投稿内容をコピーしました。\nYay!を開いて貼り付けてください。');
                         window.open('https://yay.space/', '_blank');
-                    }).catch(() => {
-                        window.open('https://yay.space/', '_blank');
-                    });
+                    }).catch(() => { window.open('https://yay.space/', '_blank'); });
                 };
-                // Instagram (Web共有URLがないため、クリップボードコピー + サイトへ遷移)
                 shareInstagram.onclick = (e) => {
                     e.preventDefault();
                     const textToCopy = shareText + "\n" + shareUrl;
                     navigator.clipboard.writeText(textToCopy).then(() => {
                         alert('投稿内容をコピーしました。\nInstagramを開いてストーリーズやフィードに貼り付けてください。');
                         window.open('https://www.instagram.com/', '_blank');
-                    }).catch(() => {
-                        window.open('https://www.instagram.com/', '_blank');
-                    });
+                    }).catch(() => { window.open('https://www.instagram.com/', '_blank'); });
                 };
             };
 
-            // 送信ボタン
             realSubmitBtn.addEventListener('click', async () => {
-
-                // ボタンを無効化して二重送信を防ぐ
                 realSubmitBtn.disabled = true;
                 realSubmitBtn.textContent = '送信中...';
-
-                // フォームからデータを取得
                 const inquiryType = form.type.value;
                 const name = form.name.value;
                 const email = form.email.value;
@@ -453,44 +495,30 @@
                 const publicPreference = form.publicPreference.value;
 
                 try {
-                    // Firestoreにデータを保存
                     const docRef = await addDoc(collection(db, 'contacts'), {
-                        type: inquiryType,
-                        name: name,
-                        email: email,
-                        message: message,
-                        publicPreference: publicPreference, // 掲載希望
+                        type: inquiryType, name, email, message,
+                        publicPreference,
                         createdAt: serverTimestamp(),
-                        displayOnSite: 'hidden', // 管理画面での表示設定（初期値は非表示）
-                        status: '未対応' // 初期ステータス
+                        displayOnSite: 'hidden',
+                        status: '未対応'
                     });
-
                     console.log("Document written with ID: ", docRef.id);
-                    // フォームを非表示にし、占いエリアを表示
                     formWrapper.style.display = 'none';
                     uranaiArea.style.display = 'block';
-
-                    // リトライ状態をリセット
                     retryCount = 0;
                     retryBtn.disabled = false;
                     retryBtn.textContent = 'もう一度占う';
                     retryBtn.style.cursor = 'pointer';
-
                     drawFortune();
-
-                    // 画面を占い結果までスクロール
                     uranaiArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
                 } catch (error) {
                     console.error("Error adding document: ", error);
                     alert('送信に失敗しました。時間をおいて再度お試しください。');
-                    // エラーがあった場合はボタンを元に戻す
                     realSubmitBtn.disabled = false;
                     realSubmitBtn.textContent = '送信して占う';
                 }
             });
 
-            // もう一度占うボタン
             retryBtn.addEventListener('click', () => {
                 if (retryCount < 1) {
                     drawFortune();
@@ -501,38 +529,22 @@
                 }
             });
 
-            // 占いデータ
             const spotList = [
-                { name: "OGAWA COFFEE LABORATORY 下北沢", url: "https://tabelog.com/tokyo/A1318/A131802/13265558/" },
-                { name: "フリッパーズ 下北沢店", url: "https://tabelog.com/tokyo/A1318/A131802/13199527/" },
-                { name: "W/O STAND SHIMOKITA", url: "https://tabelog.com/tokyo/A1318/A131802/13224222/" },
-                { name: "BOOKENDS COFFEE SERVICE", url: "https://tabelog.com/tokyo/A1318/A131802/13199583/" },
-                { name: "喫茶ネグラ", url: "https://tabelog.com/tokyo/A1318/A131802/13189972/" },
-                { name: "トロワ・シャンブル", url: "https://tabelog.com/tokyo/A1318/A131802/13001826/" },
-                { name: "CITY COUNTRY CITY", url: "https://tabelog.com/tokyo/A1318/A131802/13009353/" },
-                { name: "kate coffee", url: "https://tabelog.com/tokyo/A1318/A131802/13165345/" },
-                { name: "ON THE WAY, coffee & cupcake", url: "https://tabelog.com/tokyo/A1318/A131802/13196811/" },
-                { name: "Brooklyn Roasting Company", url: "https://tabelog.com/tokyo/A1318/A131802/13265559/" },
-                { name: "COFFEA EXLIBRIS", url: "https://tabelog.com/tokyo/A1318/A131802/13145333/" },
-                { name: "バロンデッセ", url: "https://tabelog.com/tokyo/A1318/A131802/13158302/" },
-                { name: "モルディブ", url: "https://tabelog.com/tokyo/A1318/A131802/13007111/" },
-                { name: "reload", url: "https://tabelog.com/tokyo/A1318/A131802/13261283/" },
-                { name: "BONUS TRACK", url: "https://tabelog.com/tokyo/A1318/A131802/13245400/" },
-                { name: "マジックスパイス 東京下北沢店", url: "https://tabelog.com/tokyo/A1318/A131802/13001852/" },
-                { name: "Rojiura Curry SAMURAI. 下北沢店", url: "https://tabelog.com/tokyo/A1318/A131802/13195632/" },
-                { name: "旧ヤム邸 シモキタ荘", url: "https://tabelog.com/tokyo/A1318/A131802/13211592/" },
-                { name: "茄子おやじ", url: "https://tabelog.com/tokyo/A1318/A131802/13001867/" },
-                { name: "般゜若 PANNYA CAFE CURRY", url: "https://tabelog.com/tokyo/A1318/A131802/13125053/" },
-                { name: "カレーの惑星", url: "https://tabelog.com/tokyo/A1318/A131802/13196427/" },
-                { name: "SAMA 下北沢店", url: "https://tabelog.com/tokyo/A1318/A131802/13099529/" },
-                { name: "NAN STATION", url: "https://tabelog.com/tokyo/A1318/A131802/13131510/" },
-                { name: "スパイスラーメン 点と線.", url: "https://tabelog.com/tokyo/A1318/A131802/13228867/" },
-                { name: "ポニピリカ", url: "https://tabelog.com/tokyo/A1318/A131802/13149339/" },
-                { name: "犬拳堂", url: "https://tabelog.com/tokyo/A1318/A131802/13165792/" },
-                { name: "カレー食堂 心 下北沢店", url: "https://tabelog.com/tokyo/A1318/A131802/13020224/" },
-                { name: "202カリー堂", url: "https://tabelog.com/tokyo/A1318/A131802/13259253/" },
-                { name: "無敵のカレー", url: "https://tabelog.com/tokyo/A1318/A131802/13270984/" },
-                { name: "スパイスキッチン ムーナ", url: "https://tabelog.com/tokyo/A1318/A131802/13130622/" }
+                { name: "OGAWA COFFEE LABORATORY 下北沢" }, { name: "フリッパーズ 下北沢店" },
+                { name: "W/O STAND SHIMOKITA" }, { name: "BOOKENDS COFFEE SERVICE" },
+                { name: "喫茶ネグラ" }, { name: "トロワ・シャンブル" },
+                { name: "CITY COUNTRY CITY" }, { name: "kate coffee" },
+                { name: "ON THE WAY, coffee & cupcake" }, { name: "Brooklyn Roasting Company" },
+                { name: "COFFEA EXLIBRIS" }, { name: "バロンデッセ" },
+                { name: "モルディブ" }, { name: "reload" },
+                { name: "BONUS TRACK" }, { name: "マジックスパイス 東京下北沢店" },
+                { name: "Rojiura Curry SAMURAI. 下北沢店" }, { name: "旧ヤム邸 シモキタ荘" },
+                { name: "茄子おやじ" }, { name: "般゜若 PANNYA CAFE CURRY" },
+                { name: "カレーの惑星" }, { name: "SAMA 下北沢店" },
+                { name: "NAN STATION" }, { name: "スパイスラーメン 点と線." },
+                { name: "ポニピリカ" }, { name: "犬拳堂" },
+                { name: "カレー食堂 心 下北沢店" }, { name: "202カリー堂" },
+                { name: "無敵のカレー" }, { name: "スパイスキッチン ムーナ" }
             ];
 
             const uranaiData = [
@@ -589,13 +601,6 @@
             ];
         });
     </script>
-    <!--
-    自動返信メールと管理者画面について：
-    - フォーム送信者に自動でThank youメールを送るには、Firebase FunctionsとNodemailer等を組み合わせる必要があります。
-      （Firestoreへのデータ書き込みをトリガーにして、サーバー側でメール送信処理を実行します）
-    - 入力されたデータは、FirebaseコンソールのFirestore画面から直接確認できます。
-      また、別途管理者用のWebページを作成し、Firestoreからデータを読み込んで表示することも可能です。
-    -->
     <script src="assets/js/footer.js" defer></script>
 </body>
 </html>
