@@ -3,1072 +3,1202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHIMOKITA CULTURE MEDIA | 仕事でも家でもない、下北沢という居場所。</title>
-    <meta name="description" content="下北沢のカフェ・サウナ・古着・音楽・演劇。仕事でも家でもない「もうひとつの居場所」を探す20〜30代社会人のためのローカルカルチャーメディア。人と繋がる体験を、下北沢から。">
-
-    <meta property="og:title" content="SHIMOKITA CULTURE MEDIA | 仕事でも家でもない、下北沢という居場所。">
-    <meta property="og:description" content="カフェ、サウナ、古着、音楽。この街で過ごす週末が、人生を少し変えるかもしれない。20〜30代社会人のためのローカルカルチャーメディア。">
-    <meta property="og:image" content="assets/images/shimokita.webp">
-    <meta property="og:type" content="website">
-
+    <title>下北コミュニティ | 下北沢 20-30代社会人サークル</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-
     <style>
-        /* === TOKENS === */
-        :root {
-            --bg:         #f0ece6;
-            --bg-dark:    #141210;
-            --ink:        #1a1706;
-            --ink-muted:  #7a756e;
-            --accent:     #bf5b3b;
-            --white:      #ffffff;
-            --radius:     12px;
-            --gap:        14px;
-            --max:        1200px;
-            --pad:        clamp(20px, 5vw, 60px);
-            --section-py: clamp(60px, 10vw, 120px);
-        }
-
-        /* === BASE === */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: "Noto Sans JP", sans-serif;
-            background: var(--bg);
-            color: var(--ink);
-            overflow-x: hidden;
-        }
-
-        img { display: block; }
-        a { text-decoration: none; }
-
-        /* === GRAIN TEXTURE === */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: -50%;
-            width: 200%; height: 200%;
-            pointer-events: none;
-            z-index: 9000;
-            opacity: 0.032;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-            animation: grain 0.4s steps(1) infinite;
-        }
-        @keyframes grain {
-            0%   { transform: translate(0,0); }
-            25%  { transform: translate(-3%,3%); }
-            50%  { transform: translate(3%,-3%); }
-            75%  { transform: translate(-2%,1%); }
-        }
-
-        /* === SCROLL PROGRESS === */
-        .scroll-progress {
-            position: fixed;
-            top: 0; left: 0;
-            height: 2px;
-            width: 0%;
-            background: var(--accent);
-            z-index: 10000;
-            transition: width 0.05s linear;
-        }
-
-        /* === LAYOUT === */
-        .wrap {
-            max-width: var(--max);
-            margin: 0 auto;
-            padding: 0 var(--pad);
-        }
-
-        /* === REVEAL ANIMATION === */
-        .reveal {
-            opacity: 0;
-            transform: translateY(28px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        .reveal.in { opacity: 1; transform: none; }
-        .reveal[data-d="1"] { transition-delay: 0.1s; }
-        .reveal[data-d="2"] { transition-delay: 0.2s; }
-        .reveal[data-d="3"] { transition-delay: 0.3s; }
-        .reveal[data-d="4"] { transition-delay: 0.4s; }
-
-        /* === SHARED LABELS === */
-        .label {
-            display: block;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 6px;
-        }
-        .label.light { color: rgba(255,255,255,0.45); }
-
-        .sec-head {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 900;
-            letter-spacing: -0.025em;
-            line-height: 1;
-        }
-
-        .sec-row {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            margin-bottom: clamp(28px, 4vw, 48px);
-        }
-
-        .see-all {
-            font-size: 0.78rem;
-            color: var(--ink-muted);
-            letter-spacing: 0.05em;
-            transition: color 0.2s;
-            padding-bottom: 4px;
-            border-bottom: 1px solid transparent;
-        }
-        .see-all:hover { color: var(--accent); border-color: var(--accent); }
-
-        /* ========================
-           1. HERO
-        ======================== */
-        .hero {
-            background: var(--bg);
-            padding-top: 80px;
-            overflow: hidden;
-            border-bottom: 1px solid rgba(26,23,6,0.07);
-        }
-
-        /* 2-column editorial layout for hero text */
-        .hero-top {
-            max-width: var(--max);
-            margin: 0 auto;
-            padding: clamp(48px, 8vh, 80px) var(--pad) clamp(32px, 5vh, 56px);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(24px, 4vw, 64px);
-            align-items: end;
-        }
-
-        .hero-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.58rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--ink-muted);
-            margin-bottom: 18px;
-        }
-        .hero-eyebrow::before {
-            content: '';
-            display: inline-block;
-            width: 22px;
-            height: 1px;
-            background: var(--accent);
-        }
-
-        .hero-h1 {
-            font-size: clamp(2.6rem, 6.5vw, 5.6rem);
-            font-weight: 900;
-            line-height: 1.06;
-            color: var(--ink);
-            letter-spacing: -0.03em;
-        }
-        .hero-h1 em { font-style: normal; color: var(--accent); }
-
-        .hero-sub {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 22px;
-            padding-bottom: 6px;
-        }
-        .hero-sub p {
-            color: var(--ink-muted);
-            font-size: clamp(0.84rem, 1.3vw, 0.97rem);
-            line-height: 1.95;
-            font-weight: 300;
-        }
-
-        .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
-
-        .hbtn {
-            font-size: 0.82rem;
-            font-weight: 700;
-            padding: 13px 26px;
-            border-radius: 100px;
-            letter-spacing: 0.04em;
-            transition: all 0.22s ease;
-        }
-        .hbtn-fill { background: var(--accent); color: var(--white); }
-        .hbtn-fill:hover { opacity: 0.82; }
-        .hbtn-outline { color: var(--ink); border: 1px solid rgba(26,23,6,0.22); }
-        .hbtn-outline:hover { background: var(--ink); color: var(--white); }
-
-        /* ---- 3-up Carousel ---- */
-        .hero-carousel {
-            padding-bottom: clamp(32px, 5vh, 52px);
-        }
-
-        .hc-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 var(--pad);
-        }
-
-        .hc-viewport {
-            overflow: hidden;
-            flex: 1;
-        }
-
-        .hc-track {
-            display: flex;
-            gap: 14px;
-            transition: transform 0.55s cubic-bezier(0.33, 1, 0.68, 1);
-            will-change: transform;
-        }
-
-        .hc-slide { flex: 0 0 calc((100% - 28px) / 3); }
-
-        .hc-img {
+        /* --- コンポーネント --- */
+        /* --- 1. ファーストビュー --- */
+        .hero-new {
             position: relative;
-            border-radius: var(--radius);
             overflow: hidden;
-            aspect-ratio: 3/4;
-        }
-        .hc-img img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-        .hc-slide:hover .hc-img img { transform: scale(1.04); }
-
-        /* Caption: frosted glass overlay inside image */
-        .hc-caption {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            padding: 28px 16px 18px;
-            background: rgba(245, 240, 234, 0.78);
-            backdrop-filter: blur(14px) saturate(1.4);
-            -webkit-backdrop-filter: blur(14px) saturate(1.4);
-            border-top: 1px solid rgba(255,255,255,0.6);
-            translate: 0 0;
-            transition: translate 0.4s ease;
-        }
-        .hc-slide:hover .hc-caption { translate: 0 0; }
-
-        .hc-cat {
-            display: block;
-            font-size: 0.56rem;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 5px;
-        }
-
-        .hc-title {
-            font-size: clamp(0.82rem, 1.3vw, 0.96rem);
-            font-weight: 700;
-            line-height: 1.5;
-            color: var(--ink);
-            margin-bottom: 4px;
-        }
-
-        .hc-desc {
-            font-size: 0.7rem;
-            color: var(--ink-muted);
-            line-height: 1.65;
-            font-weight: 300;
-        }
-
-        .hc-cover { position: absolute; inset: 0; z-index: 10; }
-
-        .hc-btn {
-            background: var(--white);
-            border: 1px solid rgba(26,23,6,0.1);
-            color: var(--ink);
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            font-size: 1.4rem;
-            cursor: pointer;
-            display: flex;
+            color: white;
+            padding: 140px 20px 120px;
+            text-align: center;
+            display: grid;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-            line-height: 1;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
-        .hc-btn:hover { background: var(--ink); color: var(--white); }
-        .hc-btn:disabled { opacity: 0.22; cursor: not-allowed; box-shadow: none; }
-
-        .hc-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-        }
-        .hc-dot {
-            width: 6px; height: 6px;
-            border-radius: 3px;
-            background: rgba(26,23,6,0.15);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 0;
-        }
-        .hc-dot.active { background: var(--ink); width: 22px; }
-
-        @media (max-width: 900px) {
-            .hc-slide { flex: 0 0 calc((100% - 14px) / 2); }
-        }
-        @media (max-width: 700px) {
-            .hero-top { grid-template-columns: 1fr; gap: 20px; }
-        }
-        @media (max-width: 560px) {
-            .hc-slide { flex: 0 0 82%; }
-            .hc-btn { display: none; }
-        }
-
-        /* ========================
-           2. TICKER
-        ======================== */
-        .ticker {
-            background: var(--bg-dark);
-            overflow: hidden;
-            padding: 11px 0;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-        .ticker-track {
-            display: flex;
-            white-space: nowrap;
-            width: max-content;
-            animation: tick 28s linear infinite;
-        }
-        .ticker-track span {
-            font-size: 0.68rem;
-            color: rgba(255,255,255,0.35);
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            padding: 0 18px;
-        }
-        .ticker-track span.dot { color: var(--accent); padding: 0 6px; }
-        @keyframes tick {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* ========================
-           3. BENTO GRID
-        ======================== */
-        .bento-sec {
-            padding: var(--section-py) 0;
-            background: var(--bg);
-        }
-
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: 195px 195px 280px;
-            gap: var(--gap);
-        }
-
-        .bc { position: relative; overflow: hidden; border-radius: var(--radius); cursor: pointer; }
-        .bc-1 { grid-column: 1/8;  grid-row: 1/3; }
-        .bc-2 { grid-column: 8/13; grid-row: 1/2; }
-        .bc-3 { grid-column: 8/13; grid-row: 2/3; }
-        .bc-4 { grid-column: 1/5;  grid-row: 3/4; }
-        .bc-5 { grid-column: 5/9;  grid-row: 3/4; }
-        .bc-6 {
-            grid-column: 9/13; grid-row: 3/4;
-            background: var(--bg-dark);
-            color: var(--white);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 26px;
-        }
-
-        .bc-img {
+        .hero-video-wrapper {
             position: absolute;
-            inset: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform 0.7s cubic-bezier(0.33,1,0.68,1);
-        }
-        .bc:hover .bc-img { transform: scale(1.06); }
-
-        .bc-grad {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.06) 60%, transparent 100%);
-        }
-
-        .bc-body {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            padding: 18px 20px;
-            color: var(--white);
-        }
-
-        .bc-cat {
-            display: block;
-            font-size: 0.6rem;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            opacity: 0.65;
-            margin-bottom: 5px;
-        }
-
-        .bc-title {
-            font-size: clamp(0.9rem, 1.7vw, 1.15rem);
-            font-weight: 700;
-            line-height: 1.45;
-        }
-
-        /* dark card */
-        .bc-quote { font-size: clamp(0.95rem, 1.8vw, 1.2rem); font-weight: 700; line-height: 1.65; }
-        .bc-quote-meta { display: block; font-size: 0.7rem; opacity: 0.38; margin-top: 6px; }
-        .bc-link {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--white);
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid rgba(255,255,255,0.28);
-            padding-bottom: 2px;
-            align-self: flex-start;
-            transition: border-color 0.2s;
-        }
-        .bc-link:hover { border-color: var(--white); }
-
-        /* カード全体をリンクにする透明オーバーレイ */
-        .bc-cover {
-            position: absolute;
-            inset: 0;
-            z-index: 5;
-        }
-
-        @media (max-width: 900px) {
-            .bento-grid {
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto;
-                gap: 10px;
-            }
-            .bc-1 { grid-column: 1/3; grid-row: auto; min-height: 240px; }
-            .bc-2 { grid-column: 1/2; grid-row: auto; min-height: 200px; }
-            .bc-3 { grid-column: 2/3; grid-row: auto; min-height: 200px; }
-            .bc-4 { grid-column: 1/2; grid-row: auto; min-height: 200px; }
-            .bc-5 { grid-column: 2/3; grid-row: auto; min-height: 200px; }
-            .bc-6 { grid-column: 1/3; grid-row: auto; min-height: 140px; flex-direction: row; align-items: center; gap: 24px; padding: 20px 24px; }
-        }
-        @media (max-width: 560px) {
-            .bento-grid { grid-template-columns: 1fr; }
-            .bc-1,.bc-2,.bc-3,.bc-4,.bc-5 { grid-column: 1/2; min-height: 200px; }
-            .bc-1 { min-height: 250px; }
-            .bc-6 { grid-column: 1/2; flex-direction: column; align-items: flex-start; min-height: 160px; }
-        }
-
-        /* ========================
-           4. STREET GUIDE
-        ======================== */
-        .street-sec {
-            padding: var(--section-py) 0;
-            background: #e8e3dc;
-        }
-
-        .street-scroll {
-            overflow-x: auto;
-            display: flex;
-            gap: 14px;
-            padding: 0 var(--pad) var(--gap);
-            scrollbar-width: none;
-        }
-        .street-scroll::-webkit-scrollbar { display: none; }
-
-        .spot-card {
-            flex: 0 0 230px;
-            background: var(--white);
-            border-radius: var(--radius);
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            color: var(--ink);
-            display: block;
-        }
-        .spot-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 14px 32px rgba(0,0,0,0.1);
-        }
-        .spot-card img {
+            top: 50%;
+            left: 50%;
             width: 100%;
-            aspect-ratio: 1;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            z-index: -2;
+        }
+        .hero-video-wrapper video {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
         }
-        .spot-card-body { padding: 14px 16px 18px; }
-        .spot-name { font-size: 0.92rem; font-weight: 700; margin-bottom: 5px; }
-        .spot-desc { font-size: 0.76rem; color: var(--ink-muted); line-height: 1.7; margin-bottom: 10px; }
-        .spot-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-        .spot-tag {
-            font-size: 0.6rem;
-            background: var(--bg);
-            color: var(--ink-muted);
-            padding: 3px 9px;
-            border-radius: 100px;
-            letter-spacing: 0.04em;
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.45); /* 視認性確保のためのオーバーレイ */
+            z-index: -1;
+        }
+        .hero-new .container {
+            position: relative; /* z-indexを有効にするため */
+            z-index: 1;
         }
 
-        /* ========================
-           5. TOWN STORY
-        ======================== */
-        .town-sec {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 540px;
+        .hero-new h1 {
+            font-size: 2.2rem;
+            margin: 20px 0 24px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            line-height: 1.4;
         }
-        .town-img { position: relative; overflow: hidden; }
-        .town-img img { width: 100%; height: 100%; object-fit: cover; }
-        .town-text {
-            background: var(--bg);
-            padding: clamp(40px, 8vw, 100px) clamp(28px, 6vw, 80px);
+
+        .hero-new p {
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            font-weight: 400;
+            opacity: 0.95;
+        }
+
+        .badges {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             justify-content: center;
-        }
-        .town-h2 {
-            font-size: clamp(1.5rem, 3vw, 2.4rem);
-            font-weight: 900;
-            letter-spacing: -0.02em;
-            line-height: 1.3;
-            margin: 10px 0 22px;
-        }
-        .town-p {
-            font-size: clamp(0.88rem, 1.4vw, 0.98rem);
-            line-height: 2.1;
-            color: var(--ink-muted);
+            gap: 10px;
             margin-bottom: 30px;
         }
-        .txt-link {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--accent);
+
+        .badge {
+            background: rgba(255,255,255,0.9);
+            color: var(--text-color);
+            padding: 6px 14px;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            font-weight: bold;
             letter-spacing: 0.05em;
-            border-bottom: 1px solid var(--accent);
-            padding-bottom: 2px;
-            align-self: flex-start;
-            transition: opacity 0.2s;
-        }
-        .txt-link:hover { opacity: 0.65; }
-
-        @media (max-width: 768px) {
-            .town-sec { grid-template-columns: 1fr; }
-            .town-img { min-height: 260px; }
         }
 
-        /* ========================
-           6. COMMUNITY (Dark)
-        ======================== */
-        .community-sec {
-            background: var(--bg-dark);
-            color: var(--white);
-            padding: var(--section-py) var(--pad);
+        /* --- 診断バナー --- */
+        .diagnosis-banner {
+            padding-top: 0;
+            padding-bottom: 30px;
+        }
+        .diagnosis-card-link {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .diagnosis-card-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+        .diagnosis-icon {
+            font-size: 3rem;
+            line-height: 1;
+        }
+        .diagnosis-text h3 {
+            margin: 0 0 5px;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+        .diagnosis-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .diagnosis-arrow {
+            margin-left: auto;
+            font-weight: bold;
+            white-space: nowrap;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        .sub-cta-links {
+            margin-top: 40px;
             text-align: center;
         }
-        .community-inner { max-width: 660px; margin: 0 auto; }
-        .community-h2 {
-            font-size: clamp(1.7rem, 4vw, 3rem);
-            font-weight: 900;
-            letter-spacing: -0.025em;
-            line-height: 1.3;
-            margin: 12px 0 22px;
+        .sub-cta-links .btn-cta:last-child {
+            margin-bottom: 0;
         }
-        .community-p {
-            font-size: clamp(0.86rem, 1.4vw, 0.98rem);
+        @media (max-width: 600px) {
+            .diagnosis-card-link {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+
+        /* --- 2. 共感ゾーン --- */
+        .empathy-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .empathy-guide {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+        }
+        .empathy-guide h3 {
+            margin: 0 0 5px;
+        }
+
+        #empathy-check-count {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            text-align: center;
+            margin-top: 30px;
+            font-weight: bold;
+            color: #555;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-size: 1.1rem;
+        }
+        #empathy-check-count span {
+            font-size: 1.3rem;
+            color: var(--accent-color);
+        }
+
+        .empathy-bubble {
+            position: relative;
+            background: #fff;
+            padding: 15px 20px 15px 60px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+            border: 1px solid #fff;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .empathy-bubble::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .empathy-bubble.left::before {
+            bottom: -10px;
+            left: 30px;
+            border-width: 15px 15px 0 0;
+            border-color: #fff transparent transparent transparent;
+        }
+        .empathy-bubble.right::before {
+            bottom: -10px;
+            right: 30px;
+            border-width: 0 15px 15px 0;
+            border-color: transparent #fff transparent transparent;
+        }
+        .empathy-checkbox {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .empathy-bubble.checked .empathy-checkbox {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        .empathy-bubble.checked .empathy-checkbox .checkmark {
+            opacity: 1;
+            color: white;
+            transform: scale(1);
+        }
+        .empathy-bubble:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .empathy-bubble.checked {
+            background-color: var(--accent-light);
+            transform: scale(1.03);
+            border-color: var(--accent-color);
+        }
+        .empathy-bubble .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .empathy-bubble.checked .checkmark {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* --- 3. 解決策 --- */
+        .solution {
+            background-color: var(--secondary-bg);
+            text-align: center;
+        }
+        
+        .solution-text {
+            font-size: 1.1rem;
             line-height: 2;
-            opacity: 0.6;
-            margin-bottom: 36px;
         }
-        .community-btn {
-            display: inline-block;
-            font-size: 0.84rem;
-            font-weight: 700;
-            padding: 15px 34px;
-            border-radius: 100px;
-            border: 1px solid rgba(255,255,255,0.28);
-            color: var(--white);
-            letter-spacing: 0.07em;
-            transition: all 0.24s ease;
-        }
-        .community-btn:hover { background: var(--white); color: var(--ink); border-color: var(--white); }
 
-        /* ========================
-           7. FINAL CTA
-        ======================== */
-        .cta-sec {
-            padding: var(--section-py) var(--pad);
+        /* --- 4. イベント紹介 (Bento Grid) --- */
+        .carousel-wrapper {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch; /* for smooth scrolling on iOS */
+            scrollbar-width: none; /* Firefox */
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari */
+        }
+        .carousel-item {
+            flex: 0 0 90%;
+            scroll-snap-align: center;
+            margin-right: 15px;
+        }
+        .carousel-item:last-child {
+            margin-right: 0;
+        }
+        .carousel-nav {
             text-align: center;
-            background: var(--bg);
+            margin-top: 20px;
         }
-        .cta-h2 {
-            font-size: clamp(2rem, 6vw, 4.5rem);
-            font-weight: 900;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            margin-bottom: 14px;
+        .carousel-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #ccc;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .cta-sub {
-            font-size: clamp(0.86rem, 1.4vw, 0.98rem);
-            color: var(--ink-muted);
-            line-height: 1.9;
-            margin-bottom: 36px;
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .cta-btn {
-            font-size: 0.86rem;
-            font-weight: 700;
-            padding: 15px 34px;
-            border-radius: 100px;
-            letter-spacing: 0.05em;
-            transition: all 0.22s ease;
+        .carousel-arrow-left {
+            left: -20px;
         }
-        .cta-btn-fill { background: var(--accent); color: var(--white); }
-        .cta-btn-fill:hover { opacity: 0.82; }
-        .cta-btn-line { background: transparent; color: var(--ink); border: 1px solid rgba(26,23,6,0.2); }
-        .cta-btn-line:hover { background: var(--ink); color: var(--white); }
+        .carousel-arrow-right {
+            right: -20px;
+        }
+
+        /* --- 4.5 ギャラリー --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        @media (min-width: 600px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+        }
+        .gallery-grid img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            transition: transform 0.3s;
+        }
+        .gallery-grid img:hover {
+            transform: scale(1.02);
+        }
+
+        /* --- 5. 下北沢の理由 --- */
+        .shimokita-reason {
+            background-color: #f0ece6; /* 落ち着いたベージュ */
+            border-top: 1px solid #e6e0d8;
+            border-bottom: 1px solid #e6e0d8;
+        }
+        .shimokita-content {
+            display: grid;
+            gap: 30px;
+            align-items: center;
+        }
+        @media (min-width: 768px) {
+            .shimokita-content {
+                grid-template-columns: 1fr 1.2fr;
+                gap: 50px;
+            }
+        }
+        .shimokita-img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+
+        /* --- 6. 主催者紹介 --- */
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .profile-img {
+            flex-shrink: 0;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        /* スマホでは縦並びにする */
+        @media (max-width: 600px) {
+            .profile {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        .profile-text h3 {
+            margin-top: 0;
+        }
+
+        /* --- 6. 参加者の声 --- */
+        .voice-card {
+            /* --- Glassmorphism Style --- */
+            position: relative;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 30px 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .voice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        
+        .voice-meta {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* --- 7. FAQ --- */
+        .faq-item {
+            /* --- Glassmorphism Style --- */
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .faq-q {
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        /* --- 追加: モダンなカードスタイル (Event Card用) --- */
+        .event-card {
+            /* style.cssの.cardを継承 */
+        }
+        .event-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .event-card h3, .event-card p {
+            padding: 0 20px;
+        }
+        .event-card h3 {
+            margin-top: 20px;
+        }
+        .event-card p {
+            margin-bottom: 25px;
+        }
+
+
+        /* --- 返信表示用スタイル --- */
+        .admin-reply {
+            background-color: rgba(230, 233, 249, 0.5); /* 元の背景を半透明に */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .reply-meta {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+            display: block;
+        }
+        /* --- 広告用スタイル --- */
+        .ad-container {
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            max-width: 728px; /* 一般的な広告サイズ */
+        }
+        .ad-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .ad-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e9e9e9;
+            color: #aaa;
+            min-height: 90px; /* 一般的な広告の高さ */
+            width: 100%;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        /* --- 位置情報表示用 --- */
+        .location-info {
+            font-size: 0.8rem;
+            margin-left: 15px;
+            display: none; /* JSで表示制御 */
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.9);
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .location-info a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px dotted var(--accent-color);
+        }
+        @media (max-width: 900px) {
+            .header {
+                flex-wrap: wrap;
+                padding-bottom: 10px;
+            }
+            .location-info {
+                width: 100%;
+                flex: 0 0 100%;
+                justify-content: center;
+                margin: 10px 0 0;
+                order: 4;
+            }
+        }
+
+        /* --- キャラクター表示スタイル --- */
+        .chara-container {
+            position: fixed;
+            right: 20px;
+            bottom: -160px; /* 初期状態は画面外に隠す */
+            z-index: 1500;
+            cursor: pointer;
+            transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chara-container.active {
+            bottom: 25px; /* スクロールが300pxを超えたら出現 */
+        }
+
+        #shimokita-chara {
+            width: 100px;
+            height: auto;
+            animation: bobbing 2.5s ease-in-out infinite; /* 浮遊アニメーション */
+        }
+
+        /* キャラクター上の吹き出し */
+        .speech-bubble {
+            position: relative;
+            background: #fff;
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .chara-container:hover .speech-bubble {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 吹き出しの三角部分 */
+        .speech-bubble::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 8px 0;
+            border-style: solid;
+            border-color: var(--accent-color) transparent transparent;
+        }
+
+        /* 浮いているような上下運動のアニメーション */
+        @keyframes bobbing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
     </style>
 </head>
-<body>
-    <div class="scroll-progress" id="sp"></div>
+<body class="has-sticky-cta">
+    <header class="header">
+    </header>
+    <script src="assets/js/header.js" data-path-prefix="" defer></script>
 
-    <header class="header"></header>
-    <script src="assets/js/header.js" defer></script>
+    <!-- ① ファーストビュー -->
+    <section class="hero-new">
+        <div class="hero-video-wrapper">
+            <video autoplay loop muted playsinline poster="assets/images/hero-poster.jpg">
+                <source src="assets/images/hero-video.mp4" type="video/mp4">
+                お使いのブラウザは動画の再生に対応していません。
+            </video>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <p style="font-size: 1rem; opacity: 0.9; margin-bottom: 0;">会社と家の往復だけじゃ、なんだか少し、息が詰まりませんか？</p>
+            <h1>下北沢で、コーヒー片手に<br>「会社以外の友達」と話す週末。</h1>
+            <p>無理せず、飾らず、ゆるく繋がる。</p>
+        </div>
+    </section>
 
-    <main>
-
-        <!-- ① HERO -->
-        <section class="hero">
-            <div class="hero-top">
-                <span class="hero-eyebrow">SHIMOKITA CULTURE MEDIA — FIND YOUR THIRD PLACE</span>
-                <h1 class="hero-h1">
-                    仕事でも家でもない、<br><em>下北沢</em>という居場所。
-                </h1>
-                <div class="hero-sub">
-                    <p>カフェ、サウナ、古着、音楽。<br>休日の過ごし方が変わると、人生が少し変わる気がした。</p>
-                    <div class="hero-btns">
-                        <a href="#features" class="hbtn hbtn-fill">特集を読む</a>
-                        <a href="recommend.html" class="hbtn hbtn-outline">スポットを探す →</a>
+    <!-- ② 共感ゾーン -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">ふと、こんなことを<br>思う瞬間はありませんか？</h2>
+            </div>
+            <div class="empathy-guide fade-in" style="--i: 0;">
+                <h3>🤔 あなたはいくつ当てはまりますか？</h3>
+                <p style="margin:0; font-size: 0.9rem; color: #666;">当てはまるものにチェックしてください</p>
+            </div>
+            <div class="empathy-list">
+                <div class="empathy-bubble left fade-in" style="--i: 1; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>学生時代の友人は結婚や転勤で、気軽に誘えなくなった…</div>
+                <div class="empathy-bubble right fade-in" style="--i: 2; align-self: flex-end; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>休日はスマホを見ていたら、いつの間にか夕方になっている…</div>
+                <div class="empathy-bubble left fade-in" style="--i: 3; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>職場の人とは仲が良いけれど、プライベートの話はしづらい…</div>
+                <div class="empathy-bubble right fade-in" style="--i: 4; align-self: flex-end; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>新しい趣味を始めたいけど、一人だと腰が重い…</div>
+                <div class="empathy-bubble left fade-in" style="--i: 5; align-self: flex-start; max-width: 80%;" data-empathy-item><div class="empathy-checkbox"><span class="checkmark">✔</span></div>「社会人サークル」と検索しても、ガチすぎたり、ノリが若すぎて引いてしまう…</div>
+            </div>
+            <div id="empathy-check-count"></div>
+            <div id="empathy-result" class="card fade-in" style="--i: 6; margin-top: 40px; display: none; background-color: var(--accent-light);">
+                <div class="profile" style="align-items: center; gap: 20px;">
+                    <img src="assets/images/profile.webp" alt="主催者の写真" class="profile-img" style="width: 80px; height: 80px;">
+                    <div class="profile-text">
+                        <p id="empathy-message" style="margin:0; font-size:0.95rem; line-height: 1.8;">
+                            もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。
+                        </p>
                     </div>
                 </div>
-            </div>
-            <div class="hero-carousel">
-                <div class="hc-row">
-                    <button class="hc-btn" id="hc-prev" aria-label="前へ">&#8249;</button>
-                    <div class="hc-viewport">
-                        <div class="hc-track" id="hc-track">
-                            <!-- Slide 1: Cafe -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80" alt="下北沢のカフェ">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Cafe</span>
-                                        <p class="hc-title">路地裏の一杯が、<br>一日をリセットする。</p>
-                                        <p class="hc-desc">週末の朝、誰にも急かされない時間がここにある。</p>
-                                    </div>
-                                    <a href="columns/column-detail-11.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 2: Kissa -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=600&q=80" alt="純喫茶の雰囲気">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">純喫茶</span>
-                                        <p class="hc-title">昭和の香りと、<br>今の自分が交差する。</p>
-                                        <p class="hc-desc">変わらない空間が、なぜか安心させてくれる。</p>
-                                    </div>
-                                    <a href="columns/column-detail-10.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 3: Vintage -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=600&q=80" alt="古着屋の店内">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Vintage</span>
-                                        <p class="hc-title">誰かの過去が、<br>自分のスタイルになる。</p>
-                                        <p class="hc-desc">出会いは偶然。でも、選んだのは確かに自分。</p>
-                                    </div>
-                                    <a href="columns/column-detail-3.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 4: Sauna -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1611095971073-1bf781ff48b1?auto=format&fit=crop&w=600&q=80" alt="サウナの蒸気">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Sauna</span>
-                                        <p class="hc-title">整う、という感覚を<br>初めて知った場所。</p>
-                                        <p class="hc-desc">週に一度のルーティンが、人生をととのえる。</p>
-                                    </div>
-                                    <a href="columns/column-detail-5.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 5: Theater -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&w=600&q=80" alt="小劇場のステージ">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Theater</span>
-                                        <p class="hc-title">100人の舞台が、<br>心を100万回動かす。</p>
-                                        <p class="hc-desc">小さな劇場にしかない、圧倒的なリアルがある。</p>
-                                    </div>
-                                    <a href="columns/column-detail-4.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 6: Music -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=600&q=80" alt="ライブハウス">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Music</span>
-                                        <p class="hc-title">知らない音楽に<br>出会った夜のこと。</p>
-                                        <p class="hc-desc">誰かのライブが、自分の人生を変えることがある。</p>
-                                    </div>
-                                    <a href="columns/column-detail-15.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="hc-btn" id="hc-next" aria-label="次へ">&#8250;</button>
-                </div>
-                <div class="hc-dots" id="hc-dots"></div>
-            </div>
-        </section>
-
-        <!-- ② TICKER -->
-        <div class="ticker" aria-hidden="true">
-            <div class="ticker-track">
-                <span>#下北沢カフェ</span><span class="dot">·</span>
-                <span>#下北沢サウナ</span><span class="dot">·</span>
-                <span>#下北沢古着</span><span class="dot">·</span>
-                <span>#下北沢夜散歩</span><span class="dot">·</span>
-                <span>#下北沢一人飲み</span><span class="dot">·</span>
-                <span>#下北沢社会人</span><span class="dot">·</span>
-                <span>#下北沢ライブ</span><span class="dot">·</span>
-                <span>#サードプレイス</span><span class="dot">·</span>
-                <span>#下北沢カフェ</span><span class="dot">·</span>
-                <span>#下北沢サウナ</span><span class="dot">·</span>
-                <span>#下北沢古着</span><span class="dot">·</span>
-                <span>#下北沢夜散歩</span><span class="dot">·</span>
-                <span>#下北沢一人飲み</span><span class="dot">·</span>
-                <span>#下北沢社会人</span><span class="dot">·</span>
-                <span>#下北沢ライブ</span><span class="dot">·</span>
-                <span>#サードプレイス</span><span class="dot">·</span>
             </div>
         </div>
+    </section>
 
-        <!-- ③ BENTO GRID -->
-        <section id="features" class="bento-sec">
-            <div class="wrap">
-                <div class="sec-row">
-                    <div>
-                        <span class="label reveal">Editor's Pick</span>
-                        <h2 class="sec-head reveal" data-d="1">PICK UP</h2>
+    <!-- ③ 解決策提示 -->
+    <section class="section solution fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">「頑張らなくていい」<br>それが一番大切なルール</h2>
+            </div>
+            <div class="solution-text">
+                <p>ここは、名刺交換をする異業種交流会でもなければ、ウェイウェイ盛り上がる合コンでもありません。</p>
+                <p>ただ、好きな街「下北沢」に集まって、美味しいカレーを食べたり、ボードゲームで笑ったり。</p>
+                <p>会社での肩書きを脱いで、<b>「学生時代の放課後」のような、なんでもない時間を共有する。</b></p>
+                <p>そんな「ゆるい繋がり」が、明日からの仕事に向かう気持ちを、ほんの少し軽くしてくれます。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ④ イベント紹介 -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">下北沢を拠点に、<br>こんな活動をしています</h2>
+            </div>
+            
+            <div class="carousel-wrapper">
+                <button class="carousel-arrow carousel-arrow-left" id="carousel-prev" aria-label="前へ">‹</button>
+                <button class="carousel-arrow carousel-arrow-right" id="carousel-next" aria-label="次へ">›</button>
+                <div class="carousel-container" id="activity-carousel">
+                    <!-- Activity 1 -->
+                    <div class="carousel-item">
+                        <div class="card event-card fade-in" style="--i: 0;">
+                            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="カフェでの交流">
+                            <h3>☕ まったり交流</h3>
+                            <p><b>下北沢カフェ・古着屋巡り</b><br>「あのお店、気になってたんだよね」をみんなで消化。月1回、おしゃれなカフェでただお喋りするだけの会も人気です。</p>
+                        </div>
                     </div>
-                    <a href="column.html" class="see-all">すべて見る →</a>
-                </div>
-
-                <div class="bento-grid">
-                    <!-- col-10: 純喫茶巡り -->
-                    <article class="bc bc-1 reveal">
-                        <a href="columns/column-detail-10.html" class="bc-cover" aria-label="記事を読む"></a>
-                        <img class="bc-img" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80" alt="下北沢 純喫茶 カフェ">
-                        <div class="bc-grad"></div>
-                        <div class="bc-body">
-                            <span class="bc-cat">Cafe</span>
-                            <h3 class="bc-title">タイムスリップした気分。レトロで落ち着く純喫茶巡り。</h3>
+                    <!-- Activity 2 -->
+                    <div class="carousel-item">
+                        <div class="card event-card fade-in" style="--i: 1;">
+                            <img src="https://images.unsplash.com/photo-1632501641765-e568d28b0015?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ボードゲーム会">
+                            <h3>🎲 趣味の共有</h3>
+                            <p><b>インドア派も安心</b><br>会話が苦手でも大丈夫。ボードゲームや映画鑑賞なら、無理に話そうとしなくても自然と仲良くなれます。</p>
                         </div>
-                    </article>
-
-                    <!-- col-3: 古着屋 -->
-                    <article class="bc bc-2 reveal" data-d="1">
-                        <a href="columns/column-detail-3.html" class="bc-cover" aria-label="記事を読む"></a>
-                        <img class="bc-img" src="https://images.unsplash.com/photo-1560243563-062bfc001d68?auto=format&fit=crop&w=800&q=80" alt="下北沢 古着屋 アパレル">
-                        <div class="bc-grad"></div>
-                        <div class="bc-body">
-                            <span class="bc-cat">Vintage</span>
-                            <h3 class="bc-title">なぜ下北沢の古着屋は面白いのか？現役アパレル店員と巡ってみた。</h3>
+                    </div>
+                    <!-- Activity 3 -->
+                    <div class="carousel-item">
+                        <div class="card event-card fade-in" style="--i: 2;">
+                            <img src="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ゆるいスポーツ">
+                            <h3>🏃 ゆるくリフレッシュ</h3>
+                            <p><b>「ガチじゃない」スポーツ</b><br>経験者お断り？と思うくらいゆるいフットサルやバドミントン。ミスしても笑って許せる雰囲気です。</p>
                         </div>
-                    </article>
-
-                    <!-- col-5: サウナ -->
-                    <article class="bc bc-3 reveal" data-d="2">
-                        <a href="columns/column-detail-5.html" class="bc-cover" aria-label="記事を読む"></a>
-                        <img class="bc-img" src="https://images.unsplash.com/photo-1628852425822-c49a4a5b5433?auto=format&fit=crop&w=800&q=80" alt="下北沢 サウナ 銭湯">
-                        <div class="bc-grad"></div>
-                        <div class="bc-body">
-                            <span class="bc-cat">Sauna</span>
-                            <h3 class="bc-title">サウナ好き必見！下北沢の銭湯・サウナで「ととのう」休日。</h3>
+                    </div>
+                    <!-- Activity 4 -->
+                    <div class="carousel-item">
+                        <div class="card event-card fade-in" style="--i: 3;">
+                            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="週末のドライブ">
+                            <h3>🚗 ちょっとお出かけ</h3>
+                            <p><b>週末プチ旅行</b><br>たまには少し足を延ばして、みんなでドライブや日帰り温泉へ。非日常な体験を共有すれば、もっと仲良くなれるはず。</p>
                         </div>
-                    </article>
-
-                    <!-- col-17: レコードショップ -->
-                    <article class="bc bc-4 reveal" data-d="1">
-                        <a href="columns/column-detail-17.html" class="bc-cover" aria-label="記事を読む"></a>
-                        <img class="bc-img" src="https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=1200&q=80" alt="下北沢 レコードショップ アナログ">
-                        <div class="bc-grad"></div>
-                        <div class="bc-body">
-                            <span class="bc-cat">Music</span>
-                            <h3 class="bc-title">レコードショップの歩き方。アナログ音源の魅力を再発見。</h3>
-                        </div>
-                    </article>
-
-                    <!-- col-4: 小劇場 -->
-                    <article class="bc bc-5 reveal" data-d="2">
-                        <a href="columns/column-detail-4.html" class="bc-cover" aria-label="記事を読む"></a>
-                        <img class="bc-img" src="https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=800&q=80" alt="下北沢 小劇場 演劇">
-                        <div class="bc-grad"></div>
-                        <div class="bc-body">
-                            <span class="bc-cat">Theater</span>
-                            <h3 class="bc-title">「本多劇場」だけじゃない！下北沢の小劇場で演劇デビューのすすめ。</h3>
-                        </div>
-                    </article>
-
-                    <div class="bc bc-6 reveal" data-d="3">
-                        <div>
-                            <p class="bc-quote">「ひとりで来た方が、<br>出会いがある」</p>
-                            <span class="bc-quote-meta">— 参加者の声より</span>
-                        </div>
-                        <a href="index.html" class="bc-link">コミュニティを見る →</a>
                     </div>
                 </div>
+                <div class="carousel-nav" id="carousel-nav"></div>
             </div>
-        </section>
+            <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 30px; margin-bottom: 0;">※一部、今後の活動イメージを含みます。実際の活動内容はLINEでご確認ください。</p>
+        </div>
+    </section>
 
-        <!-- ④ STREET GUIDE -->
-        <section class="street-sec">
-            <div class="wrap">
-                <div class="sec-row reveal">
-                    <div>
-                        <span class="label">Local Spots</span>
-                        <h2 class="sec-head">STREET GUIDE</h2>
-                    </div>
-                    <a href="recommend.html" class="see-all">マップを見る →</a>
+    <!-- ⑤ 下北沢を拠点にする理由 -->
+    <section class="section shimokita-reason fade-in">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">なぜ、渋谷でも新宿でもなく<br>「下北沢」なのか？</h2>
+            </div>
+            <div class="shimokita-content">
+                <img src="assets/images/shimokita.webp" alt="下北沢の街並み" class="shimokita-img">
+                <div>
+                    <p>それは、下北沢が<b>「気取らなくていい街」</b>だからです。</p>
+                    <p>キラキラした港区のような緊張感もなければ、ビジネス街のような堅苦しさもない。</p>
+                    <p>古着にスニーカーで歩けるこの街の空気感は、初対面の緊張を驚くほどほぐしてくれます。</p>
+                    <p style="margin-bottom: 0;">路地裏の隠れ家カフェや、ディープな居酒屋。「こんなお店あったんだ！」という発見が、会話のきっかけを自然に作ってくれるのです。</p>
                 </div>
             </div>
-            <div class="street-scroll">
-                <a href="recommend.html" class="spot-card reveal">
-                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80" alt="OGAWA COFFEE LABORATORY 下北沢">
-                    <div class="spot-card-body">
-                        <h4 class="spot-name">OGAWA COFFEE LABORATORY</h4>
-                        <p class="spot-desc">reload内にあるスタイリッシュな空間。Wi-Fi・電源完備で作業にも最適。カウンターが会話を生む。</p>
-                        <div class="spot-tags">
-                            <span class="spot-tag">カフェ</span>
-                            <span class="spot-tag">電源あり</span>
-                            <span class="spot-tag">作業向き</span>
-                        </div>
-                    </div>
-                </a>
+        </div>
+    </section>
 
-                <a href="recommend.html" class="spot-card reveal" data-d="1">
-                    <img src="https://images.unsplash.com/photo-1605806616949-1e87b487fc2f?auto=format&fit=crop&w=400&q=80" alt="CITY COUNTRY CITY 下北沢">
-                    <div class="spot-card-body">
-                        <h4 class="spot-name">CITY COUNTRY CITY</h4>
-                        <p class="spot-desc">レコードショップ併設のカフェ。音楽好きにはたまらない空間で、会話のきっかけが自然と生まれる。</p>
-                        <div class="spot-tags">
-                            <span class="spot-tag">カフェ</span>
-                            <span class="spot-tag">レコード</span>
-                            <span class="spot-tag">音楽好き</span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="recommend.html" class="spot-card reveal" data-d="2">
-                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80" alt="茄子おやじ 下北沢">
-                    <div class="spot-card-body">
-                        <h4 class="spot-name">茄子おやじ</h4>
-                        <p class="spot-desc">40年以上続く老舗の欧風カレー。どこか懐かしい優しい味わい。ひとりで来ると、なぜか店主と話が弾む。</p>
-                        <div class="spot-tags">
-                            <span class="spot-tag">カレー</span>
-                            <span class="spot-tag">老舗</span>
-                            <span class="spot-tag">一人歓迎</span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="recommend.html" class="spot-card reveal" data-d="3">
-                    <img src="https://images.unsplash.com/photo-1560243563-062bfc001d68?auto=format&fit=crop&w=400&q=80" alt="FLAMINGO 下北沢 古着">
-                    <div class="spot-card-body">
-                        <h4 class="spot-name">FLAMINGO 下北沢店</h4>
-                        <p class="spot-desc">アメリカ古着を中心に個性的なアイテムが豊富。試着を重ねるうちに、自分らしさが見えてくる。</p>
-                        <div class="spot-tags">
-                            <span class="spot-tag">古着</span>
-                            <span class="spot-tag">アメリカ古着</span>
-                            <span class="spot-tag">個性派</span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="recommend.html" class="spot-card reveal" data-d="4">
-                    <img src="https://images.unsplash.com/photo-1507924538820-ede94a04019d?auto=format&fit=crop&w=400&q=80" alt="本多劇場 下北沢 演劇">
-                    <div class="spot-card-body">
-                        <h4 class="spot-name">本多劇場</h4>
-                        <p class="spot-desc">下北沢の演劇文化を牽引する代表的な劇場。生の舞台が、日常に刺激をくれる。演劇デビューにも。</p>
-                        <div class="spot-tags">
-                            <span class="spot-tag">演劇</span>
-                            <span class="spot-tag">一人OK</span>
-                            <span class="spot-tag">初心者歓迎</span>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="recommend.html" class="spot-card reveal" data-d="4">
-                    <img src="https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=400&q=80" alt="BONUS TRACK 下北沢">
-                    <div class="spot-card-body">
-                        <h4 class="spot-name">BONUS TRACK</h4>
-                        <p class="spot-desc">商店街のような雰囲気の施設に飲食店・本屋・コワーキングが集結。「また来てね」と言ってくれる店主がいる。</p>
-                        <div class="spot-tags">
-                            <span class="spot-tag">散歩</span>
-                            <span class="spot-tag">テラス</span>
-                            <span class="spot-tag">個人店</span>
-                        </div>
-                    </div>
-                </a>
+    <!-- ⑥ 主催者紹介 -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">主催者はこんな人です</h2>
             </div>
-        </section>
-
-        <!-- ⑤ TOWN STORY -->
-        <section class="town-sec">
-            <div class="town-img">
-                <img src="assets/images/shimokita.webp" alt="下北沢の街並み">
+            <div class="card fade-in">
+                <div class="profile">
+                    <img src="assets/images/profile.webp" alt="主催者の写真" class="profile-img">
+                    <div class="profile-text">
+                        <h3>主催：らいと (20代後半)</h3>
+                        <p style="margin-bottom: 0;">趣味はカフェ巡りと散歩とサウナ、筋トレ。上京したての頃、会社以外に話せる人がいなくて寂しい思いをしました。「休日にふらっと集まれる仲間がほしいな」という軽い気持ちでこの会を始めました。人見知りの方も大歓迎なので、気軽に遊びに来てください！</p>
+                    </div>
+                </div>
             </div>
-            <div class="town-text reveal">
-                <span class="label">Town Story</span>
-                <h2 class="town-h2">この街には、なぜか<br>「また来たい」がある。</h2>
-                <p class="town-p">変わり続ける駅前と、変わらない路地裏。下北沢の魅力は、街そのものよりも、そこにいる「人」かもしれない。どの店にも店主がいて、どの路地にも物語がある。ここで過ごした時間は、どこか懐かしくて、どこか新しい。それが、下北沢という場所の正体だと思う。</p>
-                <a href="shimokita-story.html" class="txt-link">ストーリーの続きを読む →</a>
+        </div>
+    </section>
+
+    <!-- ⑦ 参加者の声 -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">「最初はすごく不安でした」<br>参加メンバーの声</h2>
             </div>
-        </section>
-
-        <!-- ⑥ COMMUNITY: Dark -->
-        <section class="community-sec">
-            <div class="community-inner reveal">
-                <span class="label light">Community</span>
-                <h2 class="community-h2">下北沢が好きなら、<br>仲間がいる。</h2>
-                <p class="community-p">この街が好きな人が、毎月集まっている。カフェ巡り、サウナ会、夜の街歩き。参加者の9割が1人参加。「ひとりで来てよかった」という声が、増え続けています。</p>
-                <a href="index.html" class="community-btn">コミュニティを覗いてみる</a>
+            
+            <div class="voice-card fade-in" style="--i: 0;">
+                <span class="voice-meta">26歳 女性・事務職</span>
+                <h3>「人見知りな私でも、2回目から馴染めました」</h3>
+                <p>1人で参加するのが怖くて、申し込みボタンを押すまで3日悩みました（笑）。でも行ってみたら、みんな「1人で来ました」って人ばかり。無理にテンションを上げなくていい雰囲気が、すごく居心地よかったです。</p>
             </div>
-        </section>
 
-        <!-- ⑦ FINAL CTA -->
-        <section class="cta-sec reveal">
-            <h2 class="cta-h2">次の週末、<br>ひとりで来てみて。</h2>
-            <p class="cta-sub">誰かと来てもいい。でも、ひとりで来た方が、なぜか出会いがある。</p>
-            <div class="cta-btns">
-                <a href="recommend.html" class="cta-btn cta-btn-fill">スポットを探す</a>
-                <a href="column.html" class="cta-btn cta-btn-line">最新記事を読む</a>
+            <div class="voice-card fade-in" style="--i: 1;">
+                <span class="voice-meta">29歳 男性・エンジニア</span>
+                <h3>「上京したての孤独感がなくなりました」</h3>
+                <p>地方から出てきて友達がおらず、休日はずっと家。このサークルは「意識高い系」じゃないのが自分に合ってました。下北のカレー屋巡りが楽しくて、週末が待ち遠しくなりました。</p>
             </div>
-        </section>
+            <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 30px; margin-bottom: 0;">※これらは個人の感想を元に作成した活動イメージです。</p>
+        </div>
+    </section>
 
-    </main>
+    <!-- お知らせセクション -->
+    <section class="section" style="padding-top: 30px; padding-bottom: 0;">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 30px;">
+                <h2 class="section-title">📢 お知らせ</h2>
+            </div>
+            <div id="announcement-list">
+                <p style="text-align: center; color: #888;">読み込み中...</p>
+            </div>
+        </div>
+    </section>
 
-    <footer></footer>
-    <script src="assets/js/footer.js" defer></script>
+
+
+    <!-- ▼▼▼ 広告スペース ▼▼▼ -->
+    <section class="section">
+        <div class="container">
+            <div class="ad-container fade-in">
+                <span class="ad-label">スポンサーリンク</span>
+                <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
+                    <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius: 8px;">
+                </a>
+                <p style="font-size:0.9rem; margin-top:15px; margin-bottom:0;">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
+            </div>
+        </div>
+    </section>
+    <!-- ▲▲▲ 広告スペース ▲▲▲ -->
+
+    <!-- ⑦.5 最新のお問い合わせ -->
+    <section class="section" style="background-color: #f9f9f9;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">最近届いたお問い合わせ</h2>
+            </div>
+            <p style="text-align: center; margin-bottom: 30px;">フォームから実際に届いたメッセージを、個人情報を伏せてご紹介します。</p>
+            <div id="inquiry-list">
+                <p style="text-align: center; color: #888;">読み込み中...</p>
+            </div>
+            <div class="sub-cta-links fade-in">
+                <a href="diagnosis.html" class="btn-cta" style="background-color: #8e44ad;">🎭 あなたのタイプは？下北16診断をやってみる</a>
+                <a href="recommend.html" class="btn-cta" style="background-color: #27ae60;">📍 下北沢のおすすめスポットを見る</a>
+                <a href="column.html" class="btn-cta" style="background-color: #3498db;">📝 下北沢のコラムを読む</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ⑧ よくある不安・Q&A -->
+    <section class="section" style="background-color: #fff;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">参加前の<br>「ちょっとした不安」にお答えします</h2>
+            </div>
+            
+            <div class="faq-item fade-in" style="--i: 0;">
+                <span class="faq-q">本当に1人で参加しても浮きませんか？</span>
+                <p>A. はい、むしろ1人参加が9割です。グループが出来上がっていて入りにくい…ということはありません。運営スタッフが必ずフォローします。</p>
+            </div>
+
+            <div class="faq-item fade-in" style="--i: 1;">
+                <span class="faq-q">人見知りで、話せるか不安です…</span>
+                <p>A. 無理に話さなくてOKです。ボードゲームや映画など、話術がいらない企画も多いです。「ただその場にいるだけ」でも歓迎する空気感を大切にしています。</p>
+            </div>
+
+            <div class="faq-item fade-in" style="--i: 2;">
+                <span class="faq-q">変な勧誘とかありませんか？</span>
+                <p>A. ネットワークビジネス、宗教、強引なナンパ等は発見次第、即退会としています。純粋に友達作りを楽しみたい人だけが残るよう、管理を徹底しています。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ⑨ 最終CTA -->
+    <section class="section fade-in">
+        <div class="container" style="text-align: center;">
+            <div class="section-header">
+                <h2 class="section-title">まずは「雰囲気」を知るだけでOK</h2>
+            </div>
+            <p>ここまで読んでいただき、ありがとうございます。<br>少しでも興味を持っていただけたら、お気軽にお問い合わせください。</p>
+            <p>イベントへの参加希望はもちろん、「こんなことしたい！」というご提案も大歓迎です。</p>
+            <p>あなたからのご連絡をお待ちしています！</p>
+            
+            <a href="contact.html" class="btn-cta">
+                参加希望・お問い合わせはこちら
+            </a>
+        </div>
+    </section>
+
+    <footer>
+    </footer>
+
+    <!-- スクロール追従ボタン（スマホ用） -->
+    <a href="contact.html" class="btn-cta sticky-cta">
+        お問い合わせはこちら
+    </a>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getCountFromServer, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        // Firebaseの初期化
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // ログイン状態の監視とヘッダー切り替え
+        document.addEventListener('DOMContentLoaded', () => {
+            // header.js がヘッダーを生成するのを待つ
+            onAuthStateChanged(auth, (user) => {
+                const loginLink = document.querySelector('.login-link');
+                if (!loginLink) return;
+                if (user) {
+                    // ログイン中
+                    loginLink.textContent = 'マイページ';
+                    loginLink.href = 'mypage.html';
+                } else {
+                    // 未ログイン（デフォルトのまま）
+                    loginLink.textContent = 'ログイン';
+                    loginLink.href = 'login.html';
+                }
+            });
+        });
+
+        // --- Observer for fade-in animation ---
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                    // 一度表示されたら監視を止める
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // DOM読み込み後に初期要素を監視
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll(".fade-in");
+            elements.forEach(el => observer.observe(el));
+        });
+
+        // 最新のお問い合わせを表示
+        async function showRecentInquiries() {
+            const listContainer = document.getElementById('inquiry-list');
+            try {
+                // 最新20件を取得してから、クライアント側で「表示可」のものをフィルタリングする
+                // (Firestoreで複合インデックスを作らずに済むようにするため)
+                const q = query(collection(db, "contacts"), orderBy("createdAt", "desc"), limit(20));
+                const querySnapshot = await getDocs(q);
+                
+                const visibleDocs = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.displayOnSite === 'visible') {
+                        visibleDocs.push(data);
+                    }
+                });
+
+                if (visibleDocs.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align: center;">まだメッセージはありません。</p>';
+                    return;
+                }
+
+                listContainer.innerHTML = ''; // Loadingメッセージを消去
+
+                // 最新3件まで表示
+                const displayDocs = visibleDocs.slice(0, 3);
+                let i = 0; // アニメーション遅延用のカウンター
+                displayDocs.forEach((data) => {
+                    const card = document.createElement('div');
+                    card.className = 'voice-card fade-in';
+                    card.style.setProperty('--i', i++);
+                    
+                    // メタ情報
+                    let displayName = '匿名希望';
+                    if (data.publicPreference === 'named' && data.name) {
+                        displayName = data.name;
+                    }
+
+                    const meta = document.createElement('span');
+                    meta.className = 'voice-meta';
+                    meta.textContent = `${displayName} (${data.type || 'その他'})`;
+                    card.appendChild(meta);
+
+                    // 問い合わせ内容
+                    const p = document.createElement('p');
+                    p.textContent = data.message;
+                    card.appendChild(p);
+
+                    // 返信がある場合のみ表示
+                    if (data.reply) {
+                        const replyDiv = document.createElement('div');
+                        replyDiv.className = 'admin-reply';
+                        replyDiv.innerHTML = `<span class="reply-meta">運営からの返信</span>`;
+                        const replyP = document.createElement('p');
+                        replyP.style.marginBottom = '0';
+                        replyP.textContent = data.reply;
+                        replyDiv.appendChild(replyP);
+                        card.appendChild(replyDiv);
+                    }
+                    
+                    listContainer.appendChild(card);
+                    observer.observe(card); // 動的に追加した要素を監視対象に
+                });
+            } catch (error) {
+                console.error("Error fetching inquiries:", error);
+                listContainer.innerHTML = '<p style="text-align: center; color: #888;">読み込みに失敗しました</p>';
+            }
+        }
+        showRecentInquiries();
+
+        // お知らせ一覧を表示
+        async function showAnnouncements() {
+            const listContainer = document.getElementById('announcement-list');
+            try {
+                const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(5)); // 最新5件まで
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    listContainer.innerHTML = '<p style="text-align: center;">現在、新しいお知らせはありません。</p>';
+                    return;
+                }
+
+                listContainer.innerHTML = ''; // ローディング表示をクリア
+                let i = 0;
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.createdAt.toDate().toLocaleDateString('ja-JP');
+
+                    const item = document.createElement('div');
+                    item.className = 'card fade-in';
+                    item.style.setProperty('--i', i++);
+                    item.style.marginBottom = '15px';
+                    item.innerHTML = `
+                        <p style="font-size: 0.85rem; color: #888; margin-bottom: 5px;">${date}</p>
+                        <p style="font-weight: bold; margin-bottom: 0;">${data.text}</p>
+                    `;
+                    listContainer.appendChild(item);
+                    observer.observe(item);
+                });
+
+            } catch (error) {
+                console.error("Error fetching announcements:", error);
+                listContainer.innerHTML = '<p style="text-align: center; color: #888;">お知らせの読み込みに失敗しました。</p>';
+            }
+        }
+        showAnnouncements();
+    </script>
 
     <script>
-        // Scroll progress
-        const sp = document.getElementById('sp');
-        window.addEventListener('scroll', () => {
-            const max = document.documentElement.scrollHeight - window.innerHeight;
-            sp.style.width = (window.scrollY / max * 100) + '%';
-        }, { passive: true });
+        document.addEventListener("DOMContentLoaded", function() {
+            // --- 背景グラデーションアニメーション ---
+            const body = document.body;
+            // 開始色 (ページのトップ)
+            const startColor1 = { r: 249, g: 231, b: 216 }; // #f9e7d8
+            const startColor2 = { r: 230, g: 233, b: 249 }; // #e6e9f9
 
-        // Hero carousel (3-up)
-        (function() {
-            const track = document.getElementById('hc-track');
-            const dotsWrap = document.getElementById('hc-dots');
-            const btnPrev = document.getElementById('hc-prev');
-            const btnNext = document.getElementById('hc-next');
-            const slides = Array.from(track.children);
-            const TOTAL = slides.length;
-            let current = 0;
-            let autoTimer;
+            // 終了色 (ページのボトム)
+            const endColor1 = { r: 252, g: 221, b: 236 }; // #fcddec - 温かみのあるピンク
+            const endColor2 = { r: 221, g: 221, b: 252 }; // #ddddfc - 明るい紫
 
-            function getVisible() {
-                if (window.innerWidth <= 560) return 1;
-                if (window.innerWidth <= 900) return 2;
-                return 3;
+            // 線形補間関数
+            function lerp(start, end, amount) {
+                return (1 - amount) * start + amount * end;
             }
 
-            function getPages() {
-                return Math.ceil(TOTAL / getVisible());
+            function updateGradient() {
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                const currentScroll = Math.max(0, window.scrollY);
+                const scrollFraction = maxScroll > 0 ? currentScroll / maxScroll : 0;
+
+                const r1 = Math.round(lerp(startColor1.r, endColor1.r, scrollFraction));
+                const g1 = Math.round(lerp(startColor1.g, endColor1.g, scrollFraction));
+                const b1 = Math.round(lerp(startColor1.b, endColor1.b, scrollFraction));
+
+                const r2 = Math.round(lerp(startColor2.r, endColor2.r, scrollFraction));
+                const g2 = Math.round(lerp(startColor2.g, endColor2.g, scrollFraction));
+                const b2 = Math.round(lerp(startColor2.b, endColor2.b, scrollFraction));
+
+                // CSSカスタムプロパティを更新
+                body.style.setProperty('--grad-start', `rgb(${r1}, ${g1}, ${b1})`);
+                body.style.setProperty('--grad-end', `rgb(${r2}, ${g2}, ${b2})`);
             }
 
-            function goTo(page) {
-                const vis = getVisible();
-                const pages = getPages();
-                current = Math.max(0, Math.min(page, pages - 1));
-                const vp = track.parentElement;
-                const gap = 14;
-                const slideW = (vp.offsetWidth - gap * (vis - 1)) / vis;
-                const offset = current * vis * (slideW + gap);
-                track.style.transform = `translateX(-${offset}px)`;
-                updateDots();
-                btnPrev.disabled = current === 0;
-                btnNext.disabled = current >= pages - 1;
-            }
+            window.addEventListener('scroll', updateGradient, { passive: true });
+            updateGradient(); // 初期表示
 
-            function buildDots() {
-                dotsWrap.innerHTML = '';
-                const pages = getPages();
-                for (let i = 0; i < pages; i++) {
-                    const d = document.createElement('button');
-                    d.className = 'hc-dot' + (i === current ? ' active' : '');
-                    d.setAttribute('aria-label', `スライド ${i + 1}`);
-                    d.addEventListener('click', () => { goTo(i); resetAuto(); });
-                    dotsWrap.appendChild(d);
+            // --- キャラクターのスクロール・クリック制御 ---
+            const charaContainer = document.getElementById('shimokita-chara-container');
+            
+            window.addEventListener('scroll', () => {
+                // 300pxを超えたら 'active' クラスを付与
+                if (window.scrollY > 300) {
+                    charaContainer.classList.add('active');
+                } else {
+                    charaContainer.classList.remove('active');
                 }
-            }
+            }, { passive: true });
 
-            function updateDots() {
-                dotsWrap.querySelectorAll('.hc-dot').forEach((d, i) => {
-                    d.classList.toggle('active', i === current);
+            // クリック時にスムーズにトップへ戻る
+            charaContainer.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
                 });
+            });
+        });
+
+        // --- 共感ゾーンのインタラクション ---
+        const empathyItems = document.querySelectorAll('[data-empathy-item]');
+        const empathyResult = document.getElementById('empathy-result');
+        const empathyMessage = document.getElementById('empathy-message');
+        const checkCountDisplay = document.getElementById('empathy-check-count');
+
+        empathyItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('checked');
+                updateEmpathyResult();
+            });
+        });
+
+        function updateEmpathyResult() {
+            const checkedCount = document.querySelectorAll('.empathy-bubble.checked').length;
+            const totalCount = empathyItems.length;
+            
+            let countMessage = "";
+            if (checkedCount === 0) {
+                countMessage = "まだ当てはまるものはありません";
+            } else if (checkedCount <= 2) {
+                countMessage = "少し共感ポイントがありますね";
+            } else if (checkedCount <= 4) {
+                countMessage = "あなたに合うコミュニティかもしれません";
+            } else {
+                countMessage = "きっとここがあなたの居場所です";
+            }
+            checkCountDisplay.innerHTML = `${countMessage}<br>あなたは <span>${checkedCount}</span> / ${totalCount} 個当てはまっています`;
+
+            if (checkedCount > 0) {
+                empathyResult.style.display = 'block';
+                checkCountDisplay.style.display = 'block'; // カウンターも表示
+                if (checkedCount >= 3) {
+                    empathyMessage.innerHTML = "<b>あなたと同じ悩みを持つ人が、このコミュニティに集まっています。</b><br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。";
+                } else {
+                    empathyMessage.innerHTML = "もし一つでも当てはまるなら、ここはあなたのための場所かもしれません。<br>私たちも、まったく同じ悩みを持っていた「元・ひとりぼっち」の集まりだからです。";
+                }
+            } else {
+                empathyResult.style.display = 'none';
+                checkCountDisplay.style.display = 'block'; // 0個でもカウンターは表示
+            }
+        }
+
+        // --- カルーセル ---
+        const carousel = document.getElementById('activity-carousel');
+        const navContainer = document.getElementById('carousel-nav');
+        const prevBtn = document.getElementById('carousel-prev');
+        const nextBtn = document.getElementById('carousel-next');
+        if (carousel && navContainer) {
+            const items = carousel.querySelectorAll('.carousel-item');
+            const itemCount = items.length;
+
+            // ドットナビゲーションを生成
+            for (let i = 0; i < itemCount; i++) {
+                const dot = document.createElement('span');
+                dot.classList.add('carousel-dot');
+                dot.dataset.index = i;
+                navContainer.appendChild(dot);
             }
 
-            function resetAuto() {
-                clearInterval(autoTimer);
-                autoTimer = setInterval(() => {
-                    goTo(current + 1 < getPages() ? current + 1 : 0);
-                }, 5000);
-            }
+            const dots = navContainer.querySelectorAll('.carousel-dot');
+            dots[0].style.backgroundColor = 'var(--accent-color)';
 
-            btnPrev.addEventListener('click', () => { goTo(current - 1); resetAuto(); });
-            btnNext.addEventListener('click', () => { goTo(current + 1); resetAuto(); });
+            // スクロールに応じてドットを更新
+            carousel.addEventListener('scroll', () => {
+                const scrollLeft = carousel.scrollLeft;
+                const itemWidth = items[0].offsetWidth;
+                const currentIndex = Math.round(scrollLeft / (itemWidth + 15)); // 15はmargin-right
 
-            window.addEventListener('resize', () => {
-                buildDots();
-                goTo(0);
+                dots.forEach(dot => dot.style.backgroundColor = '#ccc');
+                if (dots[currentIndex]) {
+                    dots[currentIndex].style.backgroundColor = 'var(--accent-color)';
+                }
             });
 
-            buildDots();
-            goTo(0);
-            resetAuto();
-        })();
-
-        // Reveal on scroll
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+            // ドットクリックでスクロール
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const index = parseInt(dot.dataset.index);
+                    items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+                });
             });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+            // 矢印ボタンのクリックイベント
+            prevBtn.addEventListener('click', () => {
+                carousel.scrollBy({ left: -carousel.offsetWidth * 0.9, behavior: 'smooth' });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                carousel.scrollBy({ left: carousel.offsetWidth * 0.9, behavior: 'smooth' });
+            });
+        }
     </script>
+
+    <!-- キャラクター表示用コンテナ -->
+    <div id="shimokita-chara-container" class="chara-container">
+        <div class="speech-bubble">下北へおいでよ！</div>
+        <img src="assets/images/shimokita-chara.png" alt="下北沢コミュニティキャラクター" id="shimokita-chara">
+    </div>
+
+    <script src="assets/js/footer.js" data-path-prefix="" defer></script>
 </body>
 </html>
-"}]},"uuid":"716e9020-701f-4dfd-a692-7635ccedfbd6
