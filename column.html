@@ -211,6 +211,8 @@
                 });
             }
 
+            window.renderArticles = renderArticles; // Firestore追加後の再描画用
+
             // 初期表示
             renderArticles('all');
 
@@ -226,6 +228,62 @@
             // ページ全体のフェードイン
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
         });
+    </script>
+    <!-- Firestore に保存されたコラムを取得して一覧に追加 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        const catMap = {
+            "グルメ": "gourmet",
+            "カルチャー": "culture",
+            "アクティブ": "active",
+            "コミュニティ": "deai",
+            "ライフスタイル": "cafe"
+        };
+
+        function stripHtml(html) {
+            const el = document.createElement('div');
+            el.innerHTML = html;
+            return (el.textContent || el.innerText || '').replace(/\s+/g, ' ').trim();
+        }
+
+        (async () => {
+            try {
+                const app  = initializeApp(firebaseConfig);
+                const db   = getFirestore(app);
+                const snap = await getDocs(query(collection(db, 'columns'), orderBy('createdAt', 'desc')));
+                if (snap.empty) return;
+
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    articles.push({
+                        id: `fs_${docSnap.id}`,
+                        title: d.title,
+                        category: catMap[d.category] || 'culture',
+                        excerpt: d.body ? stripHtml(d.body).slice(0, 80) + '…' : d.title,
+                        imageUrl: d.coverImage || '',
+                        detailUrl: `columns/column-view.html?id=${docSnap.id}`,
+                        date: d.date || ''
+                    });
+                });
+
+                const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+                window.renderArticles?.(activeFilter);
+            } catch (e) {
+                console.error('Firestore コラム読み込みエラー:', e);
+            }
+        })();
     </script>
     <script src="assets/js/footer.js" data-path-prefix="" defer></script>
 </body>

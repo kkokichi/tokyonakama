@@ -3,310 +3,629 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>下北16診断 | 下北コミュニティ</title>
+    <title>下北16診断 | あなたの「下北沢タイプ」を診断</title>
+    <meta name="description" content="古着、音楽、演劇、カレー...あなたの性格を「下北沢にいそうな人」16タイプに分類します。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* --- 診断ページ用スタイル --- */
-        .diagnosis-container {
+        /* === DESIGN TOKENS === */
+        :root {
+            --bg:        #f0ece6;
+            --bg-dark:   #141210;
+            --ink:       #1a1706;
+            --ink-muted: #7a756e;
+            --accent:    #bf5b3b;
+            --white:     #ffffff;
+            --radius:    18px;
+            --pad:       clamp(24px, 5vw, 52px);
+        }
+
+        body {
+            font-family: "Noto Sans JP", "Zen Maru Gothic", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            background-image: none;
+        }
+
+        /* GRAIN */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: -50%;
+            width: 200%; height: 200%;
+            pointer-events: none;
+            z-index: 9000;
+            opacity: 0.028;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 0.4s steps(1) infinite;
+        }
+        @keyframes grain {
+            0%   { transform: translate(0,0); }
+            25%  { transform: translate(-3%,3%); }
+            50%  { transform: translate(3%,-3%); }
+            75%  { transform: translate(-2%,1%); }
+        }
+
+        /* SCROLL PROGRESS */
+        .scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px; width: 0%;
+            background: var(--accent);
+            z-index: 10000;
+            transition: width 0.05s linear;
+        }
+
+        /* LAYOUT */
+        .diag-section {
+            padding-top: 80px;
+            min-height: 100svh;
+            display: flex;
+            align-items: flex-start;
+            padding-bottom: 60px;
+        }
+        .diag-wrap {
+            width: 100%;
             max-width: 600px;
             margin: 0 auto;
-            min-height: 60vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            padding: clamp(24px, 5vh, 48px) clamp(16px, 4vw, 24px) 0;
         }
-        
-        .diagnosis-card {
-            background: white;
-            padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+
+        /* SCREEN TRANSITIONS */
+        .screen-enter {
+            animation: screenIn 0.38s cubic-bezier(0.33,1,0.68,1) forwards;
+        }
+        @keyframes screenIn {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==============================
+           START SCREEN
+        ============================== */
+        .diag-start {
+            background: var(--bg-dark);
+            border-radius: var(--radius);
+            padding: clamp(44px, 9vh, 80px) var(--pad);
             text-align: center;
             position: relative;
             overflow: hidden;
         }
-
-        /* スタート画面 */
-        .start-screen h1 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: var(--text-color);
-        }
-        .start-screen p {
-            margin-bottom: 30px;
-            color: #666;
-        }
-
-        /* 質問画面 */
-        .question-screen {
-            display: none;
-        }
-        .progress-container {
-            position: relative;
-            padding-bottom: 50px; /* バーと犬のスペース確保 */
-            margin-bottom: 30px;
-        }
-        .progress-message {
-            font-size: 0.85rem;
-            color: #666;
-            font-weight: bold;
-            margin-bottom: 15px;
-            min-height: 1.5em; /* ガタつき防止 */
-        }
-        .progress-bar {
+        .diag-start::before {
+            content: '';
             position: absolute;
-            bottom: 15px;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: #eee;
-            border-radius: 10px;
-            z-index: 1;
+            top: -100px; right: -100px;
+            width: 360px; height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(191,91,59,0.18) 0%, transparent 65%);
+            pointer-events: none;
         }
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-color);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        #dog-icon {
+        .diag-start::after {
+            content: '';
             position: absolute;
-            bottom: 10px; /* バーの上に乗るように調整 */
-            left: 0;
-            height: 40px;
-            width: auto;
-            transform: translateX(-50%) scaleX(-1); /* 左向きのGIFを右向きに反転 */
-            transition: left 0.5s ease-out;
-            z-index: 2;
+            bottom: -80px; left: -80px;
+            width: 260px; height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(191,91,59,0.1) 0%, transparent 65%);
+            pointer-events: none;
         }
-        #goal-icon {
-            position: absolute;
-            right: -10px;
-            bottom: 5px;
-            font-size: 2rem;
-            z-index: 2;
-        }
-        @keyframes shake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-15deg); }
-            75% { transform: rotate(15deg); }
-        }
-        .shake {
-            animation: shake 0.5s ease-in-out infinite;
-        }
-        .question-text {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
-        .option-btn {
-            display: block;
-            width: 100%;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            background: #fff;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-        }
-        .option-btn:hover {
-            border-color: var(--accent-color);
-            background: #fff9f5;
-            transform: translateY(-2px);
-        }
-
-        /* 結果画面 */
-        .result-screen {
-            display: none;
-            text-align: left;
-        }
-        .result-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px dashed #eee;
-        }
-        .result-type-name {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            margin: 10px 0;
-        }
-        .result-catchphrase {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #555;
-            background: #eee;
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 50px;
-        }
-        .result-section {
-            margin-bottom: 25px;
-        }
-        .result-section h3 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: var(--accent-color);
-            display: flex;
+        .start-eyebrow {
+            display: inline-flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.56rem;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.36);
+            margin-bottom: 28px;
         }
-        .result-list {
+        .start-eyebrow::before {
+            content: '';
+            width: 22px; height: 1px;
+            background: var(--accent);
+            display: inline-block;
+        }
+        .start-title {
+            font-size: clamp(3rem, 12vw, 5.5rem);
+            font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.04em;
+            line-height: 1.0;
+            margin-bottom: 10px;
+        }
+        .start-title em {
+            font-style: normal;
+            color: var(--accent);
+        }
+        .start-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.1em;
+            margin-bottom: 28px;
+        }
+        .start-desc {
+            font-size: clamp(0.82rem, 1.4vw, 0.94rem);
+            color: rgba(255,255,255,0.44);
+            line-height: 2;
+            font-weight: 300;
+            max-width: 360px;
+            margin: 0 auto 40px;
+        }
+        .start-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--white);
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 17px 44px;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: all 0.22s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .start-btn:hover {
+            opacity: 0.84;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(191,91,59,0.35);
+        }
+        .start-type-count {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 32px;
+        }
+        .type-count-num {
+            font-size: clamp(2rem, 6vw, 2.8rem);
+            font-weight: 900;
+            color: var(--accent);
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+        .type-count-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.28);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-align: left;
+            line-height: 1.5;
+        }
+        .start-list-link {
+            display: block;
+            margin-top: 20px;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.28);
+            letter-spacing: 0.1em;
+            transition: color 0.2s;
+            position: relative;
+            z-index: 1;
+        }
+        .start-list-link:hover { color: rgba(255,255,255,0.6); }
+
+        /* ==============================
+           QUESTION SCREEN
+        ============================== */
+        .diag-question {
+            display: none;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: clamp(28px, 5vh, 48px) var(--pad) clamp(32px, 6vh, 52px);
+        }
+        .q-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+        .q-num {
+            font-size: clamp(3.5rem, 12vw, 5.5rem);
+            font-weight: 900;
+            color: var(--ink);
+            letter-spacing: -0.05em;
+            line-height: 1;
+        }
+        .q-of {
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            color: var(--ink-muted);
+            padding-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .q-progress {
+            position: relative;
+            height: 3px;
+            background: rgba(26,23,6,0.08);
+            border-radius: 2px;
+            margin-bottom: 10px;
+            overflow: visible;
+        }
+        .q-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.45s ease;
+        }
+        .q-dog {
+            position: absolute;
+            top: -17px;
+            left: 0%;
+            height: 38px;
+            width: auto;
+            transform: translateX(-50%) scaleX(-1);
+            transition: left 0.5s ease-out;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        }
+        .q-message {
+            font-size: 0.7rem;
+            color: var(--ink-muted);
+            min-height: 1.8em;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        .q-text {
+            font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+        .q-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .q-opt {
+            width: 100%;
+            padding: 18px 20px;
+            background: var(--bg);
+            border: 2px solid transparent;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 0.93rem;
+            font-weight: 700;
+            color: var(--ink);
+            cursor: pointer;
+            text-align: left;
+            line-height: 1.55;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .q-opt::after {
+            content: '→';
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+            color: rgba(26,23,6,0.2);
+            transition: all 0.2s;
+        }
+        .q-opt:hover {
+            border-color: var(--accent);
+            background: rgba(191,91,59,0.05);
+            transform: translateX(5px);
+        }
+        .q-opt:hover::after {
+            color: var(--accent);
+            right: 14px;
+        }
+
+        /* ==============================
+           RESULT SCREEN
+        ============================== */
+        .diag-result { display: none; }
+
+        .result-hero {
+            background: var(--bg-dark);
+            border-radius: var(--radius);
+            padding: clamp(36px, 7vh, 64px) var(--pad);
+            text-align: center;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .result-hero::before {
+            content: '';
+            position: absolute;
+            top: -80px; right: -80px;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(191,91,59,0.2) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .result-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.56rem;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.36);
+            margin-bottom: 20px;
+        }
+        .result-label::before {
+            content: '';
+            width: 18px; height: 1px;
+            background: var(--accent);
+            display: inline-block;
+        }
+        .result-name {
+            font-size: clamp(2rem, 7vw, 3.4rem);
+            font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 18px;
+        }
+        .result-catch {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--white);
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.16);
+            backdrop-filter: blur(8px);
+            padding: 8px 20px;
+            border-radius: 100px;
+            letter-spacing: 0.04em;
+        }
+
+        .result-body {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: clamp(24px, 5vh, 44px) var(--pad);
+            margin-bottom: 12px;
+        }
+        .result-sec {
+            padding-bottom: 24px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(26,23,6,0.07);
+        }
+        .result-sec:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        .result-sec-label {
+            display: block;
+            font-size: 0.54rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .result-desc {
+            font-size: 0.94rem;
+            line-height: 1.95;
+            color: var(--ink);
+            font-weight: 300;
+        }
+        .result-spots {
             list-style: none;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
         }
-        .result-list li {
+        .result-spots li {
+            font-size: 0.9rem;
+            color: var(--ink);
+            padding-left: 18px;
             position: relative;
-            padding-left: 20px;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
+            line-height: 1.6;
         }
-        .result-list li::before {
-            content: "✔";
+        .result-spots li::before {
+            content: '';
             position: absolute;
-            left: 0;
-            color: var(--accent-color);
-            font-weight: bold;
+            left: 0; top: 9px;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
         }
-        .share-area {
-            margin-top: 40px;
+        .result-compat {
+            font-size: 0.94rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.7;
+        }
+        .result-articles-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .result-articles-list li a {
+            font-size: 0.88rem;
+            color: var(--accent);
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(191,91,59,0.18);
+            padding-bottom: 2px;
+            transition: border-color 0.2s;
+        }
+        .result-articles-list li a:hover { border-color: var(--accent); }
+        .result-mbti {
+            font-size: 0.72rem;
+            color: var(--ink-muted);
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .result-actions {
+            background: var(--bg-dark);
+            border-radius: var(--radius);
+            padding: clamp(28px, 5vh, 48px) var(--pad);
             text-align: center;
         }
-        .share-buttons {
+        .share-eyebrow {
+            font-size: 0.54rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.32);
+            display: block;
+            margin-bottom: 16px;
+        }
+        .share-btns {
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-top: 15px;
             flex-wrap: wrap;
+            margin-bottom: 28px;
         }
-        .btn-share {
-            padding: 8px 16px;
-            border-radius: 50px;
-            color: white;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: bold;
+        .share-btn {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.04em;
+            transition: opacity 0.2s, transform 0.2s;
         }
-        .btn-twitter { background-color: #000; }
-        .btn-line { background-color: #06C755; }
-        
-        /* アニメーション */
-        .fade-in-up {
-            animation: fadeInUp 0.5s ease forwards;
+        .share-btn:hover { opacity: 0.82; transform: translateY(-1px); }
+        .share-x    { background: #111; }
+        .share-line { background: #06C755; }
+
+        .action-btns {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .action-primary {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--white);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 16px 40px;
+            border-radius: 100px;
+            letter-spacing: 0.05em;
+            transition: all 0.22s;
         }
+        .action-primary:hover { opacity: 0.82; transform: translateY(-2px); }
+        .action-ghost {
+            font-size: 0.76rem;
+            color: rgba(255,255,255,0.32);
+            letter-spacing: 0.06em;
+            transition: color 0.2s;
+        }
+        .action-ghost:hover { color: rgba(255,255,255,0.65); }
+        .action-accent {
+            font-size: 0.76rem;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            transition: opacity 0.2s;
+        }
+        .action-accent:hover { opacity: 0.72; }
+
+        /* Fade-in override for this page */
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
+    <div class="scroll-progress" id="sp"></div>
 
-    <header class="header">
-    </header>
+    <header class="header"></header>
     <script src="assets/js/header.js" defer></script>
 
-    <section class="section main-content fade-in">
-        <div class="container">
-            <div class="diagnosis-container">
-                
-                <!-- スタート画面 -->
-                <div id="start-screen" class="diagnosis-card start-screen">
-                    <span style="font-size: 3rem; display: block; margin-bottom: 10px;">🎭</span>
-                    <h1>下北16診断</h1>
-                    <p>あなたの性格を「下北沢にいそうな人」に例えると？<br>古着、音楽、演劇、カレー...<br>この街でのあなたの「正体」を暴きます。</p>
-                    <button id="start-btn" class="submit-btn" style="margin: 0 auto;">診断を始める</button>
-                    <a href="diagnosis-summary.html" class="btn-cta" style="background-color: #27ae60; font-size: 1rem; max-width: 250px; margin-top: 20px;">全16タイプの一覧を見る</a>
+    <section class="diag-section main-content fade-in">
+        <div class="diag-wrap">
+
+            <!-- START SCREEN -->
+            <div id="start-screen">
+                <div class="diag-start">
+                    <span class="start-eyebrow">Shimokita Type Test</span>
+                    <h1 class="start-title">下北<em>16</em>診断</h1>
+                    <p class="start-subtitle">— Find Your Shimokita Self —</p>
+                    <p class="start-desc">あなたの性格を「下北沢にいそうな人」に例えると？<br>古着、音楽、演劇、カレー...<br>この街でのあなたの「正体」を暴きます。</p>
+                    <button id="start-btn" class="start-btn">診断スタート →</button>
+                    <div class="start-type-count">
+                        <span class="type-count-num">16</span>
+                        <span class="type-count-label">Types<br>of Shimokita People</span>
+                    </div>
+                    <a href="diagnosis-summary.html" class="start-list-link">全16タイプの一覧を見る →</a>
                 </div>
-
-                <!-- 質問画面 -->
-                <div id="question-screen" class="diagnosis-card question-screen">
-                    <div class="progress-container">
-                        <div id="progress-message" class="progress-message"></div>
-                        <div class="progress-bar">
-                            <div id="progress-fill" class="progress-fill"></div>
-                        </div>
-                        <img src="assets/images/walking-dog.gif" id="dog-icon" alt="歩く犬">
-                        <span id="goal-icon">🍖</span>
-                    </div>
-                    <div id="question-container">
-                        <h2 id="question-text" class="question-text"></h2>
-                        <div id="options-container">
-                            <!-- 選択肢ボタンがここに生成されます -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 結果画面 -->
-                <div id="result-screen" class="diagnosis-card result-screen">
-                    <div class="result-header">
-                        <p style="margin-bottom: 5px; color: #888; font-size: 0.9rem;">あなたのタイプは...</p>
-                        <h2 id="result-name" class="result-type-name"></h2>
-                        <span id="result-catch" class="result-catchphrase"></span>
-                    </div>
-
-                    <div class="result-section">
-                        <h3>📝 性格</h3>
-                        <p id="result-desc" style="line-height: 1.8;"></p>
-                    </div>
-
-                    <div class="result-section">
-                        <h3>📍 下北でのおすすめ</h3>
-                        <ul id="result-spots" class="result-list"></ul>
-                    </div>
-
-                    <div class="result-section">
-                        <h3>🤝 相性のいいタイプ</h3>
-                        <p id="result-compat" style="font-weight: bold;"></p>
-                    </div>
-
-                    <div class="result-section">
-                        <h3>📖 あなたへのおすすめコラム</h3>
-                        <ul id="result-articles" class="recommended-articles">
-                        </ul>
-                    </div>
-
-                    <div class="result-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; text-align: center;">
-                        <p id="result-mbti-type" style="font-size: 0.85rem; color: #999; margin: 0;"></p>
-                    </div>
-
-
-                    <div class="share-area">
-                        <p>結果をシェアして仲間を見つけよう！</p>
-                        <div class="share-buttons">
-                            <a href="#" id="share-twitter" class="btn-share btn-twitter" target="_blank">Xでポスト</a>
-                            <a href="#" id="share-line" class="btn-share btn-line" target="_blank">LINEで送る</a>
-                        </div>
-                        <div style="margin-top: 30px;">
-                            <a href="contact.html" class="submit-btn" style="font-size: 1rem; padding: 12px;">コミュニティに参加する</a>
-                            <a href="diagnosis.html" style="display: block; margin-top: 15px; color: #888; text-decoration: none; font-size: 0.9rem;">もう一度診断する</a>
-                            <a href="diagnosis-summary.html" style="display: block; margin-top: 10px; color: var(--accent-color); font-size: 0.9rem;">全16タイプの一覧を見る →</a>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <!-- QUESTION SCREEN -->
+            <div id="question-screen" class="diag-question">
+                <div class="q-header">
+                    <span class="q-num" id="q-num">01</span>
+                    <span class="q-of" id="q-of">/ 10</span>
+                </div>
+                <div class="q-progress">
+                    <div class="q-progress-fill" id="progress-fill"></div>
+                    <img src="assets/images/walking-dog.gif" class="q-dog" id="dog-icon" alt="">
+                </div>
+                <p class="q-message" id="progress-message"></p>
+                <h2 class="q-text" id="question-text"></h2>
+                <div class="q-options" id="options-container"></div>
+            </div>
+
+            <!-- RESULT SCREEN -->
+            <div id="result-screen" class="diag-result">
+                <div class="result-hero">
+                    <span class="result-label">あなたのタイプ</span>
+                    <h2 class="result-name" id="result-name"></h2>
+                    <span class="result-catch" id="result-catch"></span>
+                </div>
+
+                <div class="result-body">
+                    <div class="result-sec">
+                        <span class="result-sec-label">性格</span>
+                        <p class="result-desc" id="result-desc"></p>
+                    </div>
+                    <div class="result-sec">
+                        <span class="result-sec-label">下北でのおすすめ</span>
+                        <ul class="result-spots" id="result-spots"></ul>
+                    </div>
+                    <div class="result-sec">
+                        <span class="result-sec-label">相性のいいタイプ</span>
+                        <p class="result-compat" id="result-compat"></p>
+                    </div>
+                    <div class="result-sec">
+                        <span class="result-sec-label">おすすめコラム</span>
+                        <ul class="result-articles-list" id="result-articles"></ul>
+                    </div>
+                    <p class="result-mbti" id="result-mbti-type"></p>
+                </div>
+
+                <div class="result-actions">
+                    <span class="share-eyebrow">Share Your Type</span>
+                    <div class="share-btns">
+                        <a href="#" id="share-twitter" class="share-btn share-x" target="_blank">Xでポスト</a>
+                        <a href="#" id="share-line" class="share-btn share-line" target="_blank">LINEで送る</a>
+                    </div>
+                    <div class="action-btns">
+                        <a href="contact.html" class="action-primary">コミュニティに参加する</a>
+                        <a href="diagnosis.html" class="action-ghost">もう一度診断する</a>
+                        <a href="diagnosis-summary.html" class="action-accent">全16タイプの一覧を見る →</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
-    <footer>
-    </footer>
+    <footer></footer>
+    <script src="assets/js/footer.js" defer></script>
 
-    <script src="assets/js/articles.js"></script> <!-- コラムデータを読み込む -->
-    <script src="assets/js/diagnosis-data.js"></script> <!-- 診断データを読み込む -->
+    <script src="assets/js/articles.js"></script>
+    <script src="assets/js/diagnosis-data.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -321,18 +640,20 @@
             measurementId: "G-BWM0Q87Q93"
         };
 
-        // Firebase初期化
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const db  = getFirestore(app);
 
         document.addEventListener("DOMContentLoaded", function() {
-            // 共通UI処理
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
 
-            // --- 診断ロジック ---
-            
-            // 質問データ (10問)
-            // 軸: E(外向)/I(内向), S(現実)/N(直感), T(論理)/F(感情), J(計画)/P(柔軟)
+            // Scroll progress
+            const sp = document.getElementById('sp');
+            window.addEventListener('scroll', () => {
+                const max = document.documentElement.scrollHeight - window.innerHeight;
+                if (max > 0) sp.style.width = (window.scrollY / max * 100) + '%';
+            }, { passive: true });
+
+            // Questions
             const questions = [
                 {
                     text: "Q1. 休日の朝、目が覚めたら11時。今の気分は？",
@@ -406,124 +727,91 @@
                 }
             ];
 
-            // 診断結果データ (16タイプ) - diagnosis-data.js から読み込み
             const results = diagnosisResults;
 
-            // 状態管理
-            let currentQuestionIndex = 0;
+            let currentQ = 0;
             let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
 
-            // DOM要素
-            const startScreen = document.getElementById('start-screen');
+            const startScreen    = document.getElementById('start-screen');
             const questionScreen = document.getElementById('question-screen');
-            const resultScreen = document.getElementById('result-screen');
-            const startBtn = document.getElementById('start-btn');
-            const questionText = document.getElementById('question-text');
-            const optionsContainer = document.getElementById('options-container');
-            const progressFill = document.getElementById('progress-fill');
-            const progressMessage = document.getElementById('progress-message');
-            const dogIcon = document.getElementById('dog-icon');
-            const goalIcon = document.getElementById('goal-icon');
+            const resultScreen   = document.getElementById('result-screen');
+            const startBtn       = document.getElementById('start-btn');
+            const questionText   = document.getElementById('question-text');
+            const optContainer   = document.getElementById('options-container');
+            const progressFill   = document.getElementById('progress-fill');
+            const progressMsg    = document.getElementById('progress-message');
+            const dogIcon        = document.getElementById('dog-icon');
+            const qNum           = document.getElementById('q-num');
 
-            // 開始ボタン
+            function show(el) {
+                el.style.display = 'block';
+                el.classList.add('screen-enter');
+                el.addEventListener('animationend', () => el.classList.remove('screen-enter'), { once: true });
+            }
+
             startBtn.addEventListener('click', () => {
                 startScreen.style.display = 'none';
-                questionScreen.style.display = 'block';
+                show(questionScreen);
                 showQuestion();
             });
 
-            // 質問表示
             function showQuestion() {
-                const q = questions[currentQuestionIndex];
+                const q = questions[currentQ];
+                const pad = String(currentQ + 1).padStart(2, '0');
+                qNum.textContent = pad;
                 questionText.textContent = q.text;
-                optionsContainer.innerHTML = '';
+                optContainer.innerHTML = '';
 
-                // プログレスバー更新
-                const progress = (currentQuestionIndex / questions.length) * 100;
-                updateProgressUI(progress);
+                const pct = (currentQ / questions.length) * 100;
+                updateProgress(pct);
 
-                // 選択肢生成
-                q.options.forEach(option => {
+                q.options.forEach(opt => {
                     const btn = document.createElement('button');
-                    btn.className = 'option-btn fade-in-up';
-                    btn.textContent = option.text;
-                    btn.addEventListener('click', () => handleAnswer(option.scores));
-                    optionsContainer.appendChild(btn);
+                    btn.className = 'q-opt screen-enter';
+                    btn.textContent = opt.text;
+                    btn.addEventListener('click', () => handleAnswer(opt.scores));
+                    optContainer.appendChild(btn);
                 });
             }
 
-            // プログレスUI更新
-            function updateProgressUI(percent) {
-                progressFill.style.width = `${percent}%`;
-                dogIcon.style.left = `${percent}%`;
+            function updateProgress(pct) {
+                progressFill.style.width = pct + '%';
+                dogIcon.style.left = pct + '%';
 
-                // メッセージ更新
-                let msg = "";
-                if (percent < 30) {
-                    msg = "🐶 ゴールのエサを目指して歩いています。最後まで答えてエサを食べさせてあげよう！";
-                } else if (percent < 70) {
-                    msg = "🐶 いい感じ！エサまでまだ少しあるよ！";
-                } else if (percent < 100) {
-                    msg = "あと少しでエサに届くよ！🐶";
-                } else {
-                    msg = "🐶 やった！エサに到着！";
-                }
-                progressMessage.textContent = msg;
-
-                // 100%時の演出
-                if (percent >= 100) {
-                    goalIcon.classList.add('shake');
-                }
+                let msg = '';
+                if (pct < 30)       msg = '🐶 ゴールのエサを目指して歩いています。';
+                else if (pct < 70)  msg = '🐶 いい感じ！エサまでもう少し！';
+                else if (pct < 100) msg = 'あと少しでエサに届くよ！🐶';
+                else                msg = '🐶 やった！エサに到着！';
+                progressMsg.textContent = msg;
             }
 
-            // 回答処理
             function handleAnswer(points) {
-                // スコア加算
-                for (const key in points) {
-                    scores[key] += points[key];
-                }
-
-                currentQuestionIndex++;
-
-                if (currentQuestionIndex < questions.length) {
+                for (const key in points) scores[key] += points[key];
+                currentQ++;
+                if (currentQ < questions.length) {
                     showQuestion();
                 } else {
-                    // 100%の演出を見せるため少し待つ
-                    updateProgressUI(100);
-                    setTimeout(() => {
-                        showResult();
-                    }, 1500);
+                    updateProgress(100);
+                    setTimeout(showResult, 1400);
                 }
             }
 
-            // 結果表示
             function showResult() {
                 questionScreen.style.display = 'none';
-                resultScreen.style.display = 'block';
+                show(resultScreen);
 
-                // タイプ判定
                 const type = (scores.E >= scores.I ? 'E' : 'I') +
                              (scores.S >= scores.N ? 'S' : 'N') +
-                             (scores.F >= scores.T ? 'F' : 'T') + // MBTI順序修正: T/F
+                             (scores.F >= scores.T ? 'F' : 'T') +
                              (scores.J >= scores.P ? 'J' : 'P');
-                
-                // ※注: 上記ロジックでT/Fの順序を修正しました (MBTIは EI, SN, TF, JP)
-                // データ取得
-                const data = results[type] || results['INFP']; // フォールバック
 
-                // DOM反映
-                document.getElementById('result-name').textContent = data.name;
-                document.getElementById('result-catch').textContent = data.catch;
-                document.getElementById('result-desc').textContent = data.desc;
-                document.getElementById('result-compat').textContent = data.compat;
+                const data = results[type] || results['INFP'];
 
-                // Firebaseに集計データを保存 (stats/diagnosis ドキュメントの該当タイプフィールドを+1)
-                const statsRef = doc(db, "stats", "diagnosis");
-                setDoc(statsRef, {
-                    [type]: increment(1)
-                }, { merge: true }).catch(err => console.error("Error updating stats:", err));
-
-                // MBTIタイプ表示
+                document.getElementById('result-name').textContent    = data.name;
+                document.getElementById('result-catch').textContent   = data.catch;
+                document.getElementById('result-desc').textContent    = data.desc;
+                document.getElementById('result-compat').textContent  = data.compat;
                 document.getElementById('result-mbti-type').textContent = `(16Personalitiesでいうと「${type}」タイプです)`;
 
                 const spotsList = document.getElementById('result-spots');
@@ -534,33 +822,31 @@
                     spotsList.appendChild(li);
                 });
 
-                // おすすめ記事表示
                 const articlesList = document.getElementById('result-articles');
                 articlesList.innerHTML = '';
                 if (data.articles && typeof articles !== 'undefined') {
-                    data.articles.forEach(articleId => {
-                        const article = articles.find(a => a.id === articleId);
-                        if (article) {
+                    data.articles.forEach(id => {
+                        const art = articles.find(a => a.id === id);
+                        if (art) {
                             const li = document.createElement('li');
-                            li.innerHTML = `<a href="${article.detailUrl}">${article.title}</a>`;
+                            li.innerHTML = `<a href="${art.detailUrl}">${art.title}</a>`;
                             articlesList.appendChild(li);
                         }
                     });
                 }
 
-
-                // シェアリンク生成
                 const shareText = `🎭下北16診断🎭\n\n私のタイプは...【${data.name}】でした！\n\n"${data.catch}"\n\n#下北コミュニティ #下北沢 #性格診断`;
-                const shareUrl = window.location.href;
-
+                const shareUrl  = window.location.href;
                 document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                document.getElementById('share-line').href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText + "\n" + shareUrl)}`;
+                document.getElementById('share-line').href   = `https://line.me/R/msg/text/?${encodeURIComponent(shareText + "\n" + shareUrl)}`;
 
-                // 画面トップへスクロール
+                const statsRef = doc(db, "stats", "diagnosis");
+                setDoc(statsRef, { [type]: increment(1) }, { merge: true })
+                    .catch(err => console.error("Stats error:", err));
+
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
     </script>
-    <script src="assets/js/footer.js" defer></script>
 </body>
 </html>

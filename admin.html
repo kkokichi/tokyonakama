@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <style>
         /* --- 管理画面用スタイル --- */
         .login-box {
@@ -106,6 +107,18 @@
             font-family: inherit;
             font-size: 0.9rem;
         }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 0.9rem; }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="date"] {
+            width: 100%; padding: 10px; border: 1px solid #ddd;
+            border-radius: 4px; box-sizing: border-box;
+            font-family: inherit; font-size: 0.9rem;
+        }
+        .ql-editor { min-height: 280px; font-size: 1rem; line-height: 1.8; }
+        .ql-editor img { max-width: 100%; height: auto; border-radius: 4px; }
 
         /* スマホ対応：カード型レイアウト */
         @media screen and (max-width: 768px) {
@@ -257,6 +270,66 @@
                     </div>
                 </div>
 
+                <!-- コラム管理 -->
+                <div class="card" style="margin-bottom:40px;background:white;">
+                    <h3 style="margin-top:0;">📝 コラム管理</h3>
+                    <p style="margin-bottom:20px;font-size:0.9rem;color:#666;">記事の作成・編集ができます。本文中への画像挿入も可能です。</p>
+
+                    <input type="hidden" id="col-edit-id">
+
+                    <div class="form-group">
+                        <label>タイトル <span style="color:red;">*</span></label>
+                        <input type="text" id="col-title" placeholder="コラムタイトルを入力">
+                    </div>
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                        <div class="form-group" style="flex:1;min-width:160px;">
+                            <label>カテゴリ</label>
+                            <select id="col-category" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;font-family:inherit;font-size:0.9rem;">
+                                <option value="グルメ"       data-color="#e67e22">グルメ</option>
+                                <option value="カルチャー"   data-color="#3498db">カルチャー</option>
+                                <option value="アクティブ"   data-color="#2ecc71">アクティブ</option>
+                                <option value="コミュニティ" data-color="#9b59b6">コミュニティ</option>
+                                <option value="ライフスタイル" data-color="#1abc9c">ライフスタイル</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex:1;min-width:160px;">
+                            <label>公開日</label>
+                            <input type="date" id="col-date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>カバー画像パス</label>
+                        <input type="text" id="col-cover-path" placeholder="assets/images/columns/filename.jpg" style="margin:6px 0;">
+                        <p style="font-size:0.8rem;color:#888;margin:4px 0 8px;">画像ファイルをこのパスに配置してください（サイトルートからの相対パス）</p>
+                        <div id="col-cover-preview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>本文 <span style="font-size:0.8rem;font-weight:normal;color:#888;">（ツールバーの 🖼 ボタンでパスを入力して画像を挿入できます）</span></label>
+                        <div id="col-editor"></div>
+                    </div>
+                    <div style="display:flex;gap:10px;margin-top:16px;">
+                        <button id="col-save-btn" class="btn-submit">公開する</button>
+                        <button id="col-clear-btn" class="btn-submit" style="background:#999;">クリア</button>
+                    </div>
+
+                    <h4 style="margin-top:30px;border-top:1px solid #eee;padding-top:20px;">公開済みコラム一覧</h4>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>タイトル</th>
+                                    <th>カテゴリ</th>
+                                    <th>公開日</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="col-list-tbody">
+                                <tr><td colspan="4" style="text-align:center;color:#888;">ログイン後に読み込まれます</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- ユーザー管理 -->
                 <h2 style="margin-bottom: 30px;">登録ユーザー一覧</h2>
                 <div class="table-wrapper" style="margin-bottom: 40px;">
@@ -326,10 +399,12 @@
     <footer>
     </footer>
 
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, addDoc, setDoc, serverTimestamp, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         // Firebase設定
         const firebaseConfig = {
@@ -343,8 +418,215 @@
         };
 
         // Firebase初期化
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const app  = initializeApp(firebaseConfig);
+        const db   = getFirestore(app);
+        const auth = getAuth(app);
+
+        // ===== コラム管理 =====
+        let quill = null;
+
+        function initQuill() {
+            if (quill) return;
+            quill = new Quill('#col-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: {
+                        container: [
+                            ['bold', 'italic', 'underline'],
+                            [{ header: 2 }, { header: 3 }],
+                            [{ list: 'ordered' }, { list: 'bullet' }],
+                            ['link', 'image'],
+                            ['clean']
+                        ],
+                        handlers: {
+                            image: function() {
+                                const range = quill.getSelection() || { index: quill.getLength() };
+
+                                // カスタムモーダル
+                                const overlay = document.createElement('div');
+                                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:9998;';
+
+                                const dialog = document.createElement('div');
+                                dialog.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:24px 28px;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,0.18);z-index:9999;width:420px;max-width:90vw;box-sizing:border-box;';
+                                dialog.innerHTML = `
+                                    <p style="margin:0 0 6px;font-weight:bold;font-size:1rem;">画像パスを入力</p>
+                                    <p style="margin:0 0 12px;font-size:0.82rem;color:#888;">例: assets/images/columns/my-image.jpg</p>
+                                    <input id="_qi_path" type="text" placeholder="assets/images/columns/..."
+                                        style="width:100%;padding:9px 10px;border:1px solid #ddd;border-radius:5px;box-sizing:border-box;font-size:0.95rem;font-family:inherit;">
+                                    <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;">
+                                        <button id="_qi_cancel" style="padding:8px 18px;border:1px solid #ccc;border-radius:5px;cursor:pointer;background:#fff;font-family:inherit;">キャンセル</button>
+                                        <button id="_qi_ok" style="padding:8px 18px;background:var(--accent-color);color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;font-family:inherit;">挿入</button>
+                                    </div>`;
+
+                                document.body.appendChild(overlay);
+                                document.body.appendChild(dialog);
+                                dialog.querySelector('#_qi_path').focus();
+
+                                const close = () => {
+                                    document.body.removeChild(overlay);
+                                    document.body.removeChild(dialog);
+                                };
+                                const insert = () => {
+                                    const path = dialog.querySelector('#_qi_path').value.trim();
+                                    close();
+                                    if (!path) return;
+                                    quill.insertEmbed(range.index, 'image', path);
+                                    quill.setSelection(range.index + 1);
+                                };
+
+                                dialog.querySelector('#_qi_ok').addEventListener('click', insert);
+                                dialog.querySelector('#_qi_cancel').addEventListener('click', close);
+                                overlay.addEventListener('click', close);
+                                dialog.querySelector('#_qi_path').addEventListener('keydown', e => {
+                                    if (e.key === 'Enter') insert();
+                                    if (e.key === 'Escape') close();
+                                });
+                            }
+                        }
+                    }
+                },
+                placeholder: '本文を入力してください...'
+            });
+        }
+
+        // カバー画像パス入力 → リアルタイムプレビュー
+        document.getElementById('col-cover-path').addEventListener('input', (e) => {
+            const path = e.target.value.trim();
+            const preview = document.getElementById('col-cover-preview');
+            if (!path) { preview.innerHTML = ''; return; }
+            preview.innerHTML = `
+                <img src="${path}" style="max-width:220px;max-height:130px;border-radius:6px;margin-top:6px;display:block;"
+                     onerror="this.style.display='none';document.getElementById('col-cover-missing').style.display='block'">
+                <span id="col-cover-missing" style="display:none;font-size:0.8rem;color:#e74c3c;">
+                    ⚠ ファイルが見つかりません。パスを確認してください。
+                </span>`;
+        });
+
+        // コラム保存
+        document.getElementById('col-save-btn').addEventListener('click', async () => {
+            const title  = document.getElementById('col-title').value.trim();
+            const catSel = document.getElementById('col-category');
+            const category      = catSel.value;
+            const categoryColor = catSel.options[catSel.selectedIndex].dataset.color;
+            const dateRaw = document.getElementById('col-date').value;
+            const bodyHtml = quill ? quill.root.innerHTML : '';
+            const editId   = document.getElementById('col-edit-id').value;
+
+            if (!title) { alert('タイトルは必須です'); return; }
+
+            const formatDate = (raw) => {
+                if (!raw) {
+                    const now = new Date();
+                    return `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+                }
+                const [y, m, d] = raw.split('-');
+                return `${y}.${m}.${d}`;
+            };
+
+            const colData = {
+                title, category, categoryColor,
+                date: formatDate(dateRaw),
+                coverImage: document.getElementById('col-cover-path').value.trim(),
+                body: bodyHtml,
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                if (editId) {
+                    await setDoc(doc(db, 'columns', editId), colData, { merge: true });
+                    alert('コラムを更新しました');
+                } else {
+                    colData.createdAt = serverTimestamp();
+                    await addDoc(collection(db, 'columns'), colData);
+                    alert('コラムを公開しました');
+                }
+                clearColForm();
+                loadColumns();
+            } catch (e) {
+                console.error('コラム保存エラー:', e);
+                alert('保存に失敗しました');
+            }
+        });
+
+        function clearColForm() {
+            document.getElementById('col-edit-id').value    = '';
+            document.getElementById('col-title').value      = '';
+            document.getElementById('col-category').selectedIndex = 0;
+            document.getElementById('col-date').value       = '';
+            document.getElementById('col-cover-path').value = '';
+            document.getElementById('col-cover-preview').innerHTML = '';
+            if (quill) quill.setContents([{ insert: '\n' }]);
+            document.getElementById('col-save-btn').textContent = '公開する';
+        }
+
+        document.getElementById('col-clear-btn').addEventListener('click', clearColForm);
+
+        async function loadColumns() {
+            const tbody = document.getElementById('col-list-tbody');
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#888;">読み込み中...</td></tr>';
+            try {
+                const q    = query(collection(db, 'columns'), orderBy('createdAt', 'desc'));
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">まだコラムがありません</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                snap.forEach(docSnap => {
+                    const d  = docSnap.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td data-label="タイトル" style="font-weight:bold;">
+                            <a href="columns/column-view.html?id=${docSnap.id}" target="_blank" style="color:#3498db;text-decoration:underline;">${d.title}</a>
+                        </td>
+                        <td data-label="カテゴリ">
+                            <span style="background:${d.categoryColor||'#888'};color:#fff;padding:2px 9px;border-radius:100px;font-size:0.78rem;font-weight:bold;">${d.category}</span>
+                        </td>
+                        <td data-label="公開日">${d.date || '-'}</td>
+                        <td data-label="操作">
+                            <button class="btn-delete" style="background:#3498db;margin-right:4px;" data-col-edit="${docSnap.id}">編集</button>
+                            <button class="btn-delete" data-col-del="${docSnap.id}">削除</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                console.error('コラム読み込みエラー:', e);
+                tbody.innerHTML = '<tr><td colspan="4" style="color:red;text-align:center;">読み込み失敗</td></tr>';
+            }
+        }
+
+        document.getElementById('col-list-tbody').addEventListener('click', async (e) => {
+            if (e.target.dataset.colDel) {
+                if (!confirm('このコラムを削除しますか？')) return;
+                await deleteDoc(doc(db, 'columns', e.target.dataset.colDel));
+                loadColumns();
+            }
+            if (e.target.dataset.colEdit) {
+                const id = e.target.dataset.colEdit;
+                try {
+                    const docSnap = await getDoc(doc(db, 'columns', id));
+                    if (!docSnap.exists()) { alert('見つかりません'); return; }
+                    const d = docSnap.data();
+                    document.getElementById('col-edit-id').value = id;
+                    document.getElementById('col-title').value   = d.title || '';
+                    const catSel = document.getElementById('col-category');
+                    for (const opt of catSel.options) { if (opt.value === d.category) { opt.selected = true; break; } }
+                    document.getElementById('col-date').value = d.date ? d.date.replace(/\./g, '-') : '';
+                    if (d.coverImage) {
+                        document.getElementById('col-cover-path').value = d.coverImage;
+                        document.getElementById('col-cover-preview').innerHTML = `<img src="${d.coverImage}" style="max-width:220px;max-height:130px;border-radius:6px;margin-top:6px;">`;
+                    }
+                    if (quill) quill.root.innerHTML = d.body || '';
+                    document.getElementById('col-save-btn').textContent = '更新する';
+                    document.getElementById('col-edit-id').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } catch (e) {
+                    console.error('編集データ取得エラー:', e);
+                    alert('データの取得に失敗しました');
+                }
+            }
+        });
+        // ===== コラム管理 ここまで =====
 
         const contactListTbody = document.getElementById('contact-list');
         const userListTbody = document.getElementById('user-list');
@@ -364,15 +646,23 @@
         const LOGIN_PASS = "admin1234";
 
         // ログイン処理
-        document.getElementById('login-btn').addEventListener('click', () => {
+        document.getElementById('login-btn').addEventListener('click', async () => {
             const input = document.getElementById('password-input').value;
             if(input === LOGIN_PASS) {
+                // Firebase Storage を使うために匿名認証でサインイン
+                try {
+                    await signInAnonymously(auth);
+                } catch (authErr) {
+                    console.warn('匿名認証に失敗しました（Storage が使えない可能性があります）:', authErr.message);
+                }
                 document.getElementById('login-area').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
                 loadData();
                 loadAnnouncements(); // お知らせも読み込む
                 loadUsers().then(() => loadReservations()); // ユーザー一覧読み込み後に予約一覧を読み込む
                 loadEvents(); // イベント一覧読み込み
+                initQuill();
+                loadColumns();
             } else {
                 document.getElementById('login-error').style.display = 'block';
             }
