@@ -1,284 +1,407 @@
-    <title>下北沢・上級謎解きゲーム | 下北コミュニティ</title>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下北沢謎解きゲーム | SHIMOKITA CULTURE MEDIA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* --- 謎解きゲーム固有スタイル --- */
+        :root {
+            --bg:         #f0ece6;
+            --bg-dark:    #141210;
+            --ink:        #1a1706;
+            --ink-muted:  #7a756e;
+            --accent:     #bf5b3b;
+            --white:      #ffffff;
+            --radius:     12px;
+            --pad:        clamp(20px, 5vw, 60px);
+            --orange:     #e67e22;
+            --gold:       #f1c40f;
+            --green:      #27ae60;
+            --purple:     #8e44ad;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            /* ミステリアスなダークグラデーション */
-            background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
-            color: #f0f0f0;
+            font-family: "Noto Sans JP", sans-serif;
+            background: var(--bg-dark);
+            color: var(--white);
+            overflow-x: hidden;
             min-height: 100vh;
         }
 
+        body::before {
+            content: '';
+            position: fixed; inset: -50%;
+            width: 200%; height: 200%;
+            pointer-events: none; z-index: 9000; opacity: 0.045;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 0.4s steps(1) infinite;
+        }
+        @keyframes grain {
+            0%   { transform: translate(0,0); }
+            25%  { transform: translate(-3%,3%); }
+            50%  { transform: translate(3%,-3%); }
+            75%  { transform: translate(-2%,1%); }
+        }
+
+        /* Page layout */
         .game-section {
-            min-height: 80vh;
+            min-height: 100svh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            padding: clamp(80px, 12vw, 120px) var(--pad) clamp(60px, 10vw, 100px);
         }
 
-        .game-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            padding: 40px;
+        .game-wrap {
             width: 100%;
-            max-width: 600px;
+            max-width: 560px;
+        }
+
+        /* Game card */
+        .game-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            padding: clamp(32px, 6vw, 52px);
             text-align: center;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: none; }
         }
 
-        /* スタート画面 */
-        .start-screen h1 {
-            font-size: 2.2rem;
-            color: #e67e22; /* オレンジ系のアクセント */
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(230, 126, 34, 0.5);
-        }
+        /* Start screen */
         .start-icon {
-            font-size: 4rem;
+            font-size: 3rem;
             margin-bottom: 20px;
             display: inline-block;
             animation: float 3s ease-in-out infinite;
         }
-
-        /* 問題画面 */
-        .question-screen {
-            display: none; /* JSで制御 */
-        }
-        .question-number {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #aaa;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .question-title {
-            font-size: 1.5rem;
-            color: #e67e22;
-            margin-bottom: 15px;
-        }
-        .question-text {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 30px;
-            line-height: 1.6;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: left;
-            white-space: pre-line; /* 改行を反映 */
-        }
-        .input-area {
-            margin-bottom: 20px;
-        }
-        .answer-input {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            border-radius: 8px;
-            text-align: center;
-            box-sizing: border-box;
-            font-family: "Zen Maru Gothic", sans-serif;
-            transition: border-color 0.3s;
-        }
-        .answer-input:focus {
-            border-color: #e67e22;
-            outline: none;
-        }
-        
-        /* ヒントエリア */
-        .hint-container {
-            margin-top: 20px;
-        }
-        .hint-btn {
-            background: transparent;
-            border: 1px solid #aaa;
-            color: #aaa;
-            padding: 5px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-        .hint-btn:hover {
-            border-color: #fff;
-            color: #fff;
-        }
-        .hint-text {
-            display: none;
-            color: #f1c40f; /* 黄色 */
-            font-size: 0.9rem;
-            margin-top: 10px;
-            font-weight: bold;
-            background: rgba(241, 196, 15, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        /* クリア画面 */
-        .clear-screen {
-            display: none; /* JSで制御 */
-        }
-        .clear-title {
-            font-size: 2rem;
-            color: #27ae60; /* 成功色 */
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
-        }
-        .clear-msg {
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-        }
-        .result-box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .result-rank {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #e67e22;
-            margin: 10px 0;
-        }
-
-        /* アニメーション */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
 
+        .start-screen h1 {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: var(--orange);
+            margin-bottom: 10px;
+            text-shadow: 0 0 24px rgba(230,126,34,0.35);
+        }
+        .start-screen > p {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }
+
+        .mode-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mode-btn {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            padding: 18px 22px;
+            border-radius: var(--radius);
+            border: 1.5px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            color: var(--white);
+            font-family: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.25s ease;
+        }
+        .mode-btn:hover {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-2px);
+        }
+        .mode-btn.normal:hover { border-color: var(--orange); }
+        .mode-btn.hard:hover   { border-color: #64748b; }
+        .mode-btn.brain:hover  { border-color: var(--purple); }
+
+        .mode-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .mode-info { flex: 1; }
+        .mode-name {
+            display: block;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .mode-desc {
+            font-size: 0.73rem;
+            color: rgba(255,255,255,0.45);
+        }
+        .mode-arrow { font-size: 0.9rem; color: rgba(255,255,255,0.3); }
+
+        /* Question screen */
+        .question-screen { display: none; }
+
+        .q-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .q-number {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+        }
+        .q-progress {
+            display: flex;
+            gap: 5px;
+        }
+        .q-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            transition: background 0.3s;
+        }
+        .q-dot.done { background: var(--orange); }
+        .q-dot.current { background: rgba(255,255,255,0.5); }
+
+        .q-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: var(--orange);
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .q-text {
+            font-size: clamp(0.9rem, 1.8vw, 1rem);
+            line-height: 1.85;
+            color: rgba(255,255,255,0.82);
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: var(--radius);
+            padding: 22px;
+            text-align: left;
+            white-space: pre-line;
+            margin-bottom: 24px;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px 18px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: 700;
+            border: 1.5px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius);
+            background: rgba(0,0,0,0.4);
+            color: var(--white);
+            text-align: center;
+            transition: border-color 0.25s;
+            outline: none;
+            margin-bottom: 16px;
+        }
+        .answer-input:focus { border-color: var(--orange); }
+        .answer-input::placeholder { color: rgba(255,255,255,0.25); font-weight: 400; }
+
+        .hint-wrap { margin-bottom: 20px; }
+        .hint-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.45);
+            padding: 6px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .hint-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .hint-text {
+            display: none;
+            margin-top: 10px;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            background: rgba(241,196,15,0.08);
+            border: 1px solid rgba(241,196,15,0.2);
+            color: var(--gold);
+            font-size: 0.83rem;
+            line-height: 1.6;
+        }
+
+        /* Buttons */
+        .game-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            border: none;
+            background: var(--orange);
+            color: var(--white);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            box-shadow: 0 4px 20px rgba(230,126,34,0.3);
+            text-decoration: none;
+            text-align: center;
+        }
+        .game-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(230,126,34,0.45); }
+        .game-btn + .game-btn { margin-top: 12px; }
+
+        .share-btn {
+            background: #000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .share-btn:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.6); }
+
+        /* Clear screen */
+        .clear-screen { display: none; }
+
+        .clear-icon { font-size: 3rem; margin-bottom: 16px; display: inline-block; }
+        .clear-title {
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            font-weight: 900;
+            color: var(--green);
+            margin-bottom: 24px;
+            text-shadow: 0 0 20px rgba(39,174,96,0.4);
+        }
+        .result-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .result-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .result-rank {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--orange);
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        .result-comment {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.7;
+        }
+        .clear-msg {
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.8;
+            margin-bottom: 28px;
+        }
+
+        /* Animations */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
-        .shake {
-            animation: shake 0.5s;
-            border-color: #e74c3c !important;
-            background-color: rgba(231, 76, 60, 0.2);
-        }
+        .shake { animation: shake 0.5s; border-color: #e74c3c !important; background: rgba(231,76,60,0.15) !important; }
 
         @keyframes flash-red {
-            0%, 100% { background-color: rgba(255, 255, 255, 0.1); }
-            50% { background-color: rgba(231, 76, 60, 0.3); }
+            0%, 100% { background: rgba(255,255,255,0.04); }
+            50% { background: rgba(231,76,60,0.12); }
         }
-        .flash-effect {
-            animation: flash-red 0.4s ease-in-out;
-        }
+        .flash-effect { animation: flash-red 0.4s ease-in-out; }
 
-        .fade-in-up {
-            animation: fadeInUp 0.5s ease forwards;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ボタンカスタマイズ */
-        .game-btn {
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
-            padding: 15px;
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            border-radius: 100px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: block;
-            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
-        }
-        .game-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(230, 126, 34, 0.5);
-            background-color: #d35400;
-        }
-        .share-btn {
-            background-color: #000;
-            margin-top: 15px;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
+        .fade-in-up { animation: fadeInUp 0.5s ease forwards; }
     </style>
 </head>
 <body>
 
-    <header class="header">
-    </header>
-    <script src="header.js" defer></script>
+    <header class="header"></header>
+    <script src="assets/js/header.js" data-path-prefix="" defer></script>
 
-    <section class="section game-section">
-        <div class="container" style="width: 100%; display: flex; justify-content: center;">
-            
-            <!-- ゲームコンテナ -->
-            <div id="game-container" class="game-card fade-in-up">
-                
+    <section class="game-section">
+        <div class="game-wrap">
+
+            <div id="game-container" class="game-card">
+
                 <!-- スタート画面 -->
                 <div id="start-screen" class="start-screen">
-                    <span class="start-icon">🕵️‍♂️</span>
-                    <h1>下北沢謎解きゲーム</h1>
-                    <p>コースを選んで挑戦してください。</p>
-                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 30px;">
-                        <button id="start-normal-btn" class="game-btn">
-                            🔰 街歩き編<br><span style="font-size:0.85rem; font-weight:normal;">（初心者向け・基礎知識）</span>
+                    <span class="start-icon">🕵️</span>
+                    <h1>下北沢<br>謎解きゲーム</h1>
+                    <p>コースを選んで挑戦してください。<br>全5問、クリアできるか？</p>
+                    <div class="mode-list">
+                        <button id="start-normal-btn" class="mode-btn normal">
+                            <span class="mode-icon">🔰</span>
+                            <span class="mode-info">
+                                <span class="mode-name">街歩き編</span>
+                                <span class="mode-desc">初心者向け・基礎知識</span>
+                            </span>
+                            <span class="mode-arrow">→</span>
                         </button>
-                        <button id="start-hard-btn" class="game-btn" style="background-color: #34495e;">
-                            🔥 下北沢マスター編<br><span style="font-size:0.85rem; font-weight:normal;">（上級者向け・難問）</span>
+                        <button id="start-hard-btn" class="mode-btn hard">
+                            <span class="mode-icon">🔥</span>
+                            <span class="mode-info">
+                                <span class="mode-name">下北沢マスター編</span>
+                                <span class="mode-desc">上級者向け・難問</span>
+                            </span>
+                            <span class="mode-arrow">→</span>
                         </button>
-                        <button id="start-brain-btn" class="game-btn" style="background-color: #8e44ad;">
-                            🧠 頭脳編<br><span style="font-size:0.85rem; font-weight:normal;">（論理パズル・ひらめき）</span>
+                        <button id="start-brain-btn" class="mode-btn brain">
+                            <span class="mode-icon">🧠</span>
+                            <span class="mode-info">
+                                <span class="mode-name">頭脳編</span>
+                                <span class="mode-desc">論理パズル・ひらめき</span>
+                            </span>
+                            <span class="mode-arrow">→</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- 問題画面 -->
                 <div id="question-screen" class="question-screen">
-                    <span id="q-number" class="question-number">Q1</span>
-                    <h2 id="q-title" class="question-title"></h2>
-                    <div id="q-text" class="question-text"></div>
-                    
-                    <div class="input-area">
-                        <input type="text" id="answer-input" class="answer-input" placeholder="答えを入力" autocomplete="off">
+                    <div class="q-header">
+                        <span id="q-number" class="q-number">Q1 / 5</span>
+                        <div id="q-progress" class="q-progress"></div>
                     </div>
-
-                    <div class="hint-container">
+                    <p id="q-title" class="q-title"></p>
+                    <div id="q-text" class="q-text"></div>
+                    <input type="text" id="answer-input" class="answer-input" placeholder="答えを入力" autocomplete="off">
+                    <div class="hint-wrap">
                         <button id="hint-btn" class="hint-btn">💡 ヒントを見る</button>
                         <p id="hint-msg" class="hint-text"></p>
                     </div>
-
-                    <button id="submit-btn" class="game-btn" style="margin-top: 20px;">回答する</button>
+                    <button id="submit-btn" class="game-btn">回答する</button>
                 </div>
 
                 <!-- クリア画面 -->
                 <div id="clear-screen" class="clear-screen">
-                    <span class="start-icon">🎉</span>
+                    <span class="clear-icon">🎉</span>
                     <h2 class="clear-title">クリアおめでとう！</h2>
-                    
                     <div class="result-box">
-                        <p style="margin-bottom: 5px; font-weight: bold; color: #ccc;">あなたの称号</p>
+                        <p class="result-label">あなたの称号</p>
                         <div id="result-rank" class="result-rank"></div>
-                        <p id="result-comment" style="margin-bottom: 0; font-size: 0.95rem;"></p>
+                        <p id="result-comment" class="result-comment"></p>
                     </div>
                     <p class="clear-msg">この難問を解き明かすとは...<br>あなたの頭脳は下北沢でもトップクラスです。</p>
-                    
-                    <a href="top.html" class="game-btn" style="text-decoration: none; margin-bottom: 15px;">トップページへ戻る</a>
+                    <a href="index.html" class="game-btn" style="margin-bottom:12px;">トップページへ戻る</a>
                     <button id="share-btn" class="game-btn share-btn">Xで結果をシェア</button>
                 </div>
 
@@ -287,14 +410,11 @@
         </div>
     </section>
 
-    <footer>
-    </footer>
+    <footer></footer>
+    <script src="assets/js/footer.js" data-path-prefix="" defer></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // --- 謎解きゲームロジック ---
-            
-            // 問題データ
             const questionSets = {
                 normal: [
                     {
@@ -411,109 +531,98 @@
 
             let currentQuestions = [];
             let currentQuestionIndex = 0;
-            let perfectScoreCount = 0; // ノーヒント（一発）正解数
-            let hasMistaken = false;   // 現在の問題で間違えたかフラグ
-            let hasUsedHint = false;   // 現在の問題でヒントを使ったか
+            let perfectScoreCount = 0;
+            let hasMistaken = false;
+            let hasUsedHint = false;
 
-            // DOM要素
             const gameContainer = document.getElementById('game-container');
-            const startScreen = document.getElementById('start-screen');
+            const startScreen    = document.getElementById('start-screen');
             const questionScreen = document.getElementById('question-screen');
-            const clearScreen = document.getElementById('clear-screen');
-            
+            const clearScreen    = document.getElementById('clear-screen');
+
             const startNormalBtn = document.getElementById('start-normal-btn');
-            const startHardBtn = document.getElementById('start-hard-btn');
-            const startBrainBtn = document.getElementById('start-brain-btn');
-            const submitBtn = document.getElementById('submit-btn');
-            const shareBtn = document.getElementById('share-btn');
-            const hintBtn = document.getElementById('hint-btn');
-            
-            const qNumber = document.getElementById('q-number');
-            const qTitle = document.getElementById('q-title');
-            const qText = document.getElementById('q-text');
+            const startHardBtn   = document.getElementById('start-hard-btn');
+            const startBrainBtn  = document.getElementById('start-brain-btn');
+            const submitBtn      = document.getElementById('submit-btn');
+            const shareBtn       = document.getElementById('share-btn');
+            const hintBtn        = document.getElementById('hint-btn');
+
+            const qNumber    = document.getElementById('q-number');
+            const qTitle     = document.getElementById('q-title');
+            const qText      = document.getElementById('q-text');
             const answerInput = document.getElementById('answer-input');
-            const hintMsg = document.getElementById('hint-msg');
-            const resultRank = document.getElementById('result-rank');
+            const hintMsg    = document.getElementById('hint-msg');
+            const resultRank    = document.getElementById('result-rank');
             const resultComment = document.getElementById('result-comment');
 
-            // ゲーム開始処理
+            function buildProgress(total, current) {
+                const prog = document.getElementById('q-progress');
+                prog.innerHTML = '';
+                for (let i = 0; i < total; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = 'q-dot' + (i < current ? ' done' : i === current ? ' current' : '');
+                    prog.appendChild(dot);
+                }
+            }
+
             function startGame(mode) {
                 currentQuestions = questionSets[mode];
                 startScreen.style.display = 'none';
                 questionScreen.style.display = 'block';
                 currentQuestionIndex = 0;
                 perfectScoreCount = 0;
-                showQuestion(currentQuestionIndex);
+                showQuestion(0);
             }
 
             startNormalBtn.addEventListener('click', () => startGame('normal'));
-            startHardBtn.addEventListener('click', () => startGame('hard'));
-            startBrainBtn.addEventListener('click', () => startGame('brain'));
+            startHardBtn.addEventListener('click',   () => startGame('hard'));
+            startBrainBtn.addEventListener('click',  () => startGame('brain'));
 
-            // 問題表示
             function showQuestion(index) {
                 const q = currentQuestions[index];
-                qNumber.textContent = `Q${index + 1}`;
+                const total = currentQuestions.length;
+                qNumber.textContent = `Q${index + 1} / ${total}`;
                 qTitle.textContent = q.title;
-                qText.textContent = q.text;
-                answerInput.value = '';
-                
+                qText.textContent  = q.text;
+                answerInput.value  = '';
                 hintMsg.style.display = 'none';
-                hintMsg.textContent = q.hint;
+                hintMsg.textContent   = q.hint;
                 hintBtn.style.display = 'inline-block';
-                
                 hasMistaken = false;
                 hasUsedHint = false;
+                buildProgress(total, index);
                 answerInput.focus();
-                
                 questionScreen.classList.remove('fade-in-up');
                 void questionScreen.offsetWidth;
                 questionScreen.classList.add('fade-in-up');
             }
 
-            // ヒント表示
             hintBtn.addEventListener('click', () => {
                 hintMsg.style.display = 'block';
                 hintBtn.style.display = 'none';
                 hasUsedHint = true;
             });
 
-            // 回答チェック
             submitBtn.addEventListener('click', checkAnswer);
-            
-            // Enterキーでも回答可能に
-            answerInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') checkAnswer();
-            });
+            answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
 
             function checkAnswer() {
-                const inputVal = answerInput.value.trim().replace(/\s+/g, ''); // 空白除去
-                const currentQ = currentQuestions[currentQuestionIndex];
-
-                // 大文字小文字を区別しない比較
-                const isCorrect = currentQ.answer.some(ans => ans.toLowerCase() === inputVal.toLowerCase());
+                const inputVal = answerInput.value.trim().replace(/\s+/g, '');
+                const q = currentQuestions[currentQuestionIndex];
+                const isCorrect = q.answer.some(a => a.toLowerCase() === inputVal.toLowerCase());
 
                 if (isCorrect) {
-                    // 正解
-                    if (!hasMistaken && !hasUsedHint) {
-                        perfectScoreCount++;
-                    }
-
+                    if (!hasMistaken && !hasUsedHint) perfectScoreCount++;
                     currentQuestionIndex++;
                     if (currentQuestionIndex < currentQuestions.length) {
                         showQuestion(currentQuestionIndex);
                     } else {
-                        // 全問正解（クリア）
                         showClearScreen();
                     }
                 } else {
-                    // 不正解
                     hasMistaken = true;
                     answerInput.classList.add('shake');
-                    
-                    // 画面フラッシュ演出
                     gameContainer.classList.add('flash-effect');
-
                     setTimeout(() => {
                         answerInput.classList.remove('shake');
                         gameContainer.classList.remove('flash-effect');
@@ -526,38 +635,31 @@
                 clearScreen.style.display = 'block';
                 clearScreen.classList.add('fade-in-up');
 
-                // ランク判定
-                let rankTitle = "";
-                let rankComment = "";
-
+                let rankTitle = "", rankComment = "";
                 if (perfectScoreCount === 5) {
-                    rankTitle = "👑 謎解き王";
-                    rankComment = "ノーヒントで全問正解！<br>あなたのIQは測定不能レベルです。";
+                    rankTitle   = "👑 謎解き王";
+                    rankComment = "ノーヒントで全問正解！あなたのIQは測定不能レベルです。";
                 } else if (perfectScoreCount >= 4) {
-                    rankTitle = "✨ 名探偵";
-                    rankComment = "素晴らしいひらめき力！<br>ほとんどの謎を見破りました。";
+                    rankTitle   = "✨ 名探偵";
+                    rankComment = "素晴らしいひらめき力！ほとんどの謎を見破りました。";
                 } else if (perfectScoreCount >= 2) {
-                    rankTitle = "👍 駆け出し探偵";
-                    rankComment = "なかなかの推理力です。<br>頭の体操になりましたね！";
+                    rankTitle   = "👍 駆け出し探偵";
+                    rankComment = "なかなかの推理力です。頭の体操になりましたね！";
                 } else {
-                    rankTitle = "🔰 見習い";
-                    rankComment = "クリアおめでとうございます！<br>ヒントを頼りに最後まで辿り着きました。";
+                    rankTitle   = "🔰 見習い";
+                    rankComment = "クリアおめでとうございます！ヒントを頼りに最後まで辿り着きました。";
                 }
 
-                resultRank.textContent = rankTitle;
-                resultComment.innerHTML = rankComment;
+                resultRank.textContent    = rankTitle;
+                resultComment.textContent = rankComment;
             }
 
-            // シェアボタン
             shareBtn.addEventListener('click', () => {
-                const rankText = resultRank.textContent;
-                const text = `🕵️‍♂️下北沢・上級謎解きゲームをクリア！\n称号：【${rankText}】\n激ムズの論理パズル、あなたは解ける？\n#下北コミュニティ #下北沢謎解き`;
-                const url = window.location.href;
-                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-                window.open(twitterUrl, '_blank');
+                const text = `🕵️下北沢謎解きゲームをクリア！\n称号：【${resultRank.textContent}】\n激ムズ謎解き、あなたは解ける？\n#下北コミュニティ #下北沢謎解き`;
+                const url  = window.location.href;
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
             });
         });
     </script>
-    <script src="assets/js/footer.js" defer></script>
 </body>
 </html>

@@ -171,12 +171,22 @@
             display: inline-block;
             font-size: 0.58rem; font-weight: 700;
             letter-spacing: 0.14em; text-transform: uppercase;
-            color: var(--accent);
-            background: rgba(191,91,59,0.08);
+            color: #fff;
+            background: var(--accent);
             padding: 3px 9px; border-radius: 3px;
             margin-bottom: 10px;
             align-self: flex-start;
         }
+        .sp-cat[data-cat="cafe"]    { background: #e67e22; }
+        .sp-cat[data-cat="curry"]   { background: #c9a010; color: #1a1706; }
+        .sp-cat[data-cat="furugi"]  { background: #27ae60; }
+        .sp-cat[data-cat="theater"] { background: #8e44ad; }
+        .sp-cat[data-cat="spot"]    { background: #3498db; }
+        .modal-cat[data-cat="cafe"]    { color: #e67e22; }
+        .modal-cat[data-cat="curry"]   { color: #c9a010; }
+        .modal-cat[data-cat="furugi"]  { color: #27ae60; }
+        .modal-cat[data-cat="theater"] { color: #8e44ad; }
+        .modal-cat[data-cat="spot"]    { color: #3498db; }
         .sp-name {
             font-size: clamp(0.88rem, 1.3vw, 0.98rem);
             font-weight: 700;
@@ -301,6 +311,7 @@
         }
         .modal-title { font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 10px; line-height: 1.4; }
         .modal-desc { font-size: 0.84rem; color: var(--ink-muted); line-height: 1.75; margin-bottom: 20px; }
+        .modal-btns { display: flex; flex-direction: column; gap: 10px; }
         .modal-btn {
             display: block;
             padding: 13px;
@@ -313,6 +324,19 @@
             transition: opacity 0.2s;
         }
         .modal-btn:hover { opacity: 0.85; }
+        .modal-btn-outline {
+            display: block;
+            padding: 12px;
+            border-radius: 50px;
+            background: transparent;
+            color: var(--ink);
+            border: 1.5px solid rgba(26,23,6,0.2);
+            text-align: center;
+            font-size: 0.84rem;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .modal-btn-outline:hover { border-color: var(--ink); background: var(--ink); color: var(--white); }
     </style>
 </head>
 <body>
@@ -384,7 +408,10 @@
                 <span id="modal-cat" class="modal-cat"></span>
                 <h3 id="modal-title" class="modal-title"></h3>
                 <p id="modal-desc" class="modal-desc"></p>
-                <a id="modal-map-link" href="" target="_blank" rel="noopener noreferrer" class="modal-btn">Googleマップでナビを開始</a>
+                <div class="modal-btns">
+                    <a id="modal-detail-link" href="" class="modal-btn">詳細を見る</a>
+                    <a id="modal-map-link" href="" target="_blank" rel="noopener noreferrer" class="modal-btn-outline">Googleマップで見る</a>
+                </div>
             </div>
         </div>
     </div>
@@ -457,18 +484,26 @@
 
             let map, markers = [], infoWindow, geocoder;
 
+            function closeModal() {
+                modal.classList.remove('open');
+                document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
             function openModal(spot) {
+                const catEl = document.getElementById('modal-cat');
+                catEl.textContent = categoryNames[spot.category];
+                catEl.dataset.cat = spot.category;
                 document.getElementById('modal-img').src = spot.img;
                 document.getElementById('modal-img').alt = spot.name;
-                document.getElementById('modal-cat').textContent = categoryNames[spot.category];
                 document.getElementById('modal-title').textContent = spot.name;
                 document.getElementById('modal-desc').textContent = spot.description;
+                document.getElementById('modal-detail-link').href = `spot_detail.html?name=${encodeURIComponent(spot.name)}`;
                 document.getElementById('modal-map-link').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}`;
                 modal.classList.add('open');
             }
 
-            closeBtn.addEventListener('click', () => modal.classList.remove('open'));
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
             function renderSpots(filter) {
                 grid.innerHTML = '';
@@ -487,7 +522,7 @@
                             <img src="${spot.img}" alt="${spot.name}" loading="lazy">
                         </div>
                         <div class="sp-body">
-                            <span class="sp-cat">${categoryNames[spot.category]}</span>
+                            <span class="sp-cat" data-cat="${spot.category}">${categoryNames[spot.category]}</span>
                             <h3 class="sp-name">${spot.name}</h3>
                             <p class="sp-desc">${spot.description}</p>
                             <div class="sp-links">

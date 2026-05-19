@@ -10,11 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <nav class="main-nav">
             <ul>
                 <li><a href="${prefix}index.html">トップ</a></li>
+                <li><a href="${prefix}recommend.html">下北おすすめ</a></li>
+                <li><a href="${prefix}column.html">下北コラム</a></li>
+                <li><a href="${prefix}diagnosis.html">下北16診断</a></li>
+                <li><a href="${prefix}mystery.html">下北沢謎解き</a></li>
+                <li class="nav-sep" aria-hidden="true"></li>
                 <li><a href="${prefix}top.html">サークル</a></li>
                 <li><a href="${prefix}schedule.html">活動予定</a></li>
-                <li><a href="${prefix}recommend.html">おすすめ</a></li>
-                <li><a href="${prefix}column.html">コラム</a></li>
-                <li><a href="${prefix}diagnosis.html">下北16診断</a></li>
                 <li><a href="${prefix}contact.html">お問い合わせ</a></li>
                 <li><a href="${prefix}login.html" class="login-link">ログイン</a></li>
             </ul>
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 以下、元のスクリプトから変更なし ---
 
     // 現在のページのファイル名を取得してアクティブなナビゲーションリンクを判定
-    const currentPage = window.location.pathname.split('/').pop();
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const isColumnDetailPage = window.location.pathname.includes('/columns/');
 
     const navLinks = headerEl.querySelectorAll('.main-nav a');

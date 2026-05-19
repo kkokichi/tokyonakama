@@ -606,7 +606,34 @@
         .community-btn:hover { background: var(--white); color: var(--ink); border-color: var(--white); }
 
         /* ========================
-           7. FINAL CTA
+           7. ANNOUNCEMENTS
+        ======================== */
+        .ann-item {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(26,23,6,0.08);
+        }
+        .ann-item:first-child { border-top: 1px solid rgba(26,23,6,0.08); }
+        .ann-date {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--ink-muted);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .ann-text {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ========================
+           8. FINAL CTA
         ======================== */
         .cta-sec {
             padding: var(--section-py) var(--pad);
@@ -964,7 +991,22 @@
             </div>
         </section>
 
-        <!-- ⑦ FINAL CTA -->
+        <!-- ⑦ ANNOUNCEMENTS -->
+        <section style="padding: clamp(60px, 10vw, 100px) 0; background: var(--bg);">
+            <div class="wrap">
+                <div class="sec-row reveal">
+                    <div>
+                        <span class="label">News</span>
+                        <h2 class="sec-head">お知らせ</h2>
+                    </div>
+                </div>
+                <div id="announcement-list">
+                    <p style="text-align:center; color:var(--ink-muted);">読み込み中...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ⑧ FINAL CTA -->
         <section class="cta-sec reveal">
             <h2 class="cta-h2">次の週末、<br>ひとりで来てみて。</h2>
             <p class="cta-sub">誰かと来てもいい。でも、ひとりで来た方が、なぜか出会いがある。</p>
@@ -978,6 +1020,55 @@
 
     <footer></footer>
     <script src="assets/js/footer.js" defer></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db  = getFirestore(app);
+
+        const fadeObs = new IntersectionObserver((entries, obs) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); } });
+        }, { threshold: 0.1 });
+
+        async function showAnnouncements() {
+            const listContainer = document.getElementById('announcement-list');
+            try {
+                const q = query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(5));
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    listContainer.innerHTML = '<p style="text-align:center; color:var(--ink-muted);">現在、新しいお知らせはありません。</p>';
+                    return;
+                }
+                listContainer.innerHTML = '';
+                let i = 0;
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.createdAt.toDate().toLocaleDateString('ja-JP');
+                    const item = document.createElement('div');
+                    item.className = 'ann-item fade-in';
+                    item.style.setProperty('--i', i++);
+                    item.innerHTML = `<span class="ann-date">${date}</span><p class="ann-text">${data.text}</p>`;
+                    listContainer.appendChild(item);
+                    fadeObs.observe(item);
+                });
+            } catch (err) {
+                console.error("announcements fetch error:", err);
+                listContainer.innerHTML = '<p style="text-align:center; color:var(--ink-muted);">お知らせの読み込みに失敗しました。</p>';
+            }
+        }
+        showAnnouncements();
+    </script>
 
     <script>
         // Scroll progress
