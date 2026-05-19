@@ -3,182 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>今後の活動予定 | 下北コミュニティ</title>
+    <title>活動予定 | SHIMOKITA CULTURE MEDIA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        .event-card {
-            padding: 0 !important; /* .cardのpaddingを打ち消して画像を端まで表示 */
+        :root {
+            --bg:         #f0ece6;
+            --bg-dark:    #141210;
+            --ink:        #1a1706;
+            --ink-muted:  #7a756e;
+            --accent:     #bf5b3b;
+            --white:      #ffffff;
+            --radius:     12px;
+            --gap:        20px;
+            --max:        1200px;
+            --pad:        clamp(20px, 5vw, 60px);
+            --section-py: clamp(60px, 10vw, 120px);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Noto Sans JP", sans-serif; background: var(--bg); color: var(--ink); overflow-x: hidden; }
+        img { display: block; }
+        a { text-decoration: none; }
+
+        body::before {
+            content: '';
+            position: fixed; inset: -50%;
+            width: 200%; height: 200%;
+            pointer-events: none; z-index: 9000; opacity: 0.032;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grain 0.4s steps(1) infinite;
+        }
+        @keyframes grain {
+            0%   { transform: translate(0,0); }
+            25%  { transform: translate(-3%,3%); }
+            50%  { transform: translate(3%,-3%); }
+            75%  { transform: translate(-2%,1%); }
+        }
+
+        .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+        .reveal[data-d="1"] { transition-delay: 0.1s; }
+        .reveal[data-d="2"] { transition-delay: 0.2s; }
+        .reveal[data-d="3"] { transition-delay: 0.3s; }
+
+        /* Page Hero */
+        .page-hero {
+            padding: clamp(80px, 12vw, 120px) 0 clamp(50px, 7vw, 80px);
+            background: var(--bg-dark);
+            color: var(--white);
+        }
+        .page-hero .eyebrow {
+            display: block;
+            font-size: 0.63rem;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 14px;
+        }
+        .page-hero h1 {
+            font-size: clamp(2.2rem, 7vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.025em;
+            line-height: 1.05;
+            margin-bottom: 18px;
+        }
+        .page-hero p {
+            font-size: clamp(0.88rem, 1.4vw, 1rem);
+            color: rgba(255,255,255,0.5);
+            line-height: 1.9;
+            max-width: 480px;
+        }
+
+        /* Intro band */
+        .intro-band {
+            background: rgba(191,91,59,0.06);
+            border-top: 3px solid var(--accent);
+            padding: clamp(24px, 4vw, 40px) 0;
+        }
+        .intro-band p {
+            text-align: center;
+            font-size: clamp(0.88rem, 1.3vw, 0.98rem);
+            line-height: 1.95;
+            color: var(--ink-muted);
+        }
+        .intro-band strong { color: var(--ink); font-weight: 700; }
+
+        /* Events section */
+        .events-sec { padding: var(--section-py) 0; }
+
+        .sec-label {
+            display: block;
+            font-size: 0.63rem;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .sec-title {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: clamp(32px, 5vw, 52px);
+        }
+
+        /* Grid */
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--gap);
+        }
+        @media (max-width: 900px) { .event-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 560px)  { .event-grid { grid-template-columns: 1fr; } }
+
+        /* Card */
+        .ev-card {
+            background: var(--white);
+            border-radius: var(--radius);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .event-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        .ev-card:hover { transform: translateY(-5px); box-shadow: 0 18px 44px rgba(0,0,0,0.1); }
+
+        .ev-img { position: relative; aspect-ratio: 16/9; overflow: hidden; }
+        .ev-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .ev-card:hover .ev-img img { transform: scale(1.05); }
+
+        .ev-badge {
+            position: absolute;
+            top: 12px; left: 12px;
+            background: var(--accent);
+            color: var(--white);
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
         }
-        .event-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            margin-bottom: 0;
-            border-radius: 0;
-        }
-        .event-content {
-            padding: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            flex: 1; /* コンテンツの高さを均一化 */
-        }
-        .event-date {
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: #888; /* 目立ちすぎないように */
-            margin-top: 0;
+
+        .ev-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
+
+        .ev-date {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--accent);
             margin-bottom: 8px;
         }
-        .event-card h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
+        .ev-title {
+            font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+            font-weight: 700;
+            line-height: 1.55;
+            color: var(--ink);
+            margin-bottom: 4px;
         }
-        .event-description {
-            margin-bottom: 20px;
-            color: #555;
-            font-size: 0.95rem;
-            min-height: 4.5em; /* 行数を安定させる */
-            line-height: 1.6;
+        .ev-seats {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 400;
+            color: var(--ink-muted);
+            margin-bottom: 12px;
         }
-        /* ネオ居心地系タグ */
-        .event-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
+        .ev-desc {
+            font-size: 0.82rem;
+            color: var(--ink-muted);
+            line-height: 1.8;
+            margin-bottom: 16px;
+            flex: 1;
         }
-        .event-tags span {
-            background-color: #fff5eb;
-            color: var(--accent-color);
-            padding: 4px 12px;
+        .ev-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+        .ev-tag {
+            background: rgba(191,91,59,0.08);
+            color: var(--accent);
+            font-size: 0.66rem;
+            font-weight: 700;
+            padding: 3px 10px;
             border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: bold;
         }
-        /* ネオ居心地系ボタン */
-        .btn-cta, .reserve-btn {
-            border-radius: 999px !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
-            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-        }
-        .btn-cta:hover, .reserve-btn:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important;
-        }
-
-        /* --- 広告用スタイル --- */
-        .ad-container {
-            margin: 40px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
+        .ev-actions { display: flex; gap: 8px; margin-top: auto; }
+        .ev-btn {
+            flex: 1;
+            padding: 11px 10px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
             text-align: center;
-            background: rgba(255, 255, 255, 0.2);
-            max-width: 728px;
-        }
-        .ad-label {
-            font-size: 0.8rem;
-            color: #888;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .ad-placeholder {
-            display: flex;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: #e9e9e9;
-            color: #aaa;
-            min-height: 90px;
-            width: 100%;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: bold;
         }
+        .ev-btn-outline { background: transparent; border: 1.5px solid rgba(26,23,6,0.22); color: var(--ink); }
+        .ev-btn-outline:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+        .ev-btn-fill { background: var(--accent); color: var(--white); }
+        .ev-btn-fill:hover { opacity: 0.85; }
+        .ev-btn:disabled { background: #ddd9d4; color: #aaa; cursor: not-allowed; border-color: transparent; }
 
-        /* モバイル最適化 */
-        @media (max-width: 768px) {
-            .event-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .btn-cta {
-                width: 100% !important;
-                max-width: none;
-            }
-            .event-actions {
-                flex-direction: column;
-            }
-            .event-actions .btn-cta, 
-            .event-actions .reserve-btn {
-                width: 100% !important;
-            }
-            .section { padding: 40px 0; }
+        /* Ad band */
+        .ad-band {
+            padding: 48px 0;
+            text-align: center;
+            border-top: 1px solid rgba(26,23,6,0.08);
         }
+        .ad-label { font-size: 0.68rem; color: var(--ink-muted); display: block; margin-bottom: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+        .ad-band img { max-width: 300px; border-radius: 8px; margin: 0 auto 12px; }
+        .ad-band p { font-size: 0.8rem; color: var(--ink-muted); }
+
+        /* CTA section */
+        .cta-sec {
+            background: var(--bg-dark);
+            padding: clamp(60px, 10vw, 100px) 0;
+            text-align: center;
+            color: var(--white);
+        }
+        .cta-sec .eyebrow {
+            display: block;
+            font-size: 0.63rem; font-weight: 700;
+            letter-spacing: 0.24em; text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 18px;
+        }
+        .cta-sec h2 {
+            font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 14px;
+        }
+        .cta-sec p { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.85; margin-bottom: 36px; }
+        .cta-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 50px;
+            background: var(--accent);
+            color: var(--white);
+            font-size: 0.88rem;
+            font-weight: 700;
+            transition: opacity 0.2s;
+        }
+        .cta-btn:hover { opacity: 0.85; }
     </style>
 </head>
 <body>
-
-    <header class="header">
-    </header>
+    <header class="header"></header>
     <script src="assets/js/header.js" data-path-prefix="" defer></script>
 
-    <section class="section main-content fade-in">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">活動予定（企画中）</h2>
-            </div>
+    <section class="page-hero">
+        <div class="wrap">
+            <span class="eyebrow reveal">Schedule</span>
+            <h1 class="reveal" data-d="1">活動予定</h1>
+            <p class="reveal" data-d="2">下北沢を一緒に楽しむ仲間を探しています。<br>初参加・1人参加、大歓迎です。</p>
+        </div>
+    </section>
 
-            <!-- コミュニティ紹介セクション（心理的ハードル低減） -->
-            <div class="card fade-in" style="margin-bottom: 40px; text-align: center; background: #fff9f5; border: 1px solid #ffe8d6;">
-                <h3 style="color: var(--accent-color); margin-bottom: 15px;">このコミュニティについて</h3>
-                <p style="margin-bottom: 0; font-size: 1.05rem;">
-                    下北沢をきっかけに、新しい人とゆるく繋がるコミュニティです。<br>
-                    「ただお店に行くだけじゃなく、誰かと感想を共有したい」<br>
-                    そんな想いから始まりました。初参加・1人参加も大歓迎です。
-                </p>
-            </div>
-
-            <p style="text-align: center; margin-bottom: 40px; font-size: 0.9rem; color: #666;">
-                「こんなことやりたい！」という企画案です。参加してみたいイベントがあれば、お気軽にお問い合わせください！
+    <div class="intro-band">
+        <div class="wrap">
+            <p class="reveal">
+                仕事でも家でもない、<strong>下北沢という居場所</strong>をきっかけに、新しい人とゆるく繋がるコミュニティです。<br>
+                「ただお店に行くだけじゃなく、誰かと感想を共有したい」──そんな想いから始まりました。
             </p>
+        </div>
+    </div>
 
+    <section class="events-sec">
+        <div class="wrap">
+            <span class="sec-label reveal">Upcoming Events</span>
+            <h2 class="sec-title reveal" data-d="1">企画中のイベント</h2>
             <div class="event-grid" id="event-grid">
-                <p style="text-align: center; width: 100%; grid-column: 1 / -1;">読み込み中...</p>
-            </div>
-
-            <!-- ▼▼▼ 広告スペース ▼▼▼ -->
-            <div class="ad-container fade-in">
-                <span class="ad-label">スポンサーリンク</span>
-                <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
-                    <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート" style="width:100%; max-width:300px; border-radius: 8px;">
-                </a>
-                <p style="font-size:0.9rem; margin-top:15px; margin-bottom:0;">【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
-            </div>
-            <!-- ▲▲▲ 広告スペース ▲▲▲ -->
-
-            <div style="text-align: center; margin-top: 50px;">
-                <p style="margin-bottom: 10px;">参加希望のご連絡や、「こんなことしたい！」というご提案は<br>お問い合わせページからお気軽にどうぞ！</p>
-                <a href="contact.html" class="btn-cta">参加希望・お問い合わせはこちら</a>
-                <a href="top.html" class="back-link">トップページに戻る</a>
+                <p style="grid-column: 1 / -1; text-align: center; color: var(--ink-muted); padding: 80px 0; font-size: 0.88rem;">読み込み中...</p>
             </div>
         </div>
     </section>
 
-    <footer>
-    </footer>
+    <div class="ad-band">
+        <div class="wrap">
+            <span class="ad-label">Sponsored</span>
+            <a href="https://kkokichi.github.io/yuki-piano-lp/" target="_blank" rel="noopener sponsored">
+                <img src="assets/images/piano-concert.jpg" alt="ピアノコンサート">
+            </a>
+            <p>【PR】下北沢でピアノコンサート開催。心温まる音色をあなたに。</p>
+        </div>
+    </div>
+
+    <section class="cta-sec">
+        <div class="wrap">
+            <span class="eyebrow">Contact</span>
+            <h2 class="reveal">参加してみませんか？</h2>
+            <p class="reveal" data-d="1">「こんなことしたい！」というご提案も、<br>お気軽にどうぞ。</p>
+            <a href="contact.html" class="cta-btn reveal" data-d="2">参加希望・お問い合わせ</a>
+        </div>
+    </section>
+
+    <footer></footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -199,88 +326,33 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 初期データ（Firestoreが空の場合に使用）
         const initialEvents = [
-            { 
-                id: "event-cafe", 
-                title: "☕ 下北沢・隠れ家カフェ巡り", 
-                date: "2025年5月18日(日)", 
-                image: "assets/images/lifestyle-cafe.jpg", 
-                tags: ["初心者歓迎", "1人参加OK"],
-                description: "少人数で下北沢の路地裏カフェを巡りながら楽しむ交流イベントです。ガイドブックに載っていない秘密の場所を見つけませんか？" 
-            },
-            { 
-                id: "event-senrosai", 
-                title: "🎡 下北線路祭 (周年イベント)", 
-                date: "2025年5月25日(日)", 
-                image: "assets/images/lifestyle-neon.jpg", 
-                tags: ["大規模", "街歩き"],
-                description: "線路跡地「下北線路街」の全面開業を祝う周年祭。ライブやマーケット、ワークショップをみんなで回遊しましょう！" 
-            },
-            { 
-                id: "event-boardgame", 
-                title: "🎲 ボドゲ＆クラフトビール会", 
-                date: "2025年6月1日(日)", 
-                image: "assets/images/lifestyle-record.jpg", 
-                tags: ["初心者歓迎", "20代・30代中心"],
-                description: "会話が苦手でもボドゲがあれば大丈夫。下北沢のクラフトビールを片手に、大人な放課後を過ごしましょう。" 
-            },
-            { 
-                id: "event-curryfes", 
-                title: "🍛 カレーフェス食べ歩き隊", 
-                date: "2025年10月開催予定", 
-                image: "assets/images/lifestyle-street.jpg", 
-                tags: ["グルメ", "1人参加OK"],
-                description: "カレーの聖地を練り歩く秋の恒例行事。1人では食べきれない種類も、みんなでシェアしてスタンプを集めましょう！" 
-            }
+            { id: "event-cafe", title: "☕ 下北沢・隠れ家カフェ巡り", date: "2025年5月18日(日)", image: "assets/images/lifestyle-cafe.jpg", tags: ["初心者歓迎", "1人参加OK"], description: "少人数で下北沢の路地裏カフェを巡りながら楽しむ交流イベントです。ガイドブックに載っていない秘密の場所を見つけませんか？" },
+            { id: "event-senrosai", title: "🎡 下北線路祭 (周年イベント)", date: "2025年5月25日(日)", image: "assets/images/lifestyle-neon.jpg", tags: ["大規模", "街歩き"], description: "線路跡地「下北線路街」の全面開業を祝う周年祭。ライブやマーケット、ワークショップをみんなで回遊しましょう！" },
+            { id: "event-boardgame", title: "🎲 ボドゲ＆クラフトビール会", date: "2025年6月1日(日)", image: "assets/images/lifestyle-record.jpg", tags: ["初心者歓迎", "20代・30代中心"], description: "会話が苦手でもボドゲがあれば大丈夫。下北沢のクラフトビールを片手に、大人な放課後を過ごしましょう。" },
+            { id: "event-curryfes", title: "🍛 カレーフェス食べ歩き隊", date: "2025年10月開催予定", image: "assets/images/lifestyle-street.jpg", tags: ["グルメ", "1人参加OK"], description: "カレーの聖地を練り歩く秋の恒例行事。1人では食べきれない種類も、みんなでシェアしてスタンプを集めましょう！" }
         ];
 
         document.addEventListener("DOMContentLoaded", function() {
-            // スクロール時のフェードインアニメーション設定
-            const observerOptions = {
-                root: null,
-                rootMargin: "0px",
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("visible");
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            // 静的なフェードイン要素を監視
-            const staticElements = document.querySelectorAll(".fade-in");
-            staticElements.forEach(el => observer.observe(el));
+            const revealObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
             const eventGrid = document.getElementById('event-grid');
 
-            // イベント読み込み＆表示
             async function loadAndDisplayEvents() {
                 const q = query(collection(db, "events"));
-                
                 try {
                     const snapshot = await getDocs(q);
-
                     if (snapshot.empty) {
-                        // データがない場合は初期データを投入
-                        eventGrid.innerHTML = '<p style="text-align: center; width: 100%;">初期データを準備中...</p>';
-                        console.log("Initializing events data...");
+                        eventGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--ink-muted);padding:80px 0;font-size:0.88rem;">初期データを準備中...</p>';
                         for (const evt of initialEvents) {
                             await setDoc(doc(db, "events", evt.id), {
-                                title: evt.title,
-                                date: evt.date,
-                                description: evt.description,
-                                image: evt.image,
-                                capacity: 10, // 初期データに定員追加
-                                currentReservations: 0,
-                                createdAt: serverTimestamp()
+                                title: evt.title, date: evt.date, description: evt.description,
+                                image: evt.image, capacity: 10, currentReservations: 0, createdAt: serverTimestamp()
                             });
                         }
-                        // リロードして表示
                         window.location.reload();
                         return;
                     }
@@ -289,158 +361,118 @@
                     snapshot.forEach(docSnapshot => {
                         const data = docSnapshot.data();
                         const card = document.createElement('div');
-                        card.className = 'card event-card fade-in';
+                        card.className = 'ev-card reveal';
                         card.dataset.id = docSnapshot.id;
                         card.dataset.title = data.title;
                         card.dataset.date = data.date;
 
-                        // 定員チェック
                         const capacity = Number(data.capacity) || 0;
                         const current = Number(data.currentReservations) || 0;
                         const isFull = capacity > 0 && current >= capacity;
-                        
-                        let btnText = '参加予約する';
-                        let btnDisabled = '';
-                        let btnStyle = '';
-                        if (isFull) {
-                            btnText = '満席';
-                            btnDisabled = 'disabled';
-                            btnStyle = 'background-color: #ccc; box-shadow: none; cursor: not-allowed;';
-                        }
-                        
+                        const seatsLeft = capacity > 0 ? capacity - current : '-';
+
                         card.innerHTML = `
-                            <img src="${data.image}" alt="${data.title}">
-                            <div class="event-content">
-                                <p class="event-date">📅 ${data.date}</p>
-                                <h3>${data.title} <span style="font-size:0.8rem; color:#666; font-weight:normal;">(残席: ${capacity > 0 ? capacity - current : '-'})</span></h3>
-                                <div class="event-tags">
-                                    ${(data.tags || ["初心者歓迎", "1人参加OK"]).map(tag => `<span>${tag}</span>`).join('')}
-                                </div>
-                                <p class="event-description">${data.description}</p>
-                                <div class="event-actions" style="display:flex; gap:10px; margin-top:auto;">
-                                    <a href="event_detail.html?id=${docSnapshot.id}" class="btn-cta" style="margin: 0; padding: 12px; font-size: 0.9rem; background-color: #3498db; width: 50%;">詳細を見る</a>
-                                    <button class="reserve-btn btn-cta" ${btnDisabled} style="margin: 0; padding: 10px; font-size: 0.9rem; width: 50%; ${btnStyle}">${btnText}</button>
+                            <div class="ev-img">
+                                <img src="${data.image}" alt="${data.title}">
+                                <span class="ev-badge">EVENT</span>
+                            </div>
+                            <div class="ev-body">
+                                <p class="ev-date">${data.date}</p>
+                                <h3 class="ev-title">${data.title}</h3>
+                                <span class="ev-seats">残席 ${seatsLeft}</span>
+                                <p class="ev-desc">${data.description}</p>
+                                <div class="ev-tags">${(data.tags || ["初心者歓迎", "1人参加OK"]).map(t => `<span class="ev-tag">${t}</span>`).join('')}</div>
+                                <div class="ev-actions">
+                                    <a href="event_detail.html?id=${docSnapshot.id}" class="ev-btn ev-btn-outline">詳細を見る</a>
+                                    <button class="ev-btn ev-btn-fill reserve-btn" ${isFull ? 'disabled' : ''}>${isFull ? '満席' : '参加予約する'}</button>
                                 </div>
                             </div>
                         `;
                         eventGrid.appendChild(card);
-                    observer.observe(card); // 動的に追加したカードを監視対象に追加
+                        revealObs.observe(card);
                     });
 
-                    // 予約ボタンのイベントリスナーを設定
                     setupReserveButtons();
                 } catch (error) {
                     console.error("Error loading events:", error);
-                    eventGrid.innerHTML = `<p style="text-align: center; width: 100%; color: red;">イベントの読み込みに失敗しました。<br>${error.message}</p>`;
+                    eventGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:red;padding:80px 0;">読み込みに失敗しました。<br>${error.message}</p>`;
                 }
             }
 
-            // --- 予約ボタンの処理 ---
             function setupReserveButtons() {
-                const reserveBtns = document.querySelectorAll('.reserve-btn');
-                reserveBtns.forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    const user = auth.currentUser;
-                    if (!user) {
-                        alert('イベントを予約するにはログインが必要です。\nログイン画面へ移動します。');
-                        window.location.href = 'login.html';
-                        return;
-                    }
-
-                    const card = e.target.closest('.event-card');
-                    const eventId = card.dataset.id;
-                    const title = card.dataset.title;
-                    const date = card.dataset.date;
-                    const btn = e.target;
-
-                    // ボタンを一時無効化
-                    btn.disabled = true;
-                    btn.textContent = '処理中...';
-
-                    try {
-                        // 最新のイベント情報を取得して定員チェック
-                        const eventRef = doc(db, "events", eventId);
-                        const eventSnap = await getDoc(eventRef);
-                        const eventData = eventSnap.data();
-                        if (eventData.capacity > 0 && (eventData.currentReservations || 0) >= eventData.capacity) {
-                            alert('申し訳ありません、タッチの差で満席となりました。');
-                            btn.textContent = '満席';
+                document.querySelectorAll('.reserve-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const user = auth.currentUser;
+                        if (!user) {
+                            alert('イベントを予約するにはログインが必要です。\nログイン画面へ移動します。');
+                            window.location.href = 'login.html';
                             return;
                         }
-
-                        // すでに予約済みかチェック
-                        const q = query(collection(db, "reservations"), where("userId", "==", user.uid), where("eventId", "==", eventId));
-                        const snapshot = await getDocs(q);
-
-                        if (!snapshot.empty) {
-                            alert('このイベントはすでに予約済みです。');
+                        const card = e.target.closest('.ev-card');
+                        const eventId = card.dataset.id;
+                        const title = card.dataset.title;
+                        const date = card.dataset.date;
+                        btn.disabled = true;
+                        btn.textContent = '処理中...';
+                        try {
+                            const eventRef = doc(db, "events", eventId);
+                            const eventSnap = await getDoc(eventRef);
+                            const eventData = eventSnap.data();
+                            if (eventData.capacity > 0 && (eventData.currentReservations || 0) >= eventData.capacity) {
+                                alert('申し訳ありません、タッチの差で満席となりました。');
+                                btn.textContent = '満席';
+                                return;
+                            }
+                            const q = query(collection(db, "reservations"), where("userId", "==", user.uid), where("eventId", "==", eventId));
+                            const snapshot = await getDocs(q);
+                            if (!snapshot.empty) {
+                                alert('このイベントはすでに予約済みです。');
+                                btn.textContent = '予約済み';
+                                return;
+                            }
+                            await addDoc(collection(db, "reservations"), {
+                                userId: user.uid, eventId, title, date, reservedAt: serverTimestamp()
+                            });
+                            await updateDoc(eventRef, { currentReservations: increment(1) });
+                            alert(`「${title}」の予約が完了しました！\nマイページで確認できます。`);
                             btn.textContent = '予約済み';
-                            return;
+                            btn.classList.remove('ev-btn-fill');
+                            btn.style.background = '#ddd9d4';
+                            btn.style.color = '#aaa';
+                        } catch (error) {
+                            console.error("Error adding reservation:", error);
+                            alert('予約に失敗しました。もう一度お試しください。');
+                            btn.disabled = false;
+                            btn.textContent = '参加予約する';
                         }
-
-                        // 予約データを保存
-                        await addDoc(collection(db, "reservations"), {
-                            userId: user.uid,
-                            eventId: eventId,
-                            title: title,
-                            date: date,
-                            reservedAt: serverTimestamp()
-                        });
-
-                        // イベントの予約数を増やす
-                        await updateDoc(eventRef, { currentReservations: increment(1) });
-
-                        alert(`「${title}」の予約が完了しました！\nマイページで確認できます。`);
-                        btn.textContent = '予約済み';
-                        btn.style.backgroundColor = '#ccc';
-                        btn.style.boxShadow = 'none';
-
-                    } catch (error) {
-                        console.error("Error adding reservation: ", error);
-                        alert('予約に失敗しました。もう一度お試しください。');
-                        btn.disabled = false;
-                        btn.textContent = '参加予約する';
-                    }
+                    });
                 });
-            });
-                
-                // ログイン状態に応じてボタンの表示を変える
                 checkLoginStatus();
             }
 
-            // ログイン状態に応じてボタンの表示を変える（オプション）
             function checkLoginStatus() {
                 const user = auth.currentUser;
-                if (user) {
-                    // ログイン済みなら、すでに予約しているイベントのボタンを「予約済み」にする
-                    const q = query(collection(db, "reservations"), where("userId", "==", user.uid));
-                    getDocs(q).then(snapshot => {
-                        snapshot.forEach(doc => {
-                            const data = doc.data();
-                            const targetCard = document.querySelector(`.event-card[data-id="${data.eventId}"]`);
-                            if (targetCard) {
-                                const btn = targetCard.querySelector('.reserve-btn');
-                                if (btn) {
-                                    btn.textContent = '予約済み';
-                                    btn.disabled = true;
-                                    btn.style.backgroundColor = '#ccc';
-                                    btn.style.boxShadow = 'none';
-                                }
+                if (!user) return;
+                const q = query(collection(db, "reservations"), where("userId", "==", user.uid));
+                getDocs(q).then(snapshot => {
+                    snapshot.forEach(docSnap => {
+                        const data = docSnap.data();
+                        const targetCard = document.querySelector(`.ev-card[data-id="${data.eventId}"]`);
+                        if (targetCard) {
+                            const btn = targetCard.querySelector('.reserve-btn');
+                            if (btn) {
+                                btn.textContent = '予約済み';
+                                btn.disabled = true;
+                                btn.style.background = '#ddd9d4';
+                                btn.style.color = '#aaa';
                             }
-                        });
+                        }
                     });
-                }
+                });
             }
 
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    checkLoginStatus();
-                }
-            });
-
-            // 初期実行
+            onAuthStateChanged(auth, (user) => { if (user) checkLoginStatus(); });
             loadAndDisplayEvents();
-
         });
     </script>
     <script src="assets/js/footer.js" data-path-prefix="" defer></script>
