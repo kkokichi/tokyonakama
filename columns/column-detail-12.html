@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         .column-article {
             max-width: 720px;
@@ -67,24 +67,9 @@
 </head>
 <body>
 
-    <header class="header">
-        <a href="index.html" class="logo">下北コミュニティ</a>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">トップ</a></li>
-                <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html">おすすめ</a></li>
-                <li><a href="column.html" class="active">コラム</a></li>
-                <li><a href="staff.html">運営募集</a></li>
-                <li><a href="contact.html">お問い合わせ</a></li>
-            </ul>
-        </nav>
-        <button class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+        <header class="header">
     </header>
+    <script src="../assets/js/header.js" data-path-prefix="../" defer></script>
 
     <section class="section main-content fade-in">
         <div class="container">
@@ -94,7 +79,7 @@
                     <h1 class="column-title">お一人様でも入りやすい！下北沢の絶品定食屋さん</h1>
                     <p class="column-date">公開日：2025.05.20</p>
                 </header>
-                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="定食のイメージ" class="column-eyecatch">
+                <img src="../assets/images/columns/column-12.jpg" alt="定食のイメージ" class="column-eyecatch">
                 <div class="column-body">
                     <p>おしゃれなカフェやカレー屋さんが多い下北沢ですが、実は「ちゃんとご飯が食べたい」時に嬉しい、美味しい定食屋さんもたくさんあります。今回は、一人でも気兼ねなく入れて、心もお腹も満たされるお店をご紹介します。</p>
                     
@@ -110,7 +95,7 @@
             </article>
 
             <div style="text-align: center;">
-                <a href="column.html" class="back-link">コラム一覧に戻る</a>
+                <a href="../column.html" class="back-link">コラム一覧に戻る</a>
             </div>
         </div>
     </section>
@@ -119,17 +104,10 @@
     </footer>
 
     <script>
-        // 共通スクリプト
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
         });
     </script>
-    <script src="footer.js" defer></script>
+    <script src="../assets/js/footer.js" data-path-prefix="../" defer></script>
 </body>
 </html>

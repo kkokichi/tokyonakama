@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         .column-article {
             max-width: 720px;
@@ -67,24 +67,9 @@
 </head>
 <body>
 
-    <header class="header">
-        <a href="index.html" class="logo">下北コミュニティ</a>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">トップ</a></li>
-                <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html">おすすめ</a></li>
-                <li><a href="column.html" class="active">コラム</a></li>
-                <li><a href="staff.html">運営募集</a></li>
-                <li><a href="contact.html">お問い合わせ</a></li>
-            </ul>
-        </nav>
-        <button class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+        <header class="header">
     </header>
+    <script src="../assets/js/header.js" data-path-prefix="../" defer></script>
 
     <section class="section main-content fade-in">
         <div class="container">
@@ -94,7 +79,7 @@
                     <h1 class="column-title">社会人サークルって実際どうなの？参加者の本音を聞いてみた</h1>
                     <p class="column-date">公開日：2025.03.10</p>
                 </header>
-                <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="サークルのイメージ" class="column-eyecatch">
+                <img src="../assets/images/columns/column-7.jpg" alt="サークルのイメージ" class="column-eyecatch">
                 <div class="column-body">
                     <p>「社会人サークル」と聞くと、どんなイメージを持ちますか？「楽しそうだけど、内輪ノリがすごそう…」「キラキラした人ばかりで馴染めるか不安…」そんな声も少なくありません。そこで今回は、実際にサークルに参加して友達ができたメンバー2名に、リアルな体験談をインタビューしました。</p>
                     
@@ -110,30 +95,20 @@
             </article>
 
             <div style="text-align: center;">
-                <a href="column.html" class="back-link">コラム一覧に戻る</a>
+                <a href="../column.html" class="back-link">コラム一覧に戻る</a>
             </div>
         </div>
     </section>
 
-    <footer>
-        <div class="container">
-            <p class="footer-links"><a href="index.html">トップ</a> | <a href="schedule.html">活動予定</a> | <a href="recommend.html">おすすめ</a> | <a href="column.html">コラム</a> | <a href="contact.html">お問い合わせ</a> | <a href="staff.html">運営募集</a></p>
-            <p class="copyright">&copy; 2026 下北コミュニティ. All Rights Reserved. | <a href="admin.html" style="color: #aaa; text-decoration: none;">管理</a></p>
-        </div>
+        <footer>
     </footer>
+    <script src="../assets/js/footer.js" data-path-prefix="../" defer></script>
 
     <a href="#" class="back-to-top">↑</a>
 
     <script>
-        // 共通スクリプト
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
         });
     </script>
 </body>

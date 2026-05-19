@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>コラム | 下北コミュニティ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .column-article {
+            max-width: 720px;
+            margin: 0 auto 40px;
+            background: #fff;
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+        @media (min-width: 768px) {
+            .column-article { padding: 40px; }
+        }
+        .column-header { text-align: center; margin-bottom: 30px; }
+        .column-category {
+            font-size: 0.8rem;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-weight: bold;
+        }
+        .column-title { font-size: 1.8rem; margin: 15px 0 10px; line-height: 1.4; }
+        .column-date { font-size: 0.9rem; color: #888; }
+        .column-eyecatch {
+            width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+        }
+        .column-body { font-size: 1.05rem; line-height: 1.9; }
+        .column-body h2 {
+            font-size: 1.4rem;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--accent-light);
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .column-body h3 { font-size: 1.15rem; margin-top: 28px; margin-bottom: 12px; }
+        .column-body p { margin-bottom: 20px; }
+        .column-body img { max-width: 100%; height: auto; border-radius: 6px; margin: 12px 0; }
+        .column-body ul, .column-body ol { padding-left: 2em; margin-bottom: 20px; }
+        .column-body li { margin-bottom: 6px; line-height: 1.75; }
+        .column-body a { color: var(--accent-color); text-decoration: underline; }
+        .column-body blockquote {
+            border-left: 3px solid var(--accent-light);
+            margin: 20px 0;
+            padding: 10px 20px;
+            color: #666;
+            font-style: italic;
+        }
+        /* Quill alignment classes */
+        .column-body .ql-align-center { text-align: center; }
+        .column-body .ql-align-right  { text-align: right; }
+        .column-body .ql-indent-1 { padding-left: 3em; }
+        .column-body .ql-indent-2 { padding-left: 6em; }
+
+        /* Loading / error states */
+        .col-loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header"></header>
+    <script src="../assets/js/header.js" data-path-prefix="../" defer></script>
+
+    <section class="section main-content fade-in">
+        <div class="container">
+            <article class="column-article" id="col-article">
+                <p class="col-loading">読み込み中...</p>
+            </article>
+
+            <div style="text-align: center;">
+                <a href="../column.html" class="back-link">コラム一覧に戻る</a>
+            </div>
+        </div>
+    </section>
+
+    <footer></footer>
+    <script src="../assets/js/footer.js" data-path-prefix="../" defer></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd",
+            measurementId: "G-BWM0Q87Q93"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db  = getFirestore(app);
+
+        const article = document.getElementById('col-article');
+        const params  = new URLSearchParams(window.location.search);
+        const id      = params.get('id');
+
+        if (!id) {
+            article.innerHTML = '<p class="col-loading" style="color:#e74c3c;">記事IDが指定されていません。</p>';
+        } else {
+            getDoc(doc(db, 'columns', id))
+                .then(docSnap => {
+                    if (!docSnap.exists()) {
+                        article.innerHTML = '<p class="col-loading" style="color:#e74c3c;">記事が見つかりませんでした。</p>';
+                        return;
+                    }
+                    const d = docSnap.data();
+                    document.title = `${d.title} | 下北コミュニティ`;
+
+                    // admin.html はサイトルートから相対パスで保存するため、
+                    // columns/ サブフォルダからは ../ を付けて解決する
+                    const fixPath = (p) => p && p.startsWith('assets/') ? '../' + p : (p || '');
+                    const fixBody = (html) => (html || '').replace(/src="assets\//g, 'src="../assets/');
+
+                    const coverSrc = fixPath(d.coverImage);
+                    const coverHtml = coverSrc
+                        ? `<img src="${coverSrc}" alt="${d.title}" class="column-eyecatch">`
+                        : '';
+
+                    article.innerHTML = `
+                        <header class="column-header">
+                            <span class="column-category" style="background-color:${d.categoryColor || '#888'};">${d.category || ''}</span>
+                            <h1 class="column-title">${d.title}</h1>
+                            <p class="column-date">公開日：${d.date || ''}</p>
+                        </header>
+                        ${coverHtml}
+                        <div class="column-body">${fixBody(d.body)}</div>
+                    `;
+                    document.querySelector('.main-content.fade-in')?.classList.add('visible');
+                })
+                .catch(err => {
+                    console.error(err);
+                    article.innerHTML = '<p class="col-loading" style="color:#e74c3c;">読み込みに失敗しました。</p>';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.main-content.fade-in')?.classList.add('visible');
+        });
+    </script>
+</body>
+</html>

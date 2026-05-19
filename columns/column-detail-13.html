@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         .column-article {
             max-width: 720px;
@@ -67,24 +67,9 @@
 </head>
 <body>
 
-    <header class="header">
-        <a href="index.html" class="logo">下北コミュニティ</a>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="index.html">トップ</a></li>
-                <li><a href="schedule.html">活動予定</a></li>
-                <li><a href="recommend.html">おすすめ</a></li>
-                <li><a href="column.html" class="active">コラム</a></li>
-                <li><a href="staff.html">運営募集</a></li>
-                <li><a href="contact.html">お問い合わせ</a></li>
-            </ul>
-        </nav>
-        <button class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+        <header class="header">
     </header>
+    <script src="../assets/js/header.js" data-path-prefix="../" defer></script>
 
     <section class="section main-content fade-in">
         <div class="container">
@@ -94,7 +79,7 @@
                     <h1 class="column-title">実はラーメン激戦区！下北沢で絶対に食べるべき一杯</h1>
                     <p class="column-date">公開日：2025.06.10</p>
                 </header>
-                <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="ラーメンのイメージ" class="column-eyecatch">
+                <img src="../assets/images/columns/column-13.jpg" alt="ラーメンのイメージ" class="column-eyecatch">
                 <div class="column-body">
                     <p>カレーや古着のイメージが強い下北沢ですが、実は都内でも有数のラーメン激戦区。個性豊かなお店がしのぎを削っています。今回は、数あるお店の中から「これは絶対に食べてほしい！」という一杯をご紹介します。</p>
                     
@@ -110,7 +95,7 @@
             </article>
 
             <div style="text-align: center;">
-                <a href="column.html" class="back-link">コラム一覧に戻る</a>
+                <a href="../column.html" class="back-link">コラム一覧に戻る</a>
             </div>
         </div>
     </section>
@@ -119,17 +104,10 @@
     </footer>
 
     <script>
-        // 共通スクリプト
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelector('.main-content.fade-in')?.classList.add('visible');
-            const hamburger = document.querySelector('.hamburger');
-            const nav = document.querySelector('.main-nav');
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('is-active');
-                nav.classList.toggle('is-active');
-            });
         });
     </script>
-    <script src="footer.js" defer></script>
+    <script src="../assets/js/footer.js" data-path-prefix="../" defer></script>
 </body>
 </html>
