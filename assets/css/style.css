@@ -7,6 +7,9 @@
     --accent-hover: #d96a45;
     --secondary-bg: #ffffff;
     --border-radius: 16px; /* グラスモーフィズム用に角丸を大きく */
+    --muted-orange: #e67e22;
+    --vintage-beige: #fdfaf6;
+    --dark-charcoal: #2c3e50;
 }
 
 body {
@@ -326,6 +329,130 @@ footer {
     background: rgba(255, 255, 255, 0.6);
     padding: 3px 8px;
     border-radius: 4px;
+}
+
+/* --- 追加メディア要素 --- */
+
+/* ライブバッジ */
+.live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #e74c3c;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+.live-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* 特集カード内のマップリンク */
+.map-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+.map-link:hover {
+    text-decoration: underline;
+}
+.map-link i, .map-link span {
+    transition: transform 0.3s;
+}
+.map-link:hover span {
+    transform: translateX(3px);
+}
+
+/* タイムライン (Walk Plan) */
+.walk-timeline {
+    position: relative;
+    padding-left: 30px;
+    margin: 40px 0;
+}
+.walk-timeline::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: #eee;
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+.timeline-item::after {
+    content: "";
+    position: absolute;
+    left: -34px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    border: 3px solid white;
+}
+.timeline-time {
+    font-weight: 900;
+    font-size: 0.8rem;
+    color: #999;
+}
+.timeline-content h4 {
+    margin: 5px 0;
+    font-size: 1rem;
+}
+
+/* Local Voice (Magazine Style) */
+.voice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+.voice-card-magazine {
+    border-top: 1px solid #000;
+    padding-top: 20px;
+}
+.voice-quote {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+.voice-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.voice-author img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* SHIMOKITA SNAP */
+.snap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
 }
 
 /* --- レスポンシブ --- */
