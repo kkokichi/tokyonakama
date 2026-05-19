@@ -6,10 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const prefix = scriptTag?.dataset.pathPrefix ?? '';
 
     const headerHTML = `
-        <a href="${prefix}index.html" class="logo">下北コミュニティ</a>
+        <a href="${prefix}top.html" class="logo">下北コミュニティ</a>
         <nav class="main-nav">
             <ul>
-                <li><a href="${prefix}index.html">トップ</a></li>
+                <li><a href="${prefix}top.html">トップ</a></li>
+                <li><a href="${prefix}index.html">サークル</a></li>
                 <li><a href="${prefix}schedule.html">活動予定</a></li>
                 <li><a href="${prefix}recommend.html">おすすめ</a></li>
                 <li><a href="${prefix}column.html">コラム</a></li>
@@ -36,13 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = headerEl.querySelectorAll('.main-nav a');
     navLinks.forEach(link => {
         const linkPage = link.getAttribute('href').split('/').pop();
-        
-        // トップページの場合 (例: /index.html や /)
-        if ((currentPage === 'index.html' || currentPage === '') && (linkPage === 'index.html' || linkPage === '')) {
+
+        // トップページ (top.html またはルート)
+        if ((currentPage === 'top.html' || currentPage === '') && linkPage === 'top.html') {
             link.classList.add('active');
-        } 
+        }
         // その他のページ
-        else if (currentPage !== '' && currentPage === linkPage) {
+        else if (currentPage !== '' && currentPage !== 'top.html' && currentPage === linkPage) {
             link.classList.add('active');
         }
     });
