@@ -248,6 +248,33 @@
                         <label style="font-weight: bold;">詳細</label>
                         <textarea id="event-desc" class="reply-textarea" rows="3" placeholder="イベントの説明文"></textarea>
                     </div>
+                    <div style="border-top: 1px dashed #eee; margin: 20px 0 20px; padding-top: 20px;">
+                        <p style="font-size: 0.82rem; color: #888; margin-bottom: 16px;">── 詳細ページ用の追加情報（任意）──</p>
+                        <div class="form-group">
+                            <label style="font-weight: bold;">カテゴリ名</label>
+                            <input type="text" id="event-category-name" placeholder="例: 街歩き・交流">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight: bold;">参加費</label>
+                            <input type="text" id="event-fee" placeholder="例: 500円 + 各自の飲食代">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight: bold;">対象</label>
+                            <input type="text" id="event-target" placeholder="例: 一人参加・カフェ好き">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight: bold;">ハイライト <span style="font-weight:normal;font-size:0.8rem;color:#888;">（1行に1項目）</span></label>
+                            <textarea id="event-highlights" class="reply-textarea" rows="4" placeholder="少人数で話しやすい&#10;穴場スポットへご案内&#10;お散歩も楽しい"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight: bold;">会場名</label>
+                            <input type="text" id="event-venue" placeholder="例: 下北沢駅 周辺のカフェ">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight: bold;">住所</label>
+                            <input type="text" id="event-address" placeholder="例: 東京都世田谷区北沢2-24-2">
+                        </div>
+                    </div>
                     <button id="save-event-btn" class="btn-submit">イベントを保存</button>
                     <button id="clear-event-btn" class="btn-submit" style="background-color: #999;">クリア</button>
 
@@ -641,6 +668,12 @@
         const eventCapacityInput = document.getElementById('event-capacity');
         const eventTagsInput = document.getElementById('event-tags');
         const eventDescInput = document.getElementById('event-desc');
+        const eventCategoryNameInput = document.getElementById('event-category-name');
+        const eventFeeInput = document.getElementById('event-fee');
+        const eventTargetInput = document.getElementById('event-target');
+        const eventHighlightsInput = document.getElementById('event-highlights');
+        const eventVenueInput = document.getElementById('event-venue');
+        const eventAddressInput = document.getElementById('event-address');
 
         // 簡易パスワード設定 (必要に応じて変更してください)
         const LOGIN_PASS = "admin1234";
@@ -842,6 +875,7 @@
                 return;
             }
 
+            const highlightsRaw = eventHighlightsInput.value.trim();
             const eventData = {
                 title: title,
                 date: date || '未定',
@@ -849,6 +883,12 @@
                 capacity: capacity ? parseInt(capacity) : 0,
                 tags: tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(t => t) : [],
                 description: desc,
+                categoryName: eventCategoryNameInput.value.trim(),
+                fee: eventFeeInput.value.trim(),
+                target: eventTargetInput.value.trim(),
+                highlights: highlightsRaw ? highlightsRaw.split('\n').map(s => s.trim()).filter(s => s) : [],
+                venue: eventVenueInput.value.trim(),
+                address: eventAddressInput.value.trim(),
                 updatedAt: serverTimestamp()
             };
 
@@ -879,7 +919,13 @@
             eventCapacityInput.value = '';
             eventTagsInput.value = '';
             eventDescInput.value = '';
-            eventIdInput.disabled = false; // ID入力可能に戻す
+            eventCategoryNameInput.value = '';
+            eventFeeInput.value = '';
+            eventTargetInput.value = '';
+            eventHighlightsInput.value = '';
+            eventVenueInput.value = '';
+            eventAddressInput.value = '';
+            eventIdInput.disabled = false;
             document.getElementById('save-event-btn').textContent = 'イベントを保存';
         });
 
@@ -1039,16 +1085,21 @@
                     if (docSnap.exists()) {
                         const data = docSnap.data();
                         eventIdInput.value = docId;
-                        eventIdInput.disabled = true; // IDは変更不可にする
+                        eventIdInput.disabled = true;
                         eventTitleInput.value = data.title || '';
                         eventDateInput.value = data.date || '';
                         eventImageInput.value = data.image || '';
                         eventCapacityInput.value = data.capacity || '';
                         eventTagsInput.value = data.tags ? data.tags.join(', ') : '';
                         eventDescInput.value = data.description || '';
-                        
+                        eventCategoryNameInput.value = data.categoryName || '';
+                        eventFeeInput.value = data.fee || '';
+                        eventTargetInput.value = data.target || '';
+                        eventHighlightsInput.value = data.highlights ? data.highlights.join('\n') : '';
+                        eventVenueInput.value = data.venue || '';
+                        eventAddressInput.value = data.address || '';
+
                         document.getElementById('save-event-btn').textContent = '更新する';
-                        // フォームの位置までスクロール
                         eventIdInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     } else {
                         alert("イベントが見つかりません。");

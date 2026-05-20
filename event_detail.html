@@ -320,87 +320,148 @@
     <footer></footer>
     <script src="assets/js/footer.js" data-path-prefix="" defer></script>
 
-    <script>
-        const eventDetails = {
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDubc2FGMimITJS_MXbzgLY_G1nO_NoAI0",
+            authDomain: "tokyonakama-e7331.firebaseapp.com",
+            projectId: "tokyonakama-e7331",
+            storageBucket: "tokyonakama-e7331.firebasestorage.app",
+            messagingSenderId: "538079381768",
+            appId: "1:538079381768:web:af9fcb02569c266279c4bd"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db  = getFirestore(app);
+
+        // 静的フォールバックデータ
+        const staticEvents = {
             "event-senrosai": {
                 title: "下北線路祭 (Shimokita Senro-sai)",
-                category: "festival", categoryName: "お祭り・周年祭",
+                categoryName: "お祭り・周年祭",
                 date: "2025年5月下旬予定",
                 fee: "入場無料 (各企画により実費)", capacity: "制限なし", target: "どなたでも大歓迎",
                 description: "「下北線路街」の全面開業を祝う年に一度の周年祭。東北沢駅から世田谷代田駅まで続く約1.7kmのエリア全域で、ライブ、マーケット、ワークショップが開催されます。街の繋がりを感じられる、下北沢で最も活気のある2日間です。",
                 highlights: ["線路街マーケット：reloadや空き地に地域の人気店が特別出店", "屋外ライブパフォーマンス：開放的な広場での音楽や演劇", "街歩きスタンプラリー：線路街を回遊して限定グッズをゲット", "シモキタ縁日：お子様も楽しめる昔ながらの遊びコーナー"],
                 venue: "下北線路街 全エリア", address: "東京都世田谷区北沢・代沢・代田周辺",
-                img: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80"
+                image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80"
             },
             "event-curryfes": {
                 title: "下北沢カレーフェスティバル",
-                category: "festival", categoryName: "グルメイベント",
+                categoryName: "グルメイベント",
                 date: "毎年10月開催",
                 fee: "実費 (食べ歩き形式)", capacity: "制限なし", target: "カレー好き・お散歩好き",
                 description: "カレーの聖地、下北沢を代表する秋の巨大イベント。100店舗以上の飲食店が参加し、この期間しか食べられない「ミニカレー」を提供。街全体がスパイシーな香りに包まれます。",
                 highlights: ["カレー食べ歩き：スタンプラリーでお得に複数店舗をハシゴ", "限定メニュー：スイーツ店やBarもカレーにちなんだ特別品を販売", "公式グッズ：毎年変わるオリジナルTシャツが人気"],
                 venue: "下北沢駅周辺 提携各店舗", address: "東京都世田谷区北沢2丁目",
-                img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80"
+                image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80"
             },
             "event-cafe": {
                 title: "☕ 下北沢・隠れ家カフェ巡り",
-                category: "walk", categoryName: "街歩き・交流",
+                categoryName: "街歩き・交流",
                 date: "週末の午後（不定期）",
                 fee: "500円 + 各自の飲食代", capacity: "8名程度", target: "一人参加・カフェ好き",
                 description: "サークルメンバーで、路地裏の静かなカフェや新しくオープンした話題のスポットを巡ります。美味しいコーヒーを飲みながら、ゆるくおしゃべりを楽しみましょう。",
                 highlights: ["少人数で話しやすい：人見知りの方でも安心のフォロー体制", "穴場スポット：一人では入りにくい路地裏の名店へご案内", "お散歩：カフェ間の移動中も街の発見がいっぱい"],
                 venue: "下北沢駅 周辺のカフェ", address: "東京都世田谷区北沢2-24-2 (集合場所例)",
-                img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80"
+                image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80"
             },
             "event-boardgame": {
                 title: "🎲 初心者だらけのボードゲーム会",
-                category: "game", categoryName: "ゲーム・趣味",
+                categoryName: "ゲーム・趣味",
                 date: "祝日の午後（月1回）",
                 fee: "1,500円 (ドリンク代込)", capacity: "12名", target: "ゲーム初心者・インドア派",
                 description: "会話が苦手でも「ゲーム」があれば自然に仲良くなれる！そんなコンセプトで開催しているボードゲーム交流会です。5分で覚えられる簡単なゲームを中心に用意しています。",
                 highlights: ["初心者特化：ルール説明から丁寧に行うので未経験OK", "手ぶらでOK：人気のボドゲを多数用意しています", "自然な会話：無理に話さなくても、ゲームを通じて笑いが生まれます"],
                 venue: "下北沢駅前のレンタルスペース", address: "東京都世田谷区北沢2丁目",
-                img: "https://images.unsplash.com/photo-1632501641765-e568d28b0015?auto=format&fit=crop&w=800&q=80"
+                image: "https://images.unsplash.com/photo-1632501641765-e568d28b0015?auto=format&fit=crop&w=800&q=80"
             }
         };
 
-        document.addEventListener("DOMContentLoaded", function() {
+        function populateEvent(data) {
             const revealObs = new IntersectionObserver((entries) => {
                 entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); } });
             }, { threshold: 0.1 });
-            document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-            const params = new URLSearchParams(window.location.search);
-            const eventId = params.get('id');
-            const data = eventDetails[eventId];
+            document.getElementById('event-detail-view').style.display = 'block';
+            document.title = `${data.title} | SHIMOKITA CULTURE MEDIA`;
 
-            if (data) {
-                document.getElementById('event-detail-view').style.display = 'block';
-                document.title = `${data.title} | SHIMOKITA CULTURE MEDIA`;
+            const imgSrc = data.image || data.img || '';
+            document.getElementById('event-img').src = imgSrc;
+            document.getElementById('event-img').alt = data.title;
+            document.getElementById('event-cat').textContent = data.categoryName || '';
+            document.getElementById('event-title').textContent = data.title;
+            document.getElementById('event-date-text').textContent = '開催予定：' + (data.date || '');
 
-                document.getElementById('event-img').src = data.img;
-                document.getElementById('event-img').alt = data.title;
-                document.getElementById('event-cat').textContent = data.categoryName;
-                document.getElementById('event-title').textContent = data.title;
-                document.getElementById('event-date-text').textContent = '開催予定：' + data.date;
+            // 参加費・定員・対象
+            document.getElementById('event-fee').textContent = data.fee || '要確認';
+            const cap = data.capacity;
+            const cur = data.currentReservations;
+            if (typeof cap === 'number' && cap > 0) {
+                const left = cap - (cur || 0);
+                document.getElementById('event-capacity').textContent = `${cap}名 (残席${left}名)`;
+            } else {
+                document.getElementById('event-capacity').textContent = cap || '-';
+            }
+            document.getElementById('event-target').textContent = data.target || '-';
+            document.getElementById('event-desc').textContent = data.description || '';
 
-                document.getElementById('event-fee').textContent = data.fee;
-                document.getElementById('event-capacity').textContent = data.capacity;
-                document.getElementById('event-target').textContent = data.target;
-                document.getElementById('event-desc').textContent = data.description;
-
-                document.getElementById('event-venue').textContent = data.venue;
-                document.getElementById('event-address').textContent = data.address;
-
-                const highlightList = document.getElementById('event-highlights');
-                data.highlights.forEach(text => {
+            // ハイライト
+            const highlights = data.highlights || [];
+            const highlightBox = document.getElementById('event-highlights').closest('.info-box');
+            if (highlights.length > 0) {
+                const list = document.getElementById('event-highlights');
+                highlights.forEach(text => {
                     const li = document.createElement('li');
                     li.textContent = text;
-                    highlightList.appendChild(li);
+                    list.appendChild(li);
                 });
+            } else {
+                if (highlightBox) highlightBox.style.display = 'none';
+            }
 
-                document.getElementById('map-iframe').src = `https://maps.google.com/maps?q=${encodeURIComponent(data.venue)}&output=embed`;
-                document.getElementById('nav-btn').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(data.address)}`;
+            // 会場・マップ
+            const venue   = data.venue   || '';
+            const address = data.address || '';
+            const venueBox = document.getElementById('event-venue').closest('.info-box');
+            if (venue || address) {
+                document.getElementById('event-venue').textContent   = venue;
+                document.getElementById('event-address').textContent = address;
+                const mapQuery = venue || address;
+                document.getElementById('map-iframe').src = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
+                document.getElementById('nav-btn').href  = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address || venue)}`;
+            } else {
+                if (venueBox) venueBox.style.display = 'none';
+            }
+
+            document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+        }
+
+        document.addEventListener("DOMContentLoaded", async function() {
+            const params  = new URLSearchParams(window.location.search);
+            const eventId = params.get('id');
+
+            if (!eventId) {
+                document.getElementById('error-view').style.display = 'block';
+                return;
+            }
+
+            // Firestore を優先的に参照
+            try {
+                const snap = await getDoc(doc(db, 'events', eventId));
+                if (snap.exists()) {
+                    populateEvent(snap.data());
+                    return;
+                }
+            } catch (e) {
+                console.warn('Firestore 取得失敗、静的データで表示します:', e);
+            }
+
+            // 静的フォールバック
+            const staticData = staticEvents[eventId];
+            if (staticData) {
+                populateEvent(staticData);
             } else {
                 document.getElementById('error-view').style.display = 'block';
             }
