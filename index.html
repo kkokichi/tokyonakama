@@ -131,207 +131,277 @@
         .see-all:hover { color: var(--accent); border-color: var(--accent); }
 
         /* ========================
-           1. HERO
+           1. HERO CINEMATIC
         ======================== */
-        .hero {
-            background: var(--bg);
-            padding-top: 80px;
+        .hero-cinematic {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 560px;
             overflow: hidden;
-            border-bottom: 1px solid rgba(26,23,6,0.07);
-        }
-
-        /* 2-column editorial layout for hero text */
-        .hero-top {
-            max-width: var(--max);
-            margin: 0 auto;
-            padding: clamp(48px, 8vh, 80px) var(--pad) clamp(32px, 5vh, 56px);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(24px, 4vw, 64px);
-            align-items: end;
-        }
-
-        .hero-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.58rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--ink-muted);
-            margin-bottom: 18px;
-        }
-        .hero-eyebrow::before {
-            content: '';
-            display: inline-block;
-            width: 22px;
-            height: 1px;
-            background: var(--accent);
-        }
-
-        .hero-h1 {
-            font-size: clamp(2.6rem, 6.5vw, 5.6rem);
-            font-weight: 900;
-            line-height: 1.06;
-            color: var(--ink);
-            letter-spacing: -0.03em;
-        }
-        .hero-h1 em { font-style: normal; color: var(--accent); }
-
-        .hero-sub {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 22px;
-            padding-bottom: 6px;
-        }
-        .hero-sub p {
-            color: var(--ink-muted);
-            font-size: clamp(0.84rem, 1.3vw, 0.97rem);
-            line-height: 1.95;
-            font-weight: 300;
-        }
-
-        .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
-
-        .hbtn {
-            font-size: 0.82rem;
-            font-weight: 700;
-            padding: 13px 26px;
-            border-radius: 100px;
-            letter-spacing: 0.04em;
-            transition: all 0.22s ease;
-        }
-        .hbtn-fill { background: var(--accent); color: var(--white); }
-        .hbtn-fill:hover { opacity: 0.82; }
-        .hbtn-outline { color: var(--ink); border: 1px solid rgba(26,23,6,0.22); }
-        .hbtn-outline:hover { background: var(--ink); color: var(--white); }
-
-        /* ---- 3-up Carousel ---- */
-        .hero-carousel {
-            padding-bottom: clamp(32px, 5vh, 52px);
-        }
-
-        .hc-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 0 var(--pad);
+            justify-content: center;
         }
 
-        .hc-viewport {
-            overflow: hidden;
-            flex: 1;
+        /* Background Slides */
+        .hcs-slides {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
         }
 
-        .hc-track {
-            display: flex;
-            gap: 14px;
-            transition: transform 0.55s cubic-bezier(0.33, 1, 0.68, 1);
+        .hcs {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            animation: hcs-fade 20s ease-in-out infinite both;
+        }
+        .hcs--1 { animation-delay: -1s; }
+        .hcs--2 { animation-delay: 4s; }
+        .hcs--3 { animation-delay: 9s; }
+        .hcs--4 { animation-delay: 14s; }
+
+        @keyframes hcs-fade {
+            0%   { opacity: 0; }
+            5%   { opacity: 1; }
+            25%  { opacity: 1; }
+            30%  { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .hcs__img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0 !important;
+            animation: ken-burns 24s ease-in-out alternate infinite;
             will-change: transform;
         }
 
-        .hc-slide { flex: 0 0 calc((100% - 28px) / 3); }
+        @keyframes ken-burns {
+            from { transform: scale(1)    translate(0, 0);     }
+            to   { transform: scale(1.12) translate(-2%, -1%); }
+        }
 
-        .hc-img {
+        /* Gradient Overlay */
+        .hcs-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            background:
+                linear-gradient(to top,  rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.38) 45%, rgba(0,0,0,0.12) 100%),
+                linear-gradient(to bottom, rgba(0,0,0,0.32) 0%, transparent 28%);
+        }
+
+        /* Header transparent mode over hero */
+        .header.on-hero {
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            box-shadow: none !important;
+            transition: background 0.5s ease, box-shadow 0.5s ease;
+        }
+        .header.on-hero .logo  { color: rgba(255,255,255,0.92) !important; }
+        .header.on-hero .hamburger span { background: rgba(255,255,255,0.9) !important; }
+
+        /* Hero Content */
+        .hcs-content {
             position: relative;
-            border-radius: var(--radius);
-            overflow: hidden;
-            aspect-ratio: 3/4;
+            z-index: 10;
+            text-align: center;
+            color: #fff;
+            padding: 0 clamp(20px, 6vw, 80px);
+            max-width: 900px;
         }
-        .hc-img img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-        .hc-slide:hover .hc-img img { transform: scale(1.04); }
 
-        /* Caption: frosted glass overlay inside image */
-        .hc-caption {
+        .hcs-eyebrow {
+            display: block;
+            font-size: 0.6rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 22px;
+            animation: hcs-rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation-delay: 0.3s;
+        }
+
+        .hcs-heading {
+            font-size: clamp(3.2rem, 9.5vw, 7.5rem);
+            font-weight: 900;
+            line-height: 1.06;
+            letter-spacing: -0.025em;
+            color: #fff;
+            margin: 0 0 28px;
+            animation: hcs-rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation-delay: 0.5s;
+        }
+
+        .hcs-sub {
+            font-size: clamp(0.92rem, 1.8vw, 1.12rem);
+            font-weight: 300;
+            line-height: 2.1;
+            color: rgba(255,255,255,0.72);
+            margin: 0 0 46px;
+            animation: hcs-rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation-delay: 0.7s;
+        }
+
+        .hcs-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: hcs-rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation-delay: 0.9s;
+        }
+
+        .hcs-btn {
+            display: inline-block;
+            font-size: 0.84rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            padding: 15px 36px;
+            border-radius: 100px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hcs-btn--glass {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            border: 1.5px solid rgba(255,255,255,0.45);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .hcs-btn--glass:hover {
+            background: rgba(255,255,255,0.24);
+            border-color: rgba(255,255,255,0.85);
+            box-shadow: 0 0 28px rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+
+        .hcs-btn--accent {
+            background: var(--accent);
+            color: #fff;
+            border: 1.5px solid transparent;
+        }
+        .hcs-btn--accent:hover {
+            opacity: 0.88;
+            box-shadow: 0 8px 28px rgba(191,91,59,0.45);
+            transform: translateY(-2px);
+        }
+
+        @keyframes hcs-rise {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Genre Labels (bottom-left) */
+        .hcs-genres {
+            position: absolute;
+            bottom: clamp(68px, 10vh, 96px);
+            left: clamp(20px, 5vw, 60px);
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            animation: hcs-rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation-delay: 1.1s;
+        }
+
+        .hcs-genre {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            padding: 5px 14px;
+            border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.38);
+            background: rgba(0,0,0,0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            animation: hcs-genre-pulse 20s ease-in-out infinite both;
+        }
+
+        .hcs-genre--1 { animation-delay: -1s; }
+        .hcs-genre--2 { animation-delay: 4s; }
+        .hcs-genre--3 { animation-delay: 9s; }
+        .hcs-genre--4 { animation-delay: 14s; }
+
+        @keyframes hcs-genre-pulse {
+            0%   { color: rgba(255,255,255,0.38); border-color: rgba(255,255,255,0.18); background: rgba(0,0,0,0.15); }
+            5%   { color: #fff; border-color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.14); }
+            25%  { color: #fff; border-color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.14); }
+            30%  { color: rgba(255,255,255,0.38); border-color: rgba(255,255,255,0.18); background: rgba(0,0,0,0.15); }
+            100% { color: rgba(255,255,255,0.38); border-color: rgba(255,255,255,0.18); background: rgba(0,0,0,0.15); }
+        }
+
+        /* Scroll Indicator */
+        .hcs-scroll {
+            position: absolute;
+            bottom: clamp(22px, 4vh, 40px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            animation: hcs-rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+            animation-delay: 1.3s;
+        }
+
+        .hcs-scroll__text {
+            font-size: 0.55rem;
+            letter-spacing: 0.32em;
+            color: rgba(255,255,255,0.38);
+        }
+
+        .hcs-scroll__line {
+            width: 1px;
+            height: 44px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.55), transparent);
+            animation: scroll-drop 2.4s ease-in-out infinite;
+        }
+
+        @keyframes scroll-drop {
+            0%   { opacity: 0; transform: translateY(-16px); }
+            50%  { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(16px); }
+        }
+
+        /* Progress Line */
+        .hcs-progress {
             position: absolute;
             bottom: 0; left: 0; right: 0;
-            padding: 28px 16px 18px;
-            background: rgba(245, 240, 234, 0.78);
-            backdrop-filter: blur(14px) saturate(1.4);
-            -webkit-backdrop-filter: blur(14px) saturate(1.4);
-            border-top: 1px solid rgba(255,255,255,0.6);
-            translate: 0 0;
-            transition: translate 0.4s ease;
-        }
-        .hc-slide:hover .hc-caption { translate: 0 0; }
-
-        .hc-cat {
-            display: block;
-            font-size: 0.56rem;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 5px;
+            height: 2px;
+            background: rgba(255,255,255,0.08);
+            z-index: 10;
+            overflow: hidden;
         }
 
-        .hc-title {
-            font-size: clamp(0.82rem, 1.3vw, 0.96rem);
-            font-weight: 700;
-            line-height: 1.5;
-            color: var(--ink);
-            margin-bottom: 4px;
+        .hcs-progress__bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, var(--accent), rgba(255,255,255,0.5));
+            animation: hcs-progress 20s linear infinite;
         }
 
-        .hc-desc {
-            font-size: 0.7rem;
-            color: var(--ink-muted);
-            line-height: 1.65;
-            font-weight: 300;
+        @keyframes hcs-progress {
+            from { width: 0%; }
+            to   { width: 100%; }
         }
 
-        .hc-cover { position: absolute; inset: 0; z-index: 10; }
-
-        .hc-btn {
-            background: var(--white);
-            border: 1px solid rgba(26,23,6,0.1);
-            color: var(--ink);
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            font-size: 1.4rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-            line-height: 1;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        @media (max-width: 768px) {
+            .hero-cinematic { height: 85vh; min-height: 500px; }
+            .hcs-btns { flex-direction: column; align-items: center; gap: 12px; }
+            .hcs-btn  { width: 220px; text-align: center; padding: 16px 20px; }
         }
-        .hc-btn:hover { background: var(--ink); color: var(--white); }
-        .hc-btn:disabled { opacity: 0.22; cursor: not-allowed; box-shadow: none; }
-
-        .hc-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-        }
-        .hc-dot {
-            width: 6px; height: 6px;
-            border-radius: 3px;
-            background: rgba(26,23,6,0.15);
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 0;
-        }
-        .hc-dot.active { background: var(--ink); width: 22px; }
-
-        @media (max-width: 900px) {
-            .hc-slide { flex: 0 0 calc((100% - 14px) / 2); }
-        }
-        @media (max-width: 700px) {
-            .hero-top { grid-template-columns: 1fr; gap: 20px; }
-        }
-        @media (max-width: 560px) {
-            .hc-slide { flex: 0 0 82%; }
-            .hc-btn { display: none; }
+        @media (max-width: 480px) {
+            .hcs-genres { bottom: 58px; gap: 6px; }
+            .hcs-genre  { font-size: 0.62rem; padding: 4px 10px; }
         }
 
         /* ========================
@@ -676,104 +746,66 @@
 
     <main>
 
-        <!-- ① HERO -->
-        <section class="hero">
-            <div class="hero-top">
-                <span class="hero-eyebrow">SHIMOKITA CULTURE MEDIA — FIND YOUR THIRD PLACE</span>
-                <h1 class="hero-h1">
-                    仕事でも<br>家でもない、<br><em>下北沢</em><br>という居場所。
-                </h1>
-                <div class="hero-sub">
-                    <p>カフェ、サウナ、古着、音楽。<br>休日の過ごし方が変わると、人生が少し変わる気がした。</p>
-                    <div class="hero-btns">
-                        <a href="#features" class="hbtn hbtn-fill">特集を読む</a>
-                        <a href="recommend.html" class="hbtn hbtn-outline">スポットを探す →</a>
-                    </div>
+        <!-- ① HERO CINEMATIC -->
+        <section class="hero-cinematic" id="hero">
+
+            <!-- Background Slides -->
+            <div class="hcs-slides" aria-hidden="true">
+                <div class="hcs hcs--1">
+                    <img class="hcs__img"
+                        src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=1920&q=85"
+                        alt="カレー">
+                </div>
+                <div class="hcs hcs--2">
+                    <img class="hcs__img"
+                        src="https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&w=1920&q=85"
+                        alt="古着">
+                </div>
+                <div class="hcs hcs--3">
+                    <img class="hcs__img"
+                        src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=1920&q=85"
+                        alt="ライブ">
+                </div>
+                <div class="hcs hcs--4">
+                    <img class="hcs__img"
+                        src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=85"
+                        alt="カフェ">
                 </div>
             </div>
-            <div class="hero-carousel">
-                <div class="hc-row">
-                    <button class="hc-btn" id="hc-prev" aria-label="前へ">&#8249;</button>
-                    <div class="hc-viewport">
-                        <div class="hc-track" id="hc-track">
-                            <!-- Slide 1: Cafe -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80" alt="下北沢のカフェ">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Cafe</span>
-                                        <p class="hc-title">路地裏の一杯が、<br>一日をリセットする。</p>
-                                        <p class="hc-desc">週末の朝、誰にも急かされない時間がここにある。</p>
-                                    </div>
-                                    <a href="columns/column-detail-11.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 2: Kissa -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=600&q=80" alt="純喫茶の雰囲気">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">純喫茶</span>
-                                        <p class="hc-title">昭和の香りと、<br>今の自分が交差する。</p>
-                                        <p class="hc-desc">変わらない空間が、なぜか安心させてくれる。</p>
-                                    </div>
-                                    <a href="columns/column-detail-10.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 3: Vintage -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=600&q=80" alt="古着屋の店内">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Vintage</span>
-                                        <p class="hc-title">誰かの過去が、<br>自分のスタイルになる。</p>
-                                        <p class="hc-desc">出会いは偶然。でも、選んだのは確かに自分。</p>
-                                    </div>
-                                    <a href="columns/column-detail-3.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 4: Sauna -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1611095971073-1bf781ff48b1?auto=format&fit=crop&w=600&q=80" alt="サウナの蒸気">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Sauna</span>
-                                        <p class="hc-title">整う、という感覚を<br>初めて知った場所。</p>
-                                        <p class="hc-desc">週に一度のルーティンが、人生をととのえる。</p>
-                                    </div>
-                                    <a href="columns/column-detail-5.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 5: Theater -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&w=600&q=80" alt="小劇場のステージ">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Theater</span>
-                                        <p class="hc-title">100人の舞台が、<br>心を100万回動かす。</p>
-                                        <p class="hc-desc">小さな劇場にしかない、圧倒的なリアルがある。</p>
-                                    </div>
-                                    <a href="columns/column-detail-4.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                            <!-- Slide 6: Music -->
-                            <div class="hc-slide">
-                                <div class="hc-img">
-                                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=600&q=80" alt="ライブハウス">
-                                    <div class="hc-caption">
-                                        <span class="hc-cat">Music</span>
-                                        <p class="hc-title">知らない音楽に<br>出会った夜のこと。</p>
-                                        <p class="hc-desc">誰かのライブが、自分の人生を変えることがある。</p>
-                                    </div>
-                                    <a href="columns/column-detail-15.html" class="hc-cover" aria-label="記事を読む"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="hc-btn" id="hc-next" aria-label="次へ">&#8250;</button>
+
+            <!-- Gradient Overlay -->
+            <div class="hcs-overlay" aria-hidden="true"></div>
+
+            <!-- Main Content -->
+            <div class="hcs-content">
+                <span class="hcs-eyebrow">SHIMOKITAZAWA LOCAL GUIDE</span>
+                <h1 class="hcs-heading">まだ知らない<br>下北沢へ。</h1>
+                <p class="hcs-sub">カレー、古着、ライブ、カフェ。<br>歩くだけで、好きが増える街。</p>
+                <div class="hcs-btns">
+                    <a href="recommend.html" class="hcs-btn hcs-btn--accent">スポットを見る</a>
+                    <a href="schedule.html" class="hcs-btn hcs-btn--glass">イベントを見る</a>
                 </div>
-                <div class="hc-dots" id="hc-dots"></div>
             </div>
+
+            <!-- Genre Labels -->
+            <div class="hcs-genres" aria-hidden="true">
+                <span class="hcs-genre hcs-genre--1">カレー</span>
+                <span class="hcs-genre hcs-genre--2">古着</span>
+                <span class="hcs-genre hcs-genre--3">ライブ</span>
+                <span class="hcs-genre hcs-genre--4">カフェ</span>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="hcs-scroll" aria-hidden="true">
+                <span class="hcs-scroll__text">SCROLL</span>
+                <div class="hcs-scroll__line"></div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="hcs-progress" aria-hidden="true">
+                <div class="hcs-progress__bar"></div>
+            </div>
+
         </section>
 
         <!-- ② TICKER -->
@@ -1078,91 +1110,15 @@
             sp.style.width = (window.scrollY / max * 100) + '%';
         }, { passive: true });
 
-        // Hero carousel (3-up)
+        // Transparent header over cinematic hero
         (function() {
-            const track = document.getElementById('hc-track');
-            const dotsWrap = document.getElementById('hc-dots');
-            const btnPrev = document.getElementById('hc-prev');
-            const btnNext = document.getElementById('hc-next');
-            const slides = Array.from(track.children);
-            const TOTAL = slides.length;
-            let current = 0;
-            let autoTimer;
-            let touchStartX = 0;
-
-            function getVisible() {
-                if (window.innerWidth <= 560) return 1;
-                if (window.innerWidth <= 900) return 2;
-                return 3;
+            const headerEl = document.querySelector('.header');
+            if (!headerEl) return;
+            function syncHeader() {
+                headerEl.classList.toggle('on-hero', window.scrollY < window.innerHeight * 0.7);
             }
-
-            function getPages() {
-                return Math.ceil(TOTAL / getVisible());
-            }
-
-            function goTo(page) {
-                const vis = getVisible();
-                const pages = getPages();
-                current = Math.max(0, Math.min(page, pages - 1));
-                const gap = 14;
-                // 実際のスライド幅を読み取る（CSSの82%指定に対応）
-                const slideW = slides[0].offsetWidth;
-                const offset = current * vis * (slideW + gap);
-                track.style.transform = `translateX(-${offset}px)`;
-                updateDots();
-                btnPrev.disabled = current === 0;
-                btnNext.disabled = current >= pages - 1;
-            }
-
-            function buildDots() {
-                dotsWrap.innerHTML = '';
-                const pages = getPages();
-                for (let i = 0; i < pages; i++) {
-                    const d = document.createElement('button');
-                    d.className = 'hc-dot' + (i === current ? ' active' : '');
-                    d.setAttribute('aria-label', `スライド ${i + 1}`);
-                    d.addEventListener('click', () => { goTo(i); resetAuto(); });
-                    dotsWrap.appendChild(d);
-                }
-            }
-
-            function updateDots() {
-                dotsWrap.querySelectorAll('.hc-dot').forEach((d, i) => {
-                    d.classList.toggle('active', i === current);
-                });
-            }
-
-            function resetAuto() {
-                clearInterval(autoTimer);
-                autoTimer = setInterval(() => {
-                    goTo(current + 1 < getPages() ? current + 1 : 0);
-                }, 5000);
-            }
-
-            // タッチスワイプ対応（スマホ用）
-            const viewport = track.parentElement;
-            viewport.addEventListener('touchstart', (e) => {
-                touchStartX = e.touches[0].clientX;
-            }, { passive: true });
-            viewport.addEventListener('touchend', (e) => {
-                const dx = e.changedTouches[0].clientX - touchStartX;
-                if (Math.abs(dx) > 50) {
-                    goTo(dx < 0 ? current + 1 : current - 1);
-                    resetAuto();
-                }
-            }, { passive: true });
-
-            btnPrev.addEventListener('click', () => { goTo(current - 1); resetAuto(); });
-            btnNext.addEventListener('click', () => { goTo(current + 1); resetAuto(); });
-
-            window.addEventListener('resize', () => {
-                buildDots();
-                goTo(0);
-            });
-
-            buildDots();
-            goTo(0);
-            resetAuto();
+            window.addEventListener('scroll', syncHeader, { passive: true });
+            syncHeader();
         })();
 
         // Reveal on scroll
