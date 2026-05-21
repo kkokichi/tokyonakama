@@ -257,40 +257,86 @@
         }
 
         .hcs-btn {
-            display: inline-block;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             font-size: 0.84rem;
             font-weight: 700;
             letter-spacing: 0.07em;
-            padding: 15px 36px;
+            padding: 17px 38px;
             border-radius: 100px;
             text-decoration: none;
-            transition: all 0.3s ease;
+            overflow: hidden;
             cursor: pointer;
+            transition:
+                transform    0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow   0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                background   0.38s ease,
+                border-color 0.38s ease;
         }
 
-        .hcs-btn--glass {
-            background: rgba(255,255,255,0.12);
-            color: #fff;
-            border: 1.5px solid rgba(255,255,255,0.45);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+        /* Shimmer sweep */
+        .hcs-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -80%;
+            width: 55%;
+            height: 100%;
+            background: linear-gradient(110deg, transparent, rgba(255,255,255,0.26), transparent);
+            transition: left 0.6s ease;
+            pointer-events: none;
         }
-        .hcs-btn--glass:hover {
-            background: rgba(255,255,255,0.24);
-            border-color: rgba(255,255,255,0.85);
-            box-shadow: 0 0 28px rgba(255,255,255,0.12);
-            transform: translateY(-2px);
-        }
+        .hcs-btn:hover::after { left: 130%; }
 
+        /* Arrow icon */
+        .hcs-btn-arrow {
+            display: inline-block;
+            font-style: normal;
+            line-height: 1;
+            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .hcs-btn:hover .hcs-btn-arrow { transform: translateX(5px); }
+
+        /* Primary — warm gradient + glow */
         .hcs-btn--accent {
-            background: var(--accent);
+            background: linear-gradient(135deg, #d96a45 0%, #bf5b3b 55%, #a34d30 100%);
             color: #fff;
-            border: 1.5px solid transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow:
+                0 4px 22px rgba(191,91,59,0.42),
+                inset 0 1px 0 rgba(255,255,255,0.18),
+                inset 0 -1px 0 rgba(0,0,0,0.18);
         }
         .hcs-btn--accent:hover {
-            opacity: 0.88;
-            box-shadow: 0 8px 28px rgba(191,91,59,0.45);
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow:
+                0 14px 38px rgba(191,91,59,0.58),
+                0 4px 12px rgba(191,91,59,0.28),
+                inset 0 1px 0 rgba(255,255,255,0.22),
+                inset 0 -1px 0 rgba(0,0,0,0.15);
+        }
+
+        /* Secondary — frosted glass with inner shine */
+        .hcs-btn--glass {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.92);
+            border: 1px solid rgba(255,255,255,0.28);
+            backdrop-filter: blur(18px) saturate(1.6);
+            -webkit-backdrop-filter: blur(18px) saturate(1.6);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.22),
+                inset 0 -1px 0 rgba(255,255,255,0.05),
+                0 4px 18px rgba(0,0,0,0.24);
+        }
+        .hcs-btn--glass:hover {
+            background: rgba(255,255,255,0.16);
+            border-color: rgba(255,255,255,0.62);
+            transform: translateY(-4px);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.35),
+                0 14px 36px rgba(0,0,0,0.32),
+                0 0 0 1px rgba(255,255,255,0.14);
         }
 
         @keyframes hcs-rise {
@@ -397,7 +443,7 @@
         @media (max-width: 768px) {
             .hero-cinematic { height: 85vh; min-height: 500px; }
             .hcs-btns { flex-direction: column; align-items: center; gap: 12px; }
-            .hcs-btn  { width: 220px; text-align: center; padding: 16px 20px; }
+            .hcs-btn  { width: 240px; justify-content: center; padding: 17px 28px; }
         }
         @media (max-width: 480px) {
             .hcs-genres { bottom: 58px; gap: 6px; }
@@ -782,8 +828,14 @@
                 <h1 class="hcs-heading">まだ知らない<br>下北沢へ。</h1>
                 <p class="hcs-sub">カレー、古着、ライブ、カフェ。<br>歩くだけで、好きが増える街。</p>
                 <div class="hcs-btns">
-                    <a href="recommend.html" class="hcs-btn hcs-btn--accent">スポットを見る</a>
-                    <a href="schedule.html" class="hcs-btn hcs-btn--glass">イベントを見る</a>
+                    <a href="recommend.html" class="hcs-btn hcs-btn--accent">
+                        スポットを見る
+                        <span class="hcs-btn-arrow" aria-hidden="true">→</span>
+                    </a>
+                    <a href="schedule.html" class="hcs-btn hcs-btn--glass">
+                        イベントを見る
+                        <span class="hcs-btn-arrow" aria-hidden="true">→</span>
+                    </a>
                 </div>
             </div>
 
